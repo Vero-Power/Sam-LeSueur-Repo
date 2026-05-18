@@ -4,29 +4,31 @@ NTP Approval Automation
 Monitors Gmail for LUX Financial NTP approval emails and updates Coperniq.
 """
 
+import imaplib
 import json
 import time
 import logging
 from datetime import datetime, timezone, timedelta
+from email import message_from_bytes
+from email.header import decode_header
 from pathlib import Path
 
 import requests
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from googleapiclient.discovery import build
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # --- Config ---
-API_KEY = '5756c367-6917-4a5c-b388-6c0b4be05525'
+GMAIL_ADDRESS    = os.environ['GMAIL_ADDRESS']
+GMAIL_APP_PW     = os.environ['GMAIL_APP_PASSWORD']
+API_KEY = os.environ['COPERNIQ_API_KEY']
 BASE_URL = 'https://api.coperniq.io/v1'
-POLL_INTERVAL = 120  # seconds (2 minutes)
+POLL_INTERVAL = 120
 NTP_WO_TEMPLATE_ID = 1907087
 NTP_FORM_TEMPLATE_ID = 1191546
 
-SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 DIR = Path(__file__).parent
-TOKEN_FILE = DIR / 'token.json'
-CREDENTIALS_FILE = DIR / 'credentials.json'
 PROCESSED_FILE = DIR / 'processed_emails.json'
 
 ET = timezone(timedelta(hours=-5))
@@ -39,20 +41,17 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 
-# --- Gmail ---
+# --- Gmail (IMAP) ---
 
-def get_gmail_service():
-    creds = None
-    if TOKEN_FILE.exists():
-        creds = Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+def _decode_subject(raw: str) -> str:
+    parts = decode_header(raw)
+    result = []
+    for part, charset in parts:
+        if isinstance(part, bytes):
+            result.append(part.decode(charset or 'utf-8', errors='replace'))
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
-            creds = flow.run_local_server(port=0)
-        TOKEN_FILE.write_text(creds.to_json())
-    return build('gmail', 'v1', credentials=creds)
+            result.append(part)
+    return ''.join(result)
 
 
 def load_processed_ids() -> set:
@@ -65,25 +64,24 @@ def save_processed_ids(ids: set):
     PROCESSED_FILE.write_text(json.dumps(list(ids)))
 
 
-def fetch_new_ntp_emails(service, processed_ids: set) -> list:
-    results = service.users().messages().list(
-        userId='me',
-        q='subject:"Vero LLC NTP Approval:"',
-    ).execute()
+def fetch_new_ntp_emails(processed_ids: set) -> list:
+    mail = imaplib.IMAP4_SSL('imap.gmail.com')
+    mail.login(GMAIL_ADDRESS, GMAIL_APP_PW)
+    mail.select('inbox')
 
+    _, data = mail.search(None, 'SUBJECT "Vero LLC NTP Approval:"')
     new = []
-    for msg in results.get('messages', []):
-        if msg['id'] in processed_ids:
+    for num in data[0].split():
+        _, raw = mail.fetch(num, '(RFC822)')
+        msg = message_from_bytes(raw[0][1])
+        msg_id = msg.get('Message-ID', '').strip()
+        if not msg_id or msg_id in processed_ids:
             continue
-        full = service.users().messages().get(
-            userId='me', id=msg['id'], format='metadata',
-            metadataHeaders=['Subject', 'From'],
-        ).execute()
-        headers = {h['name']: h['value'] for h in full['payload']['headers']}
-        subject = headers.get('Subject', '')
-        if 'Vero LLC NTP Approval:' in subject:
-            new.append({'id': msg['id'], 'subject': subject})
+        subject = _decode_subject(msg.get('Subject', ''))
+        if 'Vero LLC NTP Approval:' in subject and not subject.strip().lower().startswith('re:'):
+            new.append({'id': msg_id, 'subject': subject})
 
+    mail.logout()
     return new
 
 
@@ -233,13 +231,12 @@ def process_ntp_approval(subject: str) -> dict:
 
 def main():
     log.info('NTP automation started — polling Gmail every 2 minutes.')
-    service = get_gmail_service()
     processed_ids = load_processed_ids()
 
     while True:
         try:
             log.info('Checking Gmail for new NTP approval emails...')
-            new_emails = fetch_new_ntp_emails(service, processed_ids)
+            new_emails = fetch_new_ntp_emails(processed_ids)
             if not new_emails:
                 log.info('No new emails.')
             for email in new_emails:
