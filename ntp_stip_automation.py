@@ -31,7 +31,8 @@ SLACK_BOT_TOKEN  = os.environ['SLACK_BOT_TOKEN']
 
 COMPANY_ID        = 392
 COPERNIQ_BASE     = 'https://api.coperniq.io/v1'
-NTP_WO_TEMPLATE_ID = 1907087
+NTP_WO_TEMPLATE_ID  = 1907087
+NTP_FORM_TEMPLATE_ID = 1191546
 POLL_INTERVAL     = 120
 SAM_SLACK_ID      = 'U0AB51A9J9H'
 FALLBACK_SLACK_CH = 'C0AB50H2K9R'   # corporate-operations
@@ -262,8 +263,19 @@ def find_project(customer_name: str) -> dict:
     )
     data = r.json()
     rows = data if isinstance(data, list) else data.get('rows') or [data]
-    if not rows or not rows[0].get('id'):
+    rows = [r for r in rows if r.get('id')]
+    if not rows:
         raise ValueError(f'No project found for: {customer_name}')
+    # If multiple results, prefer the one whose title contains the full name or first name
+    if len(rows) > 1:
+        first_name = customer_name.split()[0].lower()
+        exact = [r for r in rows if customer_name.lower() in (r.get('title') or '').lower()]
+        if exact:
+            rows = exact
+        else:
+            first_match = [r for r in rows if first_name in (r.get('title') or '').lower()]
+            if first_match:
+                rows = first_match
     log.info(f'Project found: {rows[0]["id"]} — {rows[0].get("title")}')
     return rows[0]
 
@@ -271,6 +283,17 @@ def find_project(customer_name: str) -> dict:
 def get_project(project_id: int) -> dict:
     r = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}')
     return r.json()
+
+
+def _ensure_ntp_phase_started(project_id: int, ntp_phase_id: int):
+    """If the NTP phase is NOT_STARTED, patch the project to trigger phase start."""
+    project = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}').json()
+    for phase in project.get('phaseInstances', []):
+        if phase['id'] == ntp_phase_id and phase.get('status') == 'NOT_STARTED':
+            log.info('NTP phase not started — starting it now...')
+            _api_patch(f'{COPERNIQ_BASE}/projects/{project_id}', {'phaseInstanceId': ntp_phase_id})
+            return
+    # Already started or not found — nothing to do
 
 
 def get_or_create_ntp_wo(project_id: int) -> dict:
@@ -287,7 +310,6 @@ def get_or_create_ntp_wo(project_id: int) -> dict:
         log.info(f'NTP work order found: {wo["id"]}')
         return wo
 
-    # Phase not started — find NTP phase instance ID then create WO
     log.info('NTP work order not found — creating from template...')
     project = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}').json()
     ntp_phase_id = None
@@ -296,17 +318,26 @@ def get_or_create_ntp_wo(project_id: int) -> dict:
             ntp_phase_id = phase['id']
             break
 
+    if ntp_phase_id:
+        _ensure_ntp_phase_started(project_id, ntp_phase_id)
+
     body = {'templateId': NTP_WO_TEMPLATE_ID}
     if ntp_phase_id:
         body['phaseInstanceId'] = ntp_phase_id
 
     r2 = _api_post(f'{COPERNIQ_BASE}/projects/{project_id}/work-orders', body)
     wo = r2.json()
+    # Coperniq bug: if returned ID equals the template ID, the creation was rejected
+    # (happens rarely). Fall back to creating without phaseInstanceId.
+    if wo.get('id') == NTP_WO_TEMPLATE_ID:
+        log.warning('WO creation returned template ID — retrying without phaseInstanceId')
+        r2 = _api_post(f'{COPERNIQ_BASE}/projects/{project_id}/work-orders', {'templateId': NTP_WO_TEMPLATE_ID})
+        wo = r2.json()
     log.info(f'NTP work order created: {wo["id"]}')
     return wo
 
 
-def get_ntp_form(project_id: int) -> dict:
+def get_or_create_ntp_form(project_id: int) -> dict:
     r = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}/forms')
     stub = next(
         (f for f in r.json()
@@ -315,10 +346,15 @@ def get_ntp_form(project_id: int) -> dict:
         None,
     )
     if not stub:
-        raise ValueError(f'NTP form not found on project {project_id}')
-    r2 = _api_get(f'{COPERNIQ_BASE}/forms/{stub["id"]}')
+        log.info('NTP form not found — creating from template...')
+        r2 = _api_post(
+            f'{COPERNIQ_BASE}/projects/{project_id}/forms',
+            {'templateId': NTP_FORM_TEMPLATE_ID},
+        )
+        stub = r2.json()
+    r3 = _api_get(f'{COPERNIQ_BASE}/forms/{stub["id"]}')
     log.info(f'NTP form found: {stub["id"]}')
-    return r2.json()
+    return r3.json()
 
 
 def build_field_map(form: dict) -> dict:
@@ -404,7 +440,7 @@ def process_stip_email(email: dict):
     wo = get_or_create_ntp_wo(project_id)
 
     # 3. Get NTP form, update Finance Status + Stipulations
-    form      = get_ntp_form(project_id)
+    form      = get_or_create_ntp_form(project_id)
     field_map = build_field_map(form)
 
     # Skip if already NTP Approved or beyond
