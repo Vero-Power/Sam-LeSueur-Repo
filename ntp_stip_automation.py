@@ -287,12 +287,20 @@ def get_or_create_ntp_wo(project_id: int) -> dict:
         log.info(f'NTP work order found: {wo["id"]}')
         return wo
 
-    # Phase not started — create WO from template
+    # Phase not started — find NTP phase instance ID then create WO
     log.info('NTP work order not found — creating from template...')
-    r2 = _api_post(
-        f'{COPERNIQ_BASE}/projects/{project_id}/work-orders',
-        {'templateId': NTP_WO_TEMPLATE_ID},
-    )
+    project = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}').json()
+    ntp_phase_id = None
+    for phase in project.get('phaseInstances', []):
+        if 'notice to proceed' in (phase.get('name') or '').lower():
+            ntp_phase_id = phase['id']
+            break
+
+    body = {'templateId': NTP_WO_TEMPLATE_ID}
+    if ntp_phase_id:
+        body['phaseInstanceId'] = ntp_phase_id
+
+    r2 = _api_post(f'{COPERNIQ_BASE}/projects/{project_id}/work-orders', body)
     wo = r2.json()
     log.info(f'NTP work order created: {wo["id"]}')
     return wo
