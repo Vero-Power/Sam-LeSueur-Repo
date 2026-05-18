@@ -2,10 +2,9 @@
 """
 NTP Stipulation Automation
 Monitors Gmail for LUX Financial NTP stipulation emails,
-updates Coperniq, notifies the closer on Slack, and replies to sender.
+updates Coperniq form/work order, notifies closer on Slack, replies to sender.
 """
 
-import imaplib
 import imaplib
 import json
 import logging
@@ -28,22 +27,17 @@ load_dotenv()
 GMAIL_ADDRESS    = os.environ['GMAIL_ADDRESS']
 GMAIL_APP_PW     = os.environ['GMAIL_APP_PASSWORD']
 COPERNIQ_API_KEY = os.environ['COPERNIQ_API_KEY']
-COPERNIQ_BEARER  = os.environ['COPERNIQ_BEARER_TOKEN']
 SLACK_BOT_TOKEN  = os.environ['SLACK_BOT_TOKEN']
 
+COMPANY_ID        = 392
+COPERNIQ_BASE     = 'https://api.coperniq.io/v1'
 NTP_WO_TEMPLATE_ID = 1907087
-COMPANY_ID         = 392
-FALLBACK_SLACK_CH  = 'C0AB50H2K9R'   # corporate-operations
-COPERNIQ_BASE      = 'https://api.coperniq.io/v1'
-POLL_INTERVAL      = 120              # seconds
+POLL_INTERVAL     = 120
+SAM_SLACK_ID      = 'U0AB51A9J9H'
+FALLBACK_SLACK_CH = 'C0AB50H2K9R'   # corporate-operations
 
-GET_H    = {'x-api-key': COPERNIQ_API_KEY}
-POST_H   = {'x-api-key': COPERNIQ_API_KEY, 'Content-Type': 'application/json'}
-BEARER_H = {
-    'Authorization': f'Bearer {COPERNIQ_BEARER}',
-    'Content-Type': 'application/json',
-    'Company-Id': str(COMPANY_ID),
-}
+GET_H  = {'x-api-key': COPERNIQ_API_KEY}
+POST_H = {'x-api-key': COPERNIQ_API_KEY, 'Content-Type': 'application/json'}
 
 SLACK_CHANNEL_MAP = {
     'alejandro opsina': 'C0ALJKNUCLD',
@@ -93,21 +87,77 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 
+# ─── Helpers ──────────────────────────────────────────────────────────────────
+
+def _api_get(url, params=None, max_retries=5):
+    for attempt in range(max_retries):
+        r = requests.get(url, params=params, headers=GET_H)
+        if r.status_code == 429:
+            wait = 15 * (attempt + 1)
+            log.warning(f'Rate limited — waiting {wait}s (retry {attempt+1}/{max_retries})')
+            time.sleep(wait)
+            continue
+        r.raise_for_status()
+        return r
+    raise RuntimeError(f'Still rate limited after {max_retries} retries: {url}')
+
+
+def _api_patch(url, body, max_retries=5):
+    for attempt in range(max_retries):
+        r = requests.patch(url, headers=POST_H, json=body)
+        if r.status_code == 429:
+            wait = 15 * (attempt + 1)
+            log.warning(f'Rate limited — waiting {wait}s (retry {attempt+1}/{max_retries})')
+            time.sleep(wait)
+            continue
+        r.raise_for_status()
+        return r
+    raise RuntimeError(f'Still rate limited after {max_retries} retries: {url}')
+
+
+def _api_post(url, body, max_retries=5):
+    for attempt in range(max_retries):
+        r = requests.post(url, headers=POST_H, json=body)
+        if r.status_code == 429:
+            wait = 15 * (attempt + 1)
+            log.warning(f'Rate limited — waiting {wait}s (retry {attempt+1}/{max_retries})')
+            time.sleep(wait)
+            continue
+        r.raise_for_status()
+        return r
+    raise RuntimeError(f'Still rate limited after {max_retries} retries: {url}')
+
+
 # ─── Parsing ──────────────────────────────────────────────────────────────────
 
 def parse_customer_name(subject: str) -> str:
-    return subject.replace('Vero NTP Stipulation:', '').strip()
+    return subject.split('Vero NTP Stipulation:')[1].strip()
 
 
 def parse_stips(body: str) -> list[str]:
-    section = ''
-    if 'addressed:' in body:
-        section = body.split('addressed:')[1].split('Please let me know')[0]
-    return [
-        re.sub(r'^[\s\-\•\*]+', '', line).strip()
-        for line in section.split('\n')
-        if len(re.sub(r'^[\s\-\•\*]+', '', line).strip()) > 10
-    ]
+    # Join soft-wrapped lines then split on bullet/dash markers
+    body = re.sub(r'\r\n|\r', '\n', body)
+    # Collapse lines that don't start a new bullet point into the previous line
+    lines = body.split('\n')
+    joined = []
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            joined.append('')
+            continue
+        is_bullet = bool(re.match(r'^[\-\•\*•]', stripped))
+        if is_bullet or not joined:
+            joined.append(stripped)
+        else:
+            joined[-1] = (joined[-1] + ' ' + stripped).strip()
+
+    stips = []
+    skip_starts = ('hello', 'upon review', 'please let', 'thank you', 'kathy', 'hi ', 'sincerely', 'best')
+    for line in joined:
+        line = re.sub(r'^[\s\-\•\*•]+', '', line).strip()
+        if len(line) > 10 and not any(line.lower().startswith(s) for s in skip_starts):
+            stips.append(line)
+    return stips
 
 
 def match_stips(stips: list[str]) -> list[str]:
@@ -120,7 +170,7 @@ def match_stips(stips: list[str]) -> list[str]:
     return matched
 
 
-# ─── Gmail (IMAP/SMTP) ────────────────────────────────────────────────────────
+# ─── Gmail ────────────────────────────────────────────────────────────────────
 
 def load_processed_ids() -> set:
     if PROCESSED_FILE.exists():
@@ -177,7 +227,7 @@ def fetch_new_stip_emails(processed_ids: set) -> list[dict]:
         if not msg_id or msg_id in processed_ids:
             continue
         subject = _decode_subject(msg.get('Subject', ''))
-        if 'Vero NTP Stipulation:' not in subject:
+        if 'Vero NTP Stipulation:' not in subject or subject.strip().lower().startswith('re:'):
             continue
         emails.append({
             'id':      msg_id,
@@ -191,7 +241,7 @@ def fetch_new_stip_emails(processed_ids: set) -> list[dict]:
 
 
 def send_reply(to: str, subject: str):
-    msg = MIMEText('Hi Kathy,\n\nThank you for sending this over — we are on it!')
+    msg = MIMEText('Hi Kathy,\n\nThank you for the heads up — we are on it!')
     msg['From']    = GMAIL_ADDRESS
     msg['To']      = to
     msg['Subject'] = f'Re: {subject}'
@@ -199,96 +249,111 @@ def send_reply(to: str, subject: str):
         server.starttls()
         server.login(GMAIL_ADDRESS, GMAIL_APP_PW)
         server.send_message(msg)
+    log.info(f'Reply sent to {to}')
 
 
 # ─── Coperniq ─────────────────────────────────────────────────────────────────
 
-def find_project(last_name: str) -> dict:
-    r = requests.get(
+def find_project(customer_name: str) -> dict:
+    last_name = customer_name.split()[-1]
+    r = _api_get(
         f'{COPERNIQ_BASE}/projects/search',
         params={'prop1': 'title', 'op1': 'contains', 'value1': last_name},
-        headers=GET_H,
     )
-    r.raise_for_status()
     data = r.json()
-    rows = data.get('rows') or (data if isinstance(data, list) else [data])
+    rows = data if isinstance(data, list) else data.get('rows') or [data]
     if not rows or not rows[0].get('id'):
-        raise ValueError(f'No project found for last name: {last_name}')
+        raise ValueError(f'No project found for: {customer_name}')
+    log.info(f'Project found: {rows[0]["id"]} — {rows[0].get("title")}')
     return rows[0]
 
 
 def get_project(project_id: int) -> dict:
-    r = requests.get(f'{COPERNIQ_BASE}/projects/{project_id}', headers=GET_H)
-    r.raise_for_status()
+    r = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}')
     return r.json()
 
 
-def get_or_start_ntp_wo(project_id: int) -> dict:
-    r = requests.get(f'{COPERNIQ_BASE}/projects/{project_id}/work-orders', headers=GET_H)
-    r.raise_for_status()
+def get_or_create_ntp_wo(project_id: int) -> dict:
+    r = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}/work-orders')
+    work_orders = r.json()
+
     wo = next(
-        (w for w in r.json() if w.get('templateId') == NTP_WO_TEMPLATE_ID and not w.get('isArchived')),
+        (w for w in work_orders
+         if not w.get('isArchived')
+         and 'Notice to Proceed' in (w.get('title') or '')),
         None,
     )
     if wo:
+        log.info(f'NTP work order found: {wo["id"]}')
         return wo
 
-    r2 = requests.get(f'{COPERNIQ_BASE}/projects/{project_id}/elements', headers=GET_H)
-    r2.raise_for_status()
-    elems = r2.json()
-    if isinstance(elems, dict):
-        elems = elems.get('rows', [])
-    ntp_elem = next(
-        (e for e in elems
-         if e.get('templateId') == NTP_WO_TEMPLATE_ID or 'Notice to Proceed' in (e.get('title') or '')),
-        None,
+    # Phase not started — create WO from template
+    log.info('NTP work order not found — creating from template...')
+    r2 = _api_post(
+        f'{COPERNIQ_BASE}/projects/{project_id}/work-orders',
+        {'templateId': NTP_WO_TEMPLATE_ID},
     )
-    if ntp_elem:
-        requests.put(
-            f'https://coperniq.dev/project-service/workflow-instances/elements/instances/{ntp_elem["id"]}/start?companyId={COMPANY_ID}',
-            headers=BEARER_H,
-            json={},
-        )
-        log.info('Started NTP phase — waiting 5s for work order to be created...')
-        time.sleep(5)
-
-    r3 = requests.get(f'{COPERNIQ_BASE}/projects/{project_id}/work-orders', headers=GET_H)
-    r3.raise_for_status()
-    wo = next(
-        (w for w in r3.json() if w.get('templateId') == NTP_WO_TEMPLATE_ID and not w.get('isArchived')),
-        None,
-    )
-    if not wo:
-        raise ValueError('NTP work order not found after attempting to start phase')
+    wo = r2.json()
+    log.info(f'NTP work order created: {wo["id"]}')
     return wo
 
 
 def get_ntp_form(project_id: int) -> dict:
-    r = requests.get(f'{COPERNIQ_BASE}/projects/{project_id}/forms', headers=GET_H)
-    r.raise_for_status()
+    r = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}/forms')
     stub = next(
-        (f for f in r.json() if 'Notice to Proceed' in f.get('name', '') and not f.get('isArchived')),
+        (f for f in r.json()
+         if not f.get('isArchived')
+         and 'Notice to Proceed' in (f.get('name') or '')),
         None,
     )
     if not stub:
-        raise ValueError('NTP form not found')
-    r2 = requests.get(f'{COPERNIQ_BASE}/forms/{stub["id"]}', headers=GET_H)
-    r2.raise_for_status()
+        raise ValueError(f'NTP form not found on project {project_id}')
+    r2 = _api_get(f'{COPERNIQ_BASE}/forms/{stub["id"]}')
+    log.info(f'NTP form found: {stub["id"]}')
     return r2.json()
 
 
-def get_stip_column_id(form: dict) -> str:
+def build_field_map(form: dict) -> dict:
+    all_props = []
     for layout in form.get('formLayouts', []):
         for prop in layout.get('properties', []):
-            if prop.get('name') == 'Stipulations':
-                return prop['columnId']
+            all_props.append(prop)
             for field in prop.get('fields', []):
-                if field.get('name') == 'Stipulations':
-                    return field['columnId']
-    raise ValueError('Stipulations field not found in form')
+                all_props.append(field)
+    return {p['name']: p for p in all_props if 'name' in p}
 
 
 # ─── Slack ────────────────────────────────────────────────────────────────────
+
+def _slack_user_id_from_email(email: str):
+    r = requests.get(
+        'https://slack.com/api/users.lookupByEmail',
+        params={'email': email},
+        headers={'Authorization': f'Bearer {SLACK_BOT_TOKEN}'},
+    )
+    data = r.json()
+    if data.get('ok'):
+        return data['user']['id']
+    log.warning(f'Could not find Slack user for {email}: {data.get("error")}')
+    return None
+
+
+def _slack_channel_for_closer(closer_name: str) -> str:
+    last_name = closer_name.split()[-1].lower() if closer_name else ''
+    r = requests.get(
+        'https://slack.com/api/conversations.list',
+        params={'limit': 200, 'types': 'public_channel,private_channel'},
+        headers={'Authorization': f'Bearer {SLACK_BOT_TOKEN}'},
+    )
+    data = r.json()
+    if data.get('ok'):
+        for ch in data.get('channels', []):
+            name = ch['name']
+            if last_name and last_name in name and name.endswith('-ops'):
+                return ch['id']
+    log.warning(f'No ops channel found for {closer_name}, using fallback')
+    return FALLBACK_SLACK_CH
+
 
 def send_slack(channel: str, text: str):
     r = requests.post(
@@ -303,70 +368,78 @@ def send_slack(channel: str, text: str):
 
 # ─── Core processing ──────────────────────────────────────────────────────────
 
-def process_stip_email(email: dict) -> dict:
+def process_stip_email(email: dict):
     customer_name = parse_customer_name(email['subject'])
-    last_name     = customer_name.split()[-1]
     stips         = parse_stips(email['body'])
     matched_stips = match_stips(stips)
-    stips_text    = '\n'.join(f'{i+1}. {s}' for i, s in enumerate(stips))
+    stips_text    = '\n'.join(f'• {s}' for s in stips)
 
-    log.info(f'Processing: {customer_name}')
+    log.info(f'Processing stip for: {customer_name}')
+    log.info(f'Stips found: {stips}')
+    log.info(f'Matched to dropdowns: {matched_stips}')
 
-    project_stub = find_project(last_name)
-    project_id   = project_stub['id']
-    full_project = get_project(project_id)
+    # 1. Find project
+    project    = find_project(customer_name)
+    project_id = project['id']
+    full       = get_project(project_id)
 
-    closer_name   = (full_project.get('custom') or {}).get('closer_name_10') or \
-                    (full_project.get('custom') or {}).get('sales_closer_name', '')
-    slack_channel = SLACK_CHANNEL_MAP.get(closer_name.strip().lower(), FALLBACK_SLACK_CH)
+    closer_name  = (full.get('custom') or {}).get('sales_closer_name', '')
+    closer_email = (full.get('custom') or {}).get('sales_closer_email', '')
 
-    ntp_wo   = get_or_start_ntp_wo(project_id)
-    ntp_form = get_ntp_form(project_id)
-    col_id   = get_stip_column_id(ntp_form)
+    # 2. Get or create NTP work order (opens phase if needed)
+    wo = get_or_create_ntp_wo(project_id)
 
-    requests.patch(
-        f'{COPERNIQ_BASE}/forms/{ntp_form["id"]}',
-        headers=POST_H,
-        json={'fields': [{'columnId': col_id, 'value': matched_stips}]},
-    ).raise_for_status()
+    # 3. Get NTP form, update Finance Status + Stipulations
+    form      = get_ntp_form(project_id)
+    field_map = build_field_map(form)
 
-    note = (
-        f'🔴 NTP Stipulations from LUX Financial for {customer_name}:\n\n'
-        f'{stips_text}\n\n'
-        f'Added to form: {", ".join(matched_stips)}'
+    fields = []
+    if 'Finance Status' in field_map:
+        fields.append({'columnId': field_map['Finance Status']['columnId'], 'value': 'Pending Stipulation'})
+    if 'Stipulations' in field_map:
+        fields.append({'columnId': field_map['Stipulations']['columnId'], 'value': matched_stips})
+
+    if fields:
+        _api_patch(f'{COPERNIQ_BASE}/forms/{form["id"]}', {'fields': fields})
+        log.info('Form updated')
+
+    # 4. Set work order to WAITING
+    _api_patch(
+        f'{COPERNIQ_BASE}/projects/{project_id}/work-orders/{wo["id"]}',
+        {'status': 'WAITING'},
     )
-    requests.post(
-        f'{COPERNIQ_BASE}/projects/{project_id}/comments',
-        headers=POST_H,
-        json={'body': note},
-    ).raise_for_status()
+    log.info('Work order set to WAITING')
 
-    requests.patch(
-        f'{COPERNIQ_BASE}/projects/{project_id}/work-orders/{ntp_wo["id"]}',
-        headers=POST_H,
-        json={'status': 'WAITING'},
-    ).raise_for_status()
+    # 5. Leave note on project tagging Sam
+    note = (
+        f'🔴 NTP Stipulation received from LUX Financial for {customer_name}.\n\n'
+        f'{stips_text}\n\n'
+        f'[Sam LeSueur|~id:14206] — please review.'
+    )
+    _api_post(
+        f'{COPERNIQ_BASE}/projects/{project_id}/notes',
+        {'body': note},
+    )
+    log.info('Note left on project')
+
+    # 6. Notify closer on Slack, tag them
+    rep_slack_id  = _slack_user_id_from_email(closer_email) if closer_email else None
+    rep_tag       = f'<@{rep_slack_id}>' if rep_slack_id else (closer_name or 'Rep')
+    slack_channel = _slack_channel_for_closer(closer_name)
 
     send_slack(
         slack_channel,
         f'🔴 *NTP Stipulation — {customer_name}*\n\n'
-        f'LUX Financial has requested the following stips:\n{stips_text}\n\n'
+        f'{rep_tag} — LUX Financial has requested the following stips:\n\n'
+        f'{stips_text}\n\n'
         f'Please work with your customer to resolve these ASAP.',
     )
+    log.info(f'Slack sent to {closer_name} ({slack_channel})')
 
+    # 7. Reply to Lux
     send_reply(email['sender'], email['subject'])
 
-    result = {
-        'success':       True,
-        'customer_name': customer_name,
-        'project_id':    project_id,
-        'ntp_form_id':   ntp_form['id'],
-        'ntp_wo_id':     ntp_wo['id'],
-        'matched_stips': matched_stips,
-        'slack_channel': slack_channel,
-    }
-    log.info(f'Done: {result}')
-    return result
+    log.info(f'Done: {customer_name} (project {project_id})')
 
 
 # ─── Main loop ────────────────────────────────────────────────────────────────
@@ -387,7 +460,8 @@ def main():
                     processed_ids.add(email['id'])
                     save_processed_ids(processed_ids)
                 except Exception:
-                    log.exception(f'Failed to process email {email["id"]}')
+                    log.exception(f'Failed to process {email["id"]}')
+                time.sleep(3)
         except Exception:
             log.exception('Unexpected error — will retry on next poll.')
         time.sleep(POLL_INTERVAL)
