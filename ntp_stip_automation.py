@@ -328,38 +328,30 @@ def get_or_create_ntp_wo(project_id: int) -> dict:
             ntp_phase_id = phase['id']
             break
 
-    # If NTP phase is NOT_STARTED, start it and wait for the auto-created WO
+    # If NTP phase is NOT_STARTED, start it and poll until it becomes IN_PROGRESS
     if ntp_phase_id:
         for phase in project.get('phaseInstances', []):
             if phase['id'] == ntp_phase_id and phase.get('status') == 'NOT_STARTED':
                 _start_ntp_phase(project_id, ntp_phase_id)
-                # Poll up to 30s for the WO Coperniq auto-creates when a phase starts
+                # Poll up to 30s for the phase to become IN_PROGRESS
+                phase_started = False
                 for _ in range(15):
                     time.sleep(2)
-                    work_orders = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}/work-orders').json()
-                    wo = next(
-                        (w for w in work_orders
-                         if not w.get('isArchived')
-                         and 'Notice to Proceed' in (w.get('title') or '')),
+                    refreshed = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}').json()
+                    phase_status = next(
+                        (p.get('status') for p in refreshed.get('phaseInstances', []) if p['id'] == ntp_phase_id),
                         None,
                     )
-                    if wo:
-                        log.info(f'NTP work order auto-created by phase start: {wo["id"]}')
-                        return wo
-                log.warning('Phase started but no NTP WO auto-created after 30s')
+                    if phase_status == 'IN_PROGRESS':
+                        log.info('NTP phase is now IN_PROGRESS')
+                        phase_started = True
+                        break
+                if not phase_started:
+                    log.warning('NTP phase did not become IN_PROGRESS after 30s — WO would land in Other, aborting')
+                    raise RuntimeError('NTP phase did not start — cannot safely create WO')
                 break
 
-    # Manual fallback — only create if phase is confirmed IN_PROGRESS (not NOT_STARTED)
-    # Creating a WO when phase is NOT_STARTED causes it to land in OTHER
-    refreshed = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}').json()
-    phase_status = next(
-        (p.get('status') for p in refreshed.get('phaseInstances', []) if p['id'] == ntp_phase_id),
-        None,
-    ) if ntp_phase_id else None
-    if phase_status == 'NOT_STARTED':
-        log.warning('NTP phase still NOT_STARTED — WO would land in Other, aborting manual creation')
-        raise RuntimeError('NTP phase did not start — cannot safely create WO')
-
+    # Create WO with phaseInstanceId so it lands in the NTP phase, not Other
     body = {'templateId': NTP_WO_TEMPLATE_ID}
     if ntp_phase_id:
         body['phaseInstanceId'] = ntp_phase_id
