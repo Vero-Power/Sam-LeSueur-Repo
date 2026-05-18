@@ -73,7 +73,7 @@ STIP_KEYWORDS = {
     'Behind on Utility Bill':                ['past due', 'behind on utility', 'balance'],
     'Voided check':                          ['voided check', 'void check'],
     'Copy of ID':                            ['copy of id', 'photo id'],
-    'Social Security card':                  ['social security', 'ssn'],
+    'Social Security card':                  ['social security', 'ssn', 'ss #', 'ss#'],
 }
 
 DIR            = Path(__file__).parent
