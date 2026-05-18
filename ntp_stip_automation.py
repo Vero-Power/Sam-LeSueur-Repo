@@ -383,6 +383,12 @@ def process_stip_email(email: dict):
     project_id = project['id']
     full       = get_project(project_id)
 
+    # Skip cancelled or on-hold projects
+    project_status = (full.get('status') or '').upper()
+    if project_status in ('CANCELLED', 'ON_HOLD', 'HOLD'):
+        log.info(f'Skipping — project status is {project_status}')
+        return
+
     closer_name  = (full.get('custom') or {}).get('sales_closer_name', '')
     closer_email = (full.get('custom') or {}).get('sales_closer_email', '')
 
