@@ -73,7 +73,7 @@ STIP_KEYWORDS = {
     'FEOC for Inverter/battery and racking': ['feoc', 'inverter', 'racking'],
     'Behind on Utility Bill':                ['past due', 'behind on utility', 'balance'],
     'Voided check':                          ['voided check', 'void check'],
-    'Copy of ID':                            ['copy of id', 'photo id'],
+    'Copy of ID':                            ['copy of id', 'photo id', 'id front', 'id back', 'provide an id'],
     'Social Security card':                  ['social security', 'ssn', 'ss #', 'ss#'],
 }
 
@@ -333,8 +333,8 @@ def get_or_create_ntp_wo(project_id: int) -> dict:
         for phase in project.get('phaseInstances', []):
             if phase['id'] == ntp_phase_id and phase.get('status') == 'NOT_STARTED':
                 _start_ntp_phase(project_id, ntp_phase_id)
-                # Poll up to 10s for the WO Coperniq auto-creates when a phase starts
-                for _ in range(5):
+                # Poll up to 30s for the WO Coperniq auto-creates when a phase starts
+                for _ in range(15):
                     time.sleep(2)
                     work_orders = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}/work-orders').json()
                     wo = next(
@@ -346,10 +346,20 @@ def get_or_create_ntp_wo(project_id: int) -> dict:
                     if wo:
                         log.info(f'NTP work order auto-created by phase start: {wo["id"]}')
                         return wo
-                log.warning('Phase started but no NTP WO auto-created after 10s')
+                log.warning('Phase started but no NTP WO auto-created after 30s')
                 break
 
-    # Phase was already IN_PROGRESS but no NTP WO found — create one
+    # Manual fallback — only create if phase is confirmed IN_PROGRESS (not NOT_STARTED)
+    # Creating a WO when phase is NOT_STARTED causes it to land in OTHER
+    refreshed = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}').json()
+    phase_status = next(
+        (p.get('status') for p in refreshed.get('phaseInstances', []) if p['id'] == ntp_phase_id),
+        None,
+    ) if ntp_phase_id else None
+    if phase_status == 'NOT_STARTED':
+        log.warning('NTP phase still NOT_STARTED — WO would land in Other, aborting manual creation')
+        raise RuntimeError('NTP phase did not start — cannot safely create WO')
+
     body = {'templateId': NTP_WO_TEMPLATE_ID}
     if ntp_phase_id:
         body['phaseInstanceId'] = ntp_phase_id
