@@ -323,33 +323,29 @@ def get_or_create_ntp_wo(project_id: int) -> dict:
     log.info('NTP work order not found — creating from template...')
     project = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}').json()
     ntp_phase_id = None
+    ntp_phase_status = None
     for phase in project.get('phaseInstances', []):
         if 'notice to proceed' in (phase.get('name') or '').lower():
             ntp_phase_id = phase['id']
+            ntp_phase_status = phase.get('status')
             break
 
-    # If NTP phase is NOT_STARTED, start it and poll until it becomes IN_PROGRESS
-    if ntp_phase_id:
-        for phase in project.get('phaseInstances', []):
-            if phase['id'] == ntp_phase_id and phase.get('status') == 'NOT_STARTED':
-                _start_ntp_phase(project_id, ntp_phase_id)
-                # Poll up to 30s for the phase to become IN_PROGRESS
-                phase_started = False
-                for _ in range(15):
-                    time.sleep(2)
-                    refreshed = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}').json()
-                    phase_status = next(
-                        (p.get('status') for p in refreshed.get('phaseInstances', []) if p['id'] == ntp_phase_id),
-                        None,
-                    )
-                    if phase_status == 'IN_PROGRESS':
-                        log.info('NTP phase is now IN_PROGRESS')
-                        phase_started = True
-                        break
-                if not phase_started:
-                    log.warning('NTP phase did not become IN_PROGRESS after 30s — WO would land in Other, aborting')
-                    raise RuntimeError('NTP phase did not start — cannot safely create WO')
+    # If NTP phase is NOT_STARTED, try to start it first
+    # Coperniq silently rejects WO creation in NOT_STARTED phases (returns template ID instead of new WO)
+    if ntp_phase_id and ntp_phase_status == 'NOT_STARTED':
+        _start_ntp_phase(project_id, ntp_phase_id)
+        for _ in range(15):
+            time.sleep(2)
+            refreshed = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}').json()
+            ntp_phase_status = next(
+                (p.get('status') for p in refreshed.get('phaseInstances', []) if p['id'] == ntp_phase_id),
+                None,
+            )
+            if ntp_phase_status == 'IN_PROGRESS':
+                log.info('NTP phase is now IN_PROGRESS')
                 break
+        else:
+            log.warning('NTP phase still NOT_STARTED after 30s — WO creation will likely fail')
 
     # Create WO with phaseInstanceId so it lands in the NTP phase, not Other
     body = {'templateId': NTP_WO_TEMPLATE_ID}
@@ -357,6 +353,12 @@ def get_or_create_ntp_wo(project_id: int) -> dict:
         body['phaseInstanceId'] = ntp_phase_id
     r2 = _api_post(f'{COPERNIQ_BASE}/projects/{project_id}/work-orders', body)
     wo = r2.json()
+    # Coperniq silently rejects WO creation when phase is NOT_STARTED — returns template ID instead
+    if wo.get('id') == NTP_WO_TEMPLATE_ID:
+        raise RuntimeError(
+            f'WO creation failed — NTP phase {ntp_phase_id} is NOT_STARTED. '
+            'Start the phase in Coperniq UI and this will retry automatically.'
+        )
     log.info(f'NTP work order created: {wo["id"]}')
     return wo
 
