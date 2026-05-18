@@ -285,15 +285,25 @@ def get_project(project_id: int) -> dict:
     return r.json()
 
 
-def _ensure_ntp_phase_started(project_id: int, ntp_phase_id: int):
-    """If the NTP phase is NOT_STARTED, patch the project to trigger phase start."""
+def _start_ntp_phase(project_id: int, ntp_phase_id: int):
+    """Trigger Coperniq to start the NTP phase by sending multiple PATCH signals."""
+    log.info('NTP phase not started — starting it now...')
     project = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}').json()
+    ntp_phase_template_id = None
     for phase in project.get('phaseInstances', []):
-        if phase['id'] == ntp_phase_id and phase.get('status') == 'NOT_STARTED':
-            log.info('NTP phase not started — starting it now...')
-            _api_patch(f'{COPERNIQ_BASE}/projects/{project_id}', {'phaseInstanceId': ntp_phase_id})
-            return
-    # Already started or not found — nothing to do
+        if phase['id'] == ntp_phase_id:
+            ntp_phase_template_id = (phase.get('phaseTemplate') or {}).get('id')
+            break
+    # Send multiple patches — Coperniq requires more than one signal to start a phase
+    for body in [
+        {'phaseInstanceId': ntp_phase_id},
+        {'currentPhaseInstanceId': ntp_phase_id},
+        {'phaseId': ntp_phase_template_id} if ntp_phase_template_id else {},
+        {'activePhaseInstanceId': ntp_phase_id},
+    ]:
+        if body:
+            _api_patch(f'{COPERNIQ_BASE}/projects/{project_id}', body)
+            time.sleep(0.5)
 
 
 def get_or_create_ntp_wo(project_id: int) -> dict:
@@ -318,21 +328,33 @@ def get_or_create_ntp_wo(project_id: int) -> dict:
             ntp_phase_id = phase['id']
             break
 
+    # If NTP phase is NOT_STARTED, start it and wait for the auto-created WO
     if ntp_phase_id:
-        _ensure_ntp_phase_started(project_id, ntp_phase_id)
+        for phase in project.get('phaseInstances', []):
+            if phase['id'] == ntp_phase_id and phase.get('status') == 'NOT_STARTED':
+                _start_ntp_phase(project_id, ntp_phase_id)
+                # Poll up to 10s for the WO Coperniq auto-creates when a phase starts
+                for _ in range(5):
+                    time.sleep(2)
+                    work_orders = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}/work-orders').json()
+                    wo = next(
+                        (w for w in work_orders
+                         if not w.get('isArchived')
+                         and 'Notice to Proceed' in (w.get('title') or '')),
+                        None,
+                    )
+                    if wo:
+                        log.info(f'NTP work order auto-created by phase start: {wo["id"]}')
+                        return wo
+                log.warning('Phase started but no NTP WO auto-created after 10s')
+                break
 
+    # Phase was already IN_PROGRESS but no NTP WO found — create one
     body = {'templateId': NTP_WO_TEMPLATE_ID}
     if ntp_phase_id:
         body['phaseInstanceId'] = ntp_phase_id
-
     r2 = _api_post(f'{COPERNIQ_BASE}/projects/{project_id}/work-orders', body)
     wo = r2.json()
-    # Coperniq bug: if returned ID equals the template ID, the creation was rejected
-    # (happens rarely). Fall back to creating without phaseInstanceId.
-    if wo.get('id') == NTP_WO_TEMPLATE_ID:
-        log.warning('WO creation returned template ID — retrying without phaseInstanceId')
-        r2 = _api_post(f'{COPERNIQ_BASE}/projects/{project_id}/work-orders', {'templateId': NTP_WO_TEMPLATE_ID})
-        wo = r2.json()
     log.info(f'NTP work order created: {wo["id"]}')
     return wo
 
