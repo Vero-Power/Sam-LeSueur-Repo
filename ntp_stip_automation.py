@@ -393,6 +393,15 @@ def process_stip_email(email: dict):
     form      = get_ntp_form(project_id)
     field_map = build_field_map(form)
 
+    # Skip if already NTP Approved or beyond
+    current_status = ''
+    if 'Finance Status' in field_map:
+        current_status = field_map['Finance Status'].get('value', '') or ''
+    skip_statuses = ('NTP Approved', 'M2 Approved', 'M2 Submitted')
+    if any(s.lower() in current_status.lower() for s in skip_statuses):
+        log.info(f'Skipping — Finance Status is already "{current_status}"')
+        return
+
     fields = []
     if 'Finance Status' in field_map:
         fields.append({'columnId': field_map['Finance Status']['columnId'], 'value': 'Pending Stipulation'})
