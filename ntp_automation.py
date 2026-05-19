@@ -174,6 +174,13 @@ def process_ntp_approval(subject: str) -> dict:
                 all_props.append(field)
     field_map = {p['name']: p for p in all_props if 'name' in p}
 
+    # Skip if already M2 Approved or M2 Submitted — NTP approval email came in after M2 was already done
+    current_fin = field_map.get('Finance Status', {}).get('value', '')
+    if isinstance(current_fin, list): current_fin = ' '.join(current_fin)
+    if any(s in current_fin for s in ('M2 Approved', 'M2 Submitted')):
+        log.info(f'Skipping — Finance Status is already "{current_fin}"')
+        return {'success': True, 'skipped': True, 'reason': current_fin, 'customer_name': customer_name}
+
     today = _today_et()
     field_values = [
         ('Finance Status',      'NTP Approved'),
