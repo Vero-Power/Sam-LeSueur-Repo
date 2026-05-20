@@ -215,9 +215,236 @@ async def export_cc_checklist_pdf(cc_project_id: str) -> Optional[bytes]:
             await browser.close()
 
 
+TESLA_EMAIL = os.environ.get('TESLA_EMAIL', 'sam@veropwr.com')
+TESLA_USER_DATA_DIR = str(DIR / '.tesla_browser_profile')
+TESLA_SESSION_FILE = DIR / 'tesla_session.json'
+TESLA_LOGIN_URL = 'https://powerhub.energy.tesla.com/login?redirect_to=%2F'
+TESLA_BASE_URL = 'https://powerhub.energy.tesla.com'
+
+
+async def _tesla_ensure_login(page, context) -> bool:
+    """Ensure we are logged into Tesla PowerHub.
+
+    Attempts login using stored credentials.  If a CAPTCHA / MFA step blocks
+    the automated flow the function opens the browser in a visible window and
+    waits up to 3 minutes for the user to complete authentication manually.
+
+    Returns True if logged in, False on timeout.
+    """
+    await page.goto(TESLA_BASE_URL, wait_until='domcontentloaded', timeout=30000)
+    await asyncio.sleep(2)
+    url = page.url
+
+    # Already on the dashboard
+    if TESLA_BASE_URL in url and 'login' not in url and 'auth.tesla.com' not in url:
+        log.info("Tesla PowerHub: already logged in via saved session")
+        return True
+
+    log.info("Tesla PowerHub: session expired or missing — starting login flow")
+
+    # Navigate to login page
+    await page.goto(TESLA_LOGIN_URL, wait_until='domcontentloaded', timeout=30000)
+    await asyncio.sleep(2)
+
+    # Phase 1: fill identity (email) on powerhub.energy.tesla.com/login
+    identity = page.locator('input[name="identity"]')
+    if await identity.is_visible():
+        log.info("Filling email field")
+        await identity.fill(TESLA_EMAIL)
+        submit = page.locator('button[type="submit"]').first
+        await submit.click()
+        await page.wait_for_load_state('domcontentloaded')
+        await asyncio.sleep(2)
+
+    # Phase 2: fill password on auth.tesla.com
+    pwd = page.locator('input[type="password"], input[name="credential"]').first
+    if await pwd.is_visible():
+        log.info("Filling password field")
+        await pwd.fill(TESLA_PASSWORD)
+        submit = page.locator('button[type="submit"]').first
+        await submit.click()
+        await page.wait_for_load_state('domcontentloaded')
+        await asyncio.sleep(2)
+
+    # Phase 3: check for CAPTCHA / MFA — wait for manual completion (up to 3 min)
+    for i in range(90):
+        await asyncio.sleep(2)
+        url = page.url
+        if TESLA_BASE_URL in url and 'login' not in url and 'auth.tesla.com' not in url:
+            log.info(f"Tesla PowerHub: login confirmed — URL: {url}")
+            # Persist session for next run
+            try:
+                import json as _json
+                state = await context.storage_state()
+                TESLA_SESSION_FILE.write_text(_json.dumps(state))
+                log.info(f"Tesla session saved ({len(state.get('cookies', []))} cookies)")
+            except Exception as e:
+                log.warning(f"Could not save Tesla session: {e}")
+            return True
+        if i % 15 == 0:
+            log.info(f"Tesla login waiting ({i * 2}s elapsed)… manual CAPTCHA/MFA may be needed")
+
+    log.error("Tesla PowerHub: login timed out after 3 minutes")
+    return False
+
+
 async def screenshot_tesla_commissioning(customer_address: str) -> Optional[bytes]:
-    """Log into Tesla PowerHub, find job by address, screenshot commissioning page."""
-    pass  # Task 10
+    """Log into Tesla PowerHub, find job by address, screenshot commissioning page.
+
+    Flow:
+      1. Launch Chromium with a persistent user-data directory so Tesla session
+         cookies survive across runs.  If the session is still valid the login
+         step is skipped automatically.
+      2. If not logged in, pre-fill email + password and wait up to 3 minutes
+         for the user to complete any CAPTCHA / MFA in the visible window.
+      3. Search for the customer by address using the site's search bar.
+      4. Open the matching job and navigate to the Commissioning tab.
+      5. Return a full-page PNG screenshot as bytes.
+    """
+    import os as _os
+    _os.makedirs(TESLA_USER_DATA_DIR, exist_ok=True)
+
+    async with async_playwright() as p:
+        # Use a persistent context so browser cookies survive between runs
+        context = await p.chromium.launch_persistent_context(
+            TESLA_USER_DATA_DIR,
+            headless=False,   # must be visible for manual CAPTCHA if needed
+            slow_mo=200,
+            viewport={'width': 1600, 'height': 900},
+            args=['--no-sandbox', '--disable-blink-features=AutomationControlled'],
+        )
+        page = context.pages[0] if context.pages else await context.new_page()
+
+        try:
+            # Step 1 — Ensure we are logged in
+            logged_in = await _tesla_ensure_login(page, context)
+            if not logged_in:
+                log.error("screenshot_tesla_commissioning: could not log in — aborting")
+                return None
+
+            # Let the dashboard fully render
+            await asyncio.sleep(3)
+            log.info(f"Searching PowerHub for address: {customer_address!r}")
+
+            # Step 2 — Try the search bar first
+            # PowerHub typically has a global search input
+            search_selectors = [
+                'input[placeholder*="search" i]',
+                'input[placeholder*="address" i]',
+                'input[placeholder*="customer" i]',
+                'input[aria-label*="search" i]',
+                'input[type="search"]',
+                '[data-testid*="search"] input',
+            ]
+            search_input = None
+            for sel in search_selectors:
+                candidate = page.locator(sel).first
+                if await candidate.count() and await candidate.is_visible():
+                    search_input = candidate
+                    log.info(f"Found search input: {sel}")
+                    break
+
+            job_url = None
+
+            if search_input:
+                # Use address short form for better match (street + city)
+                short_address = customer_address.split(',')[0].strip()
+                await search_input.click()
+                await search_input.fill(short_address)
+                await asyncio.sleep(2)
+
+                # Pick first dropdown result
+                result_selectors = [
+                    '[role="option"]',
+                    '[role="listbox"] li',
+                    '.search-result',
+                    '.autocomplete-item',
+                    'ul li a',
+                ]
+                for r_sel in result_selectors:
+                    results = page.locator(r_sel)
+                    if await results.count() > 0:
+                        log.info(f"Search dropdown hit — clicking first result ({r_sel})")
+                        await results.first.click()
+                        await page.wait_for_load_state('domcontentloaded')
+                        await asyncio.sleep(2)
+                        job_url = page.url
+                        break
+
+            # Step 3 — If search didn't navigate us, try browsing the jobs list
+            if not job_url or job_url == TESLA_BASE_URL:
+                log.info("Search navigation did not work — browsing jobs list")
+                for list_path in ['/jobs', '/projects', '/installations', '/']:
+                    await page.goto(TESLA_BASE_URL + list_path, wait_until='domcontentloaded', timeout=20000)
+                    await asyncio.sleep(2)
+
+                    # Look for a row/card containing the address
+                    addr_short = customer_address.split(',')[0].strip()
+                    addr_locator = page.locator(
+                        f'text="{addr_short}", a:has-text("{addr_short}"), [data-address*="{addr_short}"]'
+                    ).first
+                    if await addr_locator.count() and await addr_locator.is_visible():
+                        await addr_locator.click()
+                        await page.wait_for_load_state('domcontentloaded')
+                        await asyncio.sleep(2)
+                        job_url = page.url
+                        log.info(f"Found job via list browsing: {job_url}")
+                        break
+
+                    # Also try a search field on this page
+                    for sel in search_selectors:
+                        si = page.locator(sel).first
+                        if await si.count() and await si.is_visible():
+                            await si.fill(customer_address.split(',')[0].strip())
+                            await asyncio.sleep(2)
+                            for r_sel in ['[role="option"]', '[role="listbox"] li', 'li']:
+                                rs = page.locator(r_sel)
+                                if await rs.count() > 0:
+                                    await rs.first.click()
+                                    await page.wait_for_load_state('domcontentloaded')
+                                    await asyncio.sleep(2)
+                                    job_url = page.url
+                                    break
+                            if job_url:
+                                break
+                    if job_url:
+                        break
+
+            if not job_url or job_url == TESLA_BASE_URL:
+                log.warning("Could not navigate to a specific job — taking screenshot of current page")
+            else:
+                log.info(f"On job page: {job_url}")
+
+            # Step 4 — Navigate to the Commissioning tab if present
+            commissioning_selectors = [
+                'a:has-text("Commissioning")',
+                'button:has-text("Commissioning")',
+                '[role="tab"]:has-text("Commissioning")',
+                'a:has-text("Commission")',
+                '[data-testid*="commission" i]',
+            ]
+            for sel in commissioning_selectors:
+                tab = page.locator(sel).first
+                if await tab.count() and await tab.is_visible():
+                    log.info(f"Clicking commissioning tab: {sel}")
+                    await tab.click()
+                    await page.wait_for_load_state('domcontentloaded')
+                    await asyncio.sleep(2)
+                    break
+            else:
+                log.info("No 'Commissioning' tab found — screenshotting the job page as-is")
+
+            # Step 5 — Full-page screenshot
+            log.info(f"Taking full-page screenshot of: {page.url}")
+            screenshot_bytes = await page.screenshot(full_page=True)
+            log.info(f"Screenshot captured: {len(screenshot_bytes)} bytes")
+            return screenshot_bytes
+
+        except Exception as e:
+            log.exception(f"screenshot_tesla_commissioning failed: {e}")
+            return None
+        finally:
+            await context.close()
 
 
 async def upload_to_lux_portal(customer_name: str, files: List) -> bool:
