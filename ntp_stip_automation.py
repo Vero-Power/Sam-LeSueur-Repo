@@ -519,19 +519,46 @@ def process_stip_email(email: dict):
     )
     log.info('Note left on project')
 
-    # 6. Notify closer on Slack, tag them
+    # 6. Notify closer — Slack if they have an ops channel, email otherwise
     rep_slack_id  = _slack_user_id_from_email(closer_email) if closer_email else None
     rep_tag       = f'<@{rep_slack_id}>' if rep_slack_id else (closer_name or 'Rep')
+    last_name     = closer_name.split()[-1].lower() if closer_name else ''
     slack_channel = _slack_channel_for_closer(closer_name)
 
-    send_slack(
-        slack_channel,
-        f'🔴 *NTP Stipulation — {customer_name}*\n\n'
-        f'{rep_tag} — LUX Financial has requested the following stips:\n\n'
-        f'{stips_text}\n\n'
-        f'Please work with your customer to resolve these ASAP.',
-    )
-    log.info(f'Slack sent to {closer_name} ({slack_channel})')
+    if slack_channel != FALLBACK_SLACK_CH:
+        send_slack(
+            slack_channel,
+            f'🔴 *NTP Stipulation — {customer_name}*\n\n'
+            f'{rep_tag} — LUX Financial has requested the following stips:\n\n'
+            f'{stips_text}\n\n'
+            f'Please work with your customer to resolve these ASAP.',
+        )
+        log.info(f'Slack sent to {closer_name} ({slack_channel})')
+    elif closer_email:
+        msg = MIMEText(
+            f'Hi {closer_name},\n\n'
+            f'LUX Financial has requested the following stipulations for {customer_name}:\n\n'
+            f'{stips_text}\n\n'
+            f'Please work with your customer to resolve these ASAP.\n\n'
+            f'— Sam LeSueur'
+        )
+        msg['From']    = GMAIL_ADDRESS
+        msg['To']      = closer_email
+        msg['Subject'] = f'NTP Stipulation — {customer_name}'
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(GMAIL_ADDRESS, GMAIL_APP_PW)
+            server.send_message(msg)
+        log.info(f'Email sent to rep {closer_name} ({closer_email}) — no Slack ops channel found')
+    else:
+        send_slack(
+            FALLBACK_SLACK_CH,
+            f'🔴 *NTP Stipulation — {customer_name}*\n\n'
+            f'{closer_name or "Rep"} — LUX Financial has requested the following stips:\n\n'
+            f'{stips_text}\n\n'
+            f'Please work with your customer to resolve these ASAP.',
+        )
+        log.info(f'Slack sent to fallback channel — no rep email or ops channel for {closer_name}')
 
     # 7. Reply to Lux
     send_reply(email['sender'], email['subject'])
