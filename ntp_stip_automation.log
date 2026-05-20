@@ -1,0 +1,1968 @@
+/Users/samlesueur/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2026-05-18 11:23:39  INFO      NTP Stip automation started — polling Gmail every 2 minutes.
+2026-05-18 11:23:39  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 11:26:53  INFO      Processing stip for: Floyd Sanders
+2026-05-18 11:26:53  INFO      Stips found: ['Upon doing the title verification for Floyd Sanders, I was unable to tie Floyd to the title of the home. It returned being currently owned by Hmh Lifetyles LP. I either need documentation showing that Floyd owns this business or documentation showing he is on the deed of the home. Mortgage Statements would also work as long as it is under his name.']
+2026-05-18 11:26:53  INFO      Matched to dropdowns: ['Title Verification']
+2026-05-18 11:26:54  INFO      Project found: 737964 — Floyd Sanders
+2026-05-18 11:26:55  INFO      NTP work order found: 1920197
+2026-05-18 11:26:56  INFO      NTP form found: 1199687
+2026-05-18 11:26:57  INFO      Form updated
+2026-05-18 11:26:57  INFO      Work order set to WAITING
+2026-05-18 11:26:57  INFO      Note left on project
+/Users/samlesueur/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2026-05-18 11:27:27  INFO      NTP Stip automation started — polling Gmail every 2 minutes.
+2026-05-18 11:27:27  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 11:31:17  INFO      Processing stip for: Floyd Sanders
+2026-05-18 11:31:17  INFO      Stips found: ['Upon doing the title verification for Floyd Sanders, I was unable to tie Floyd to the title of the home. It returned being currently owned by Hmh Lifetyles LP. I either need documentation showing that Floyd owns this business or documentation showing he is on the deed of the home. Mortgage Statements would also work as long as it is under his name.']
+2026-05-18 11:31:17  INFO      Matched to dropdowns: ['Title Verification']
+2026-05-18 11:31:18  INFO      Project found: 737964 — Floyd Sanders
+2026-05-18 11:31:18  INFO      NTP work order found: 1920197
+2026-05-18 11:31:19  INFO      NTP form found: 1199687
+2026-05-18 11:31:19  INFO      Form updated
+2026-05-18 11:31:20  INFO      Work order set to WAITING
+2026-05-18 11:31:20  INFO      Note left on project
+2026-05-18 11:31:21  INFO      Slack sent to Landen Olsen (C0B0GG0FG4A)
+2026-05-18 11:31:29  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:31:29  INFO      Done: Floyd Sanders (project 737964)
+2026-05-18 11:31:32  INFO      Processing stip for: Arshmaina Rehman
+2026-05-18 11:31:32  INFO      Stips found: []
+2026-05-18 11:31:32  INFO      Matched to dropdowns: []
+2026-05-18 11:31:33  INFO      Project found: 738141 — Arshmaina Rehman
+2026-05-18 11:31:33  INFO      NTP work order found: 1917174
+2026-05-18 11:31:34  INFO      NTP form found: 1198132
+2026-05-18 11:31:35  INFO      Form updated
+2026-05-18 11:31:35  INFO      Work order set to WAITING
+2026-05-18 11:31:35  INFO      Note left on project
+2026-05-18 11:31:36  WARNING   Could not find Slack user for Thomas@veropwr.com: users_not_found
+2026-05-18 11:31:36  INFO      Slack sent to Thomas Morrow (C0ABGPQ871T)
+2026-05-18 11:31:44  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:31:44  INFO      Done: Arshmaina Rehman (project 738141)
+2026-05-18 11:31:47  INFO      Processing stip for: Luna Obude
+2026-05-18 11:31:47  INFO      Stips found: []
+2026-05-18 11:31:47  INFO      Matched to dropdowns: []
+2026-05-18 11:31:48  INFO      Project found: 737961 — Luna Obude
+2026-05-18 11:31:49  INFO      NTP work order not found — creating from template...
+2026-05-18 11:31:50  INFO      NTP work order created: 2204244
+2026-05-18 11:31:50  INFO      NTP form found: 1373359
+2026-05-18 11:31:51  INFO      Form updated
+2026-05-18 11:31:51  INFO      Work order set to WAITING
+2026-05-18 11:31:51  INFO      Note left on project
+2026-05-18 11:31:52  INFO      Slack sent to Zachary Burton (C0ADDJXD4RX)
+2026-05-18 11:32:00  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:32:00  INFO      Done: Luna Obude (project 737961)
+2026-05-18 11:32:03  INFO      Processing stip for: Mahmut Disli
+2026-05-18 11:32:03  INFO      Stips found: []
+2026-05-18 11:32:03  INFO      Matched to dropdowns: []
+2026-05-18 11:32:04  INFO      Project found: 738143 — Mahmut Disli
+2026-05-18 11:32:04  INFO      NTP work order found: 1920232
+2026-05-18 11:32:05  INFO      NTP form found: 1199719
+2026-05-18 11:32:06  INFO      Form updated
+2026-05-18 11:32:06  INFO      Work order set to WAITING
+2026-05-18 11:32:06  INFO      Note left on project
+2026-05-18 11:32:07  INFO      Slack sent to Zachary Burton (C0ADDJXD4RX)
+2026-05-18 11:32:15  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:32:15  INFO      Done: Mahmut Disli (project 738143)
+2026-05-18 11:32:18  INFO      Processing stip for: Andrew Cormier
+2026-05-18 11:32:18  INFO      Stips found: []
+2026-05-18 11:32:18  INFO      Matched to dropdowns: []
+2026-05-18 11:32:19  INFO      Project found: 738298 — Andrew Cormier
+2026-05-18 11:32:19  INFO      NTP work order found: 1920144
+2026-05-18 11:32:20  INFO      NTP form found: 1199652
+2026-05-18 11:32:20  INFO      Form updated
+2026-05-18 11:32:21  INFO      Work order set to WAITING
+2026-05-18 11:32:21  INFO      Note left on project
+2026-05-18 11:32:22  INFO      Slack sent to Thomas Morrow (C0ABGPQ871T)
+2026-05-18 11:32:30  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:32:30  INFO      Done: Andrew Cormier (project 738298)
+2026-05-18 11:32:33  INFO      Processing stip for: Ankit Patel
+2026-05-18 11:32:33  INFO      Stips found: []
+2026-05-18 11:32:33  INFO      Matched to dropdowns: []
+2026-05-18 11:32:33  INFO      Project found: 739439 — Ankit Patel
+2026-05-18 11:32:34  INFO      NTP work order found: 1920242
+2026-05-18 11:32:35  INFO      NTP form found: 1199727
+2026-05-18 11:32:36  INFO      Form updated
+2026-05-18 11:32:36  INFO      Work order set to WAITING
+2026-05-18 11:32:37  INFO      Note left on project
+2026-05-18 11:32:37  INFO      Slack sent to Thomas Morrow (C0ABGPQ871T)
+2026-05-18 11:32:45  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:32:45  INFO      Done: Ankit Patel (project 739439)
+2026-05-18 11:32:48  INFO      Processing stip for: Lester Hughes
+2026-05-18 11:32:48  INFO      Stips found: []
+2026-05-18 11:32:48  INFO      Matched to dropdowns: []
+2026-05-18 11:32:49  INFO      Project found: 739743 — Lester Hughes
+2026-05-18 11:32:50  INFO      NTP work order found: 1920266
+2026-05-18 11:32:50  INFO      NTP form found: 1199747
+2026-05-18 11:32:51  INFO      Form updated
+2026-05-18 11:32:52  INFO      Work order set to WAITING
+2026-05-18 11:32:53  INFO      Note left on project
+2026-05-18 11:32:54  INFO      Slack sent to Thomas Morrow (C0ABGPQ871T)
+2026-05-18 11:33:02  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:33:02  INFO      Done: Lester Hughes (project 739743)
+2026-05-18 11:33:05  INFO      Processing stip for: Lauraetta Gates
+2026-05-18 11:33:05  INFO      Stips found: []
+2026-05-18 11:33:05  INFO      Matched to dropdowns: []
+2026-05-18 11:33:05  ERROR     Failed to process <CADMtj9eV2T-d7MfqjgOWjaUbY6LTPSiDa+hzgaNnL18FEETirQ@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 459, in main
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 382, in process_stip_email
+    project    = find_project(customer_name)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 266, in find_project
+    raise ValueError(f'No project found for: {customer_name}')
+ValueError: No project found for: Lauraetta Gates
+2026-05-18 11:33:08  INFO      Processing stip for: Barbara Fontaina
+2026-05-18 11:33:08  INFO      Stips found: []
+2026-05-18 11:33:08  INFO      Matched to dropdowns: []
+2026-05-18 11:33:09  INFO      Project found: 740474 — Barbara Fontaina
+2026-05-18 11:33:10  INFO      NTP work order found: 1924657
+2026-05-18 11:33:10  INFO      NTP form found: 1202287
+2026-05-18 11:33:11  INFO      Form updated
+2026-05-18 11:33:11  INFO      Work order set to WAITING
+2026-05-18 11:33:11  INFO      Note left on project
+2026-05-18 11:33:13  INFO      Slack sent to Hayden Young (C0ACJNZ8PCP)
+2026-05-18 11:33:21  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:33:21  INFO      Done: Barbara Fontaina (project 740474)
+2026-05-18 11:33:24  INFO      Processing stip for: Cassandra Asberry
+2026-05-18 11:33:24  INFO      Stips found: ['Last thing, I will review the utility bill once it is submitted.']
+2026-05-18 11:33:24  INFO      Matched to dropdowns: []
+2026-05-18 11:33:24  INFO      Project found: 747051 — Anthony Rasberry
+2026-05-18 11:33:25  INFO      NTP work order not found — creating from template...
+2026-05-18 11:33:25  INFO      NTP work order created: 2204257
+2026-05-18 11:33:26  INFO      NTP form found: 1373365
+2026-05-18 11:33:26  INFO      Form updated
+2026-05-18 11:33:27  INFO      Work order set to WAITING
+2026-05-18 11:33:27  INFO      Note left on project
+2026-05-18 11:33:28  INFO      Slack sent to Thomas Morrow (C0ABGPQ871T)
+2026-05-18 11:33:36  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:33:36  INFO      Done: Cassandra Asberry (project 747051)
+2026-05-18 11:33:39  INFO      Processing stip for: Terry Patterson
+2026-05-18 11:33:39  INFO      Stips found: []
+2026-05-18 11:33:39  INFO      Matched to dropdowns: []
+2026-05-18 11:33:39  INFO      Project found: 743139 — Terry Patterson
+2026-05-18 11:33:40  INFO      NTP work order found: 1927153
+2026-05-18 11:33:40  INFO      NTP form found: 1203558
+2026-05-18 11:33:41  INFO      Form updated
+2026-05-18 11:33:41  INFO      Work order set to WAITING
+2026-05-18 11:33:42  INFO      Note left on project
+2026-05-18 11:33:43  INFO      Slack sent to Thomas Morrow (C0ABGPQ871T)
+2026-05-18 11:33:50  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:33:50  INFO      Done: Terry Patterson (project 743139)
+2026-05-18 11:33:53  INFO      Processing stip for: Deonte Johnson
+2026-05-18 11:33:53  INFO      Stips found: []
+2026-05-18 11:33:53  INFO      Matched to dropdowns: []
+2026-05-18 11:33:54  INFO      Project found: 741298 — deonte johnson
+2026-05-18 11:33:54  INFO      NTP work order found: 1932814
+2026-05-18 11:33:55  INFO      NTP form found: 1206982
+2026-05-18 11:33:56  INFO      Form updated
+2026-05-18 11:33:56  INFO      Work order set to WAITING
+2026-05-18 11:33:56  INFO      Note left on project
+2026-05-18 11:33:57  INFO      Slack sent to Noah Lund (C0ADD4FRBC1)
+2026-05-18 11:34:05  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:34:05  INFO      Done: Deonte Johnson (project 741298)
+2026-05-18 11:34:08  INFO      Processing stip for: Ulysses Teyada
+2026-05-18 11:34:08  INFO      Stips found: []
+2026-05-18 11:34:08  INFO      Matched to dropdowns: []
+2026-05-18 11:34:08  ERROR     Failed to process <CADMtj9ekEizy3Vr5Zra+o7hyws8WZsYpcNGiyZDacvULth2UMQ@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 459, in main
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 382, in process_stip_email
+    project    = find_project(customer_name)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 266, in find_project
+    raise ValueError(f'No project found for: {customer_name}')
+ValueError: No project found for: Ulysses Teyada
+2026-05-18 11:34:11  INFO      Processing stip for: Anthony Rasberry
+2026-05-18 11:34:11  INFO      Stips found: []
+2026-05-18 11:34:11  INFO      Matched to dropdowns: []
+2026-05-18 11:34:12  INFO      Project found: 747051 — Anthony Rasberry
+2026-05-18 11:34:12  INFO      NTP work order found: 2204257
+2026-05-18 11:34:13  INFO      NTP form found: 1373365
+/Users/samlesueur/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2026-05-18 11:34:15  INFO      NTP Stip automation started — polling Gmail every 2 minutes.
+2026-05-18 11:34:15  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 11:38:19  INFO      Processing stip for: Lauraetta Gates
+2026-05-18 11:38:19  INFO      Stips found: []
+2026-05-18 11:38:19  INFO      Matched to dropdowns: []
+2026-05-18 11:38:20  ERROR     Failed to process <CADMtj9eV2T-d7MfqjgOWjaUbY6LTPSiDa+hzgaNnL18FEETirQ@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 468, in main
+    process_stip_email(email)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 382, in process_stip_email
+    project    = find_project(customer_name)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 266, in find_project
+    raise ValueError(f'No project found for: {customer_name}')
+ValueError: No project found for: Lauraetta Gates
+2026-05-18 11:38:23  INFO      Processing stip for: Ulysses Teyada
+2026-05-18 11:38:23  INFO      Stips found: []
+2026-05-18 11:38:23  INFO      Matched to dropdowns: []
+2026-05-18 11:38:23  ERROR     Failed to process <CADMtj9ekEizy3Vr5Zra+o7hyws8WZsYpcNGiyZDacvULth2UMQ@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 468, in main
+    process_stip_email(email)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 382, in process_stip_email
+    project    = find_project(customer_name)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 266, in find_project
+    raise ValueError(f'No project found for: {customer_name}')
+ValueError: No project found for: Ulysses Teyada
+2026-05-18 11:38:26  INFO      Processing stip for: Anthony Rasberry
+2026-05-18 11:38:26  INFO      Stips found: []
+2026-05-18 11:38:26  INFO      Matched to dropdowns: []
+2026-05-18 11:38:26  INFO      Project found: 747051 — Anthony Rasberry
+2026-05-18 11:38:27  INFO      NTP work order found: 2204257
+2026-05-18 11:38:28  INFO      NTP form found: 1373365
+2026-05-18 11:38:28  ERROR     Failed to process <CADMtj9d20reHp+9X3LT2FYDVuHnm_ZKfvuk6MpFhJcwbG=x_KA@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 468, in main
+    process_stip_email(email)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 401, in process_stip_email
+    if any(s.lower() in current_status.lower() for s in skip_statuses):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 401, in <genexpr>
+    if any(s.lower() in current_status.lower() for s in skip_statuses):
+AttributeError: 'list' object has no attribute 'lower'
+2026-05-18 11:38:31  INFO      Processing stip for: Thomas Mozell
+2026-05-18 11:38:31  INFO      Stips found: []
+2026-05-18 11:38:31  INFO      Matched to dropdowns: []
+2026-05-18 11:38:31  INFO      Project found: 747788 — Thomas Mozell
+2026-05-18 11:38:32  INFO      NTP work order found: 1932834
+2026-05-18 11:38:32  INFO      NTP form found: 1206998
+2026-05-18 11:38:32  ERROR     Failed to process <CADMtj9eSChOkNMHJeXAsG6Tp7du8jjJ1_7GApV0JroxkfWPTjQ@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 468, in main
+    process_stip_email(email)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 401, in process_stip_email
+    if any(s.lower() in current_status.lower() for s in skip_statuses):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 401, in <genexpr>
+    if any(s.lower() in current_status.lower() for s in skip_statuses):
+AttributeError: 'list' object has no attribute 'lower'
+2026-05-18 11:38:35  INFO      Processing stip for: Kenneth English
+2026-05-18 11:38:35  INFO      Stips found: []
+2026-05-18 11:38:35  INFO      Matched to dropdowns: []
+2026-05-18 11:38:36  INFO      Project found: 748278 — Kenneth English
+2026-05-18 11:38:36  INFO      NTP work order found: 1932847
+/Users/samlesueur/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2026-05-18 11:40:43  INFO      NTP Stip automation started — polling Gmail every 2 minutes.
+2026-05-18 11:40:43  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 11:43:59  INFO      Processing stip for: Lauraetta Gates
+2026-05-18 11:43:59  INFO      Stips found: []
+2026-05-18 11:43:59  INFO      Matched to dropdowns: []
+2026-05-18 11:44:00  ERROR     Failed to process <CADMtj9eV2T-d7MfqjgOWjaUbY6LTPSiDa+hzgaNnL18FEETirQ@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 468, in main
+    process_stip_email(email)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 382, in process_stip_email
+    project    = find_project(customer_name)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 266, in find_project
+    raise ValueError(f'No project found for: {customer_name}')
+ValueError: No project found for: Lauraetta Gates
+2026-05-18 11:44:03  INFO      Processing stip for: Ulysses Teyada
+2026-05-18 11:44:03  INFO      Stips found: []
+2026-05-18 11:44:03  INFO      Matched to dropdowns: []
+2026-05-18 11:44:03  ERROR     Failed to process <CADMtj9ekEizy3Vr5Zra+o7hyws8WZsYpcNGiyZDacvULth2UMQ@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 468, in main
+    process_stip_email(email)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 382, in process_stip_email
+    project    = find_project(customer_name)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 266, in find_project
+    raise ValueError(f'No project found for: {customer_name}')
+ValueError: No project found for: Ulysses Teyada
+2026-05-18 11:44:06  INFO      Processing stip for: Anthony Rasberry
+2026-05-18 11:44:06  INFO      Stips found: []
+2026-05-18 11:44:06  INFO      Matched to dropdowns: []
+2026-05-18 11:44:06  INFO      Project found: 747051 — Anthony Rasberry
+2026-05-18 11:44:07  INFO      NTP work order not found — creating from template...
+2026-05-18 11:44:08  INFO      NTP work order created: 2204321
+2026-05-18 11:44:08  INFO      NTP form found: 1373409
+2026-05-18 11:44:08  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:44:12  INFO      Processing stip for: Thomas Mozell
+2026-05-18 11:44:12  INFO      Stips found: []
+2026-05-18 11:44:12  INFO      Matched to dropdowns: []
+2026-05-18 11:44:12  INFO      Project found: 747788 — Thomas Mozell
+2026-05-18 11:44:13  INFO      NTP work order found: 1932834
+2026-05-18 11:44:13  INFO      NTP form found: 1206998
+2026-05-18 11:44:13  INFO      Skipping — Finance Status is already "M2 Approved"
+2026-05-18 11:44:16  INFO      Processing stip for: Kenneth English
+2026-05-18 11:44:16  INFO      Stips found: []
+2026-05-18 11:44:16  INFO      Matched to dropdowns: []
+2026-05-18 11:44:17  INFO      Project found: 748278 — Kenneth English
+2026-05-18 11:44:17  INFO      NTP work order found: 1932847
+2026-05-18 11:44:18  INFO      NTP form found: 1207007
+2026-05-18 11:44:19  INFO      Form updated
+2026-05-18 11:44:19  INFO      Work order set to WAITING
+2026-05-18 11:44:19  INFO      Note left on project
+2026-05-18 11:44:21  INFO      Slack sent to Hayden Young (C0ACJNZ8PCP)
+2026-05-18 11:44:29  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:44:30  INFO      Done: Kenneth English (project 748278)
+2026-05-18 11:44:33  INFO      Processing stip for: Nikunj Patel
+2026-05-18 11:44:33  INFO      Stips found: ['I have changed the first name to match the ID but a new agreement will need to be signed. I will let you guys send that via the portal so you can do it when it best suites you and the customer.']
+2026-05-18 11:44:33  INFO      Matched to dropdowns: []
+2026-05-18 11:44:33  INFO      Project found: 739439 — Ankit Patel
+2026-05-18 11:44:34  INFO      NTP work order found: 1920242
+2026-05-18 11:44:35  INFO      NTP form found: 1199727
+2026-05-18 11:44:35  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:44:38  INFO      Processing stip for: James Shepherd
+2026-05-18 11:44:38  INFO      Stips found: []
+2026-05-18 11:44:38  INFO      Matched to dropdowns: []
+2026-05-18 11:44:38  ERROR     Failed to process <CADMtj9fDjqr3Qk6PwgjfsrpCHvBmeaSp0qF1GFrkqC1pJeSW8g@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 468, in main
+    process_stip_email(email)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 382, in process_stip_email
+    project    = find_project(customer_name)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 266, in find_project
+    raise ValueError(f'No project found for: {customer_name}')
+ValueError: No project found for: James Shepherd
+2026-05-18 11:44:41  INFO      Processing stip for: Latoye Manley - Davis
+2026-05-18 11:44:41  INFO      Stips found: []
+2026-05-18 11:44:41  INFO      Matched to dropdowns: []
+2026-05-18 11:44:42  INFO      Project found: 749437 — Latoye Manley - Davis
+2026-05-18 11:44:42  INFO      NTP work order found: 1939103
+2026-05-18 11:44:43  INFO      NTP form found: 1210856
+2026-05-18 11:44:43  INFO      Skipping — Finance Status is already "M2 Approved"
+2026-05-18 11:44:46  INFO      Processing stip for: Destani Torres
+2026-05-18 11:44:46  INFO      Stips found: []
+2026-05-18 11:44:46  INFO      Matched to dropdowns: []
+2026-05-18 11:44:46  INFO      Project found: 749562 — destani torres
+2026-05-18 11:44:47  INFO      NTP work order found: 1939132
+2026-05-18 11:44:48  INFO      NTP form found: 1210880
+2026-05-18 11:44:48  INFO      Skipping — Finance Status is already "M2 Approved"
+2026-05-18 11:44:51  INFO      Processing stip for: Shelley Solomon
+2026-05-18 11:44:51  INFO      Stips found: []
+2026-05-18 11:44:51  INFO      Matched to dropdowns: []
+2026-05-18 11:44:51  INFO      Project found: 750468 — Shelley solomon
+2026-05-18 11:44:52  INFO      NTP work order found: 1939302
+2026-05-18 11:44:53  INFO      NTP form found: 1211012
+2026-05-18 11:44:55  INFO      Form updated
+2026-05-18 11:44:55  INFO      Work order set to WAITING
+2026-05-18 11:44:56  INFO      Note left on project
+2026-05-18 11:44:56  INFO      Slack sent to Crew Wakley (C0AFAMZCUD9)
+2026-05-18 11:45:06  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:45:06  INFO      Done: Shelley Solomon (project 750468)
+2026-05-18 11:45:09  INFO      Processing stip for: Dedric Harbor
+2026-05-18 11:45:09  INFO      Stips found: []
+2026-05-18 11:45:09  INFO      Matched to dropdowns: []
+2026-05-18 11:45:09  INFO      Project found: 763842 — Dedric Harbor
+2026-05-18 11:45:10  INFO      NTP work order found: 1990981
+2026-05-18 11:45:11  INFO      NTP form found: 1225653
+2026-05-18 11:45:11  INFO      Skipping — Finance Status is already "M2 Approved"
+2026-05-18 11:45:14  INFO      Processing stip for: Lamont Long
+2026-05-18 11:45:14  INFO      Stips found: []
+2026-05-18 11:45:14  INFO      Matched to dropdowns: []
+2026-05-18 11:45:14  INFO      Project found: 748441 — Lamont Long
+2026-05-18 11:45:15  INFO      NTP work order found: 1939593
+2026-05-18 11:45:15  INFO      NTP form found: 1211217
+2026-05-18 11:45:15  INFO      Skipping — Finance Status is already "M2 Approved"
+2026-05-18 11:45:18  INFO      Processing stip for: Xochitl Santos
+2026-05-18 11:45:18  INFO      Stips found: []
+2026-05-18 11:45:18  INFO      Matched to dropdowns: []
+2026-05-18 11:45:19  INFO      Project found: 764300 — Xochitl Santos
+2026-05-18 11:45:20  INFO      NTP work order not found — creating from template...
+2026-05-18 11:45:20  INFO      NTP work order created: 2204331
+2026-05-18 11:45:21  INFO      NTP form found: 1373414
+2026-05-18 11:45:22  INFO      Form updated
+2026-05-18 11:45:22  INFO      Work order set to WAITING
+2026-05-18 11:45:23  INFO      Note left on project
+2026-05-18 11:45:24  INFO      Slack sent to Crew Wakley (C0AFAMZCUD9)
+2026-05-18 11:45:32  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:45:32  INFO      Done: Xochitl Santos (project 764300)
+2026-05-18 11:45:35  INFO      Processing stip for: Lakitha Watts
+2026-05-18 11:45:35  INFO      Stips found: ["We also need proof that she is on title. The title check shows Lakitha D Johnson and the customer's ID says Lakitha Johnson Watts. We need either documentation showing her name change or other documentation tying Lakitha Johnson Watts to the title."]
+2026-05-18 11:45:35  INFO      Matched to dropdowns: ['Title Verification']
+2026-05-18 11:45:36  INFO      Project found: 764334 — Lakitha Watts
+2026-05-18 11:45:36  INFO      NTP work order found: 1992983
+2026-05-18 11:45:37  INFO      NTP form found: 1226971
+2026-05-18 11:45:37  INFO      Skipping — Finance Status is already "M2 Approved"
+2026-05-18 11:45:40  INFO      Processing stip for: Cornell Stallworth
+2026-05-18 11:45:40  INFO      Stips found: ['We need a voided check to verify the bank information provided in the agreement.', 'The customer needs to catch up on their utility bill. They are currently past due.', 'Title verification identified the customer as the previous owner and Home Landings LLC as the current owner. Please provide documentation showing the customer owns the LLC or other proof that they are on the title.']
+2026-05-18 11:45:40  INFO      Matched to dropdowns: ['Bank Verification', 'Voided check', 'Behind on Utility Bill', 'Title Verification']
+2026-05-18 11:45:40  INFO      Project found: 765033 — Cornell Stallworth
+2026-05-18 11:45:41  INFO      NTP work order found: 1995787
+2026-05-18 11:45:42  INFO      NTP form found: 1229448
+2026-05-18 11:45:42  INFO      Skipping — Finance Status is already "M2 Approved"
+2026-05-18 11:45:45  INFO      Processing stip for: Clifton Vancil
+2026-05-18 11:45:45  INFO      Stips found: []
+2026-05-18 11:45:45  INFO      Matched to dropdowns: []
+2026-05-18 11:45:45  INFO      Project found: 767438 — Clifton Vancil
+2026-05-18 11:45:46  INFO      NTP work order found: 1995810
+2026-05-18 11:45:47  INFO      NTP form found: 1229471
+2026-05-18 11:45:48  INFO      Form updated
+2026-05-18 11:45:48  INFO      Work order set to WAITING
+2026-05-18 11:45:48  INFO      Note left on project
+2026-05-18 11:45:49  INFO      Slack sent to Thomas Morrow (C0ABGPQ871T)
+2026-05-18 11:45:57  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:45:57  INFO      Done: Clifton Vancil (project 767438)
+2026-05-18 11:46:00  INFO      Processing stip for: Johnetta Ellison
+2026-05-18 11:46:00  INFO      Stips found: []
+2026-05-18 11:46:00  INFO      Matched to dropdowns: []
+2026-05-18 11:46:01  INFO      Project found: 784056 — Johnetta Ellison
+2026-05-18 11:46:02  INFO      NTP work order found: 2008906
+2026-05-18 11:46:02  INFO      NTP form found: 1238569
+2026-05-18 11:46:03  INFO      Form updated
+2026-05-18 11:46:04  INFO      Work order set to WAITING
+2026-05-18 11:46:04  INFO      Note left on project
+2026-05-18 11:46:05  INFO      Slack sent to Thomas Morrow (C0ABGPQ871T)
+2026-05-18 11:46:13  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:46:13  INFO      Done: Johnetta Ellison (project 784056)
+2026-05-18 11:46:16  INFO      Processing stip for: Tanya Moore
+2026-05-18 11:46:16  INFO      Stips found: ['We will need a new utility bill, the bill submitted state they are past due. I will need to see them get caught up to proceed.', 'We will also need a new design/production showing the correct investor. The one submitted shows enphase inverters but the inverter selected was Tesla.']
+2026-05-18 11:46:16  INFO      Matched to dropdowns: ['Behind on Utility Bill', 'Design Upload Needed', 'FEOC for Inverter/battery and racking']
+2026-05-18 11:46:16  INFO      Project found: 786045 — Tanya Moore
+2026-05-18 11:46:17  INFO      NTP work order found: 2010865
+2026-05-18 11:46:18  INFO      NTP form found: 1240022
+2026-05-18 11:46:18  INFO      Form updated
+2026-05-18 11:46:19  INFO      Work order set to WAITING
+2026-05-18 11:46:19  INFO      Note left on project
+2026-05-18 11:46:20  INFO      Slack sent to Thomas Morrow (C0ABGPQ871T)
+2026-05-18 11:46:28  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:46:28  INFO      Done: Tanya Moore (project 786045)
+2026-05-18 11:46:31  INFO      Processing stip for: Omari Fry
+2026-05-18 11:46:31  INFO      Stips found: []
+2026-05-18 11:46:31  INFO      Matched to dropdowns: []
+2026-05-18 11:46:31  INFO      Project found: 788802 — Omari Fry
+2026-05-18 11:46:32  INFO      NTP work order found: 2010878
+2026-05-18 11:46:33  INFO      NTP form found: 1240038
+2026-05-18 11:46:33  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:46:36  INFO      Processing stip for: Fernanda Kate
+2026-05-18 11:46:36  INFO      Stips found: []
+2026-05-18 11:46:36  INFO      Matched to dropdowns: []
+2026-05-18 11:46:36  ERROR     Failed to process <CADMtj9cRETK_pZ8eEFT_YbLuUYVVfZnzUcH09Of7Y_5mbUfXBA@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 468, in main
+    process_stip_email(email)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 382, in process_stip_email
+    project    = find_project(customer_name)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 266, in find_project
+    raise ValueError(f'No project found for: {customer_name}')
+ValueError: No project found for: Fernanda Kate
+2026-05-18 11:46:39  INFO      Processing stip for: Sterling Felder
+2026-05-18 11:46:39  INFO      Stips found: []
+2026-05-18 11:46:39  INFO      Matched to dropdowns: []
+2026-05-18 11:46:39  INFO      Project found: 789315 — Sterling Felder
+2026-05-18 11:46:40  INFO      NTP work order found: 2011662
+2026-05-18 11:46:41  INFO      NTP form found: 1240502
+2026-05-18 11:46:41  INFO      Skipping — Finance Status is already "M2 Approved"
+2026-05-18 11:46:44  INFO      Processing stip for: Karen Werdlow
+2026-05-18 11:46:44  INFO      Stips found: ['We will need a voided check, we were not able to verify the bank information provided.', 'The title verification came back with the customer as a previous owner and the current owner is Lawrence Werdlow. Please provide what the relationship is with the customer and/or something that shows the customer on the title. Moving the project to Lawrence Werdlow would work as well.']
+2026-05-18 11:46:44  INFO      Matched to dropdowns: ['Bank Verification', 'Voided check', 'Title Verification']
+2026-05-18 11:46:44  INFO      Project found: 789732 — Karen Werdlow
+2026-05-18 11:46:45  INFO      NTP work order found: 2011647
+2026-05-18 11:46:45  INFO      NTP form found: 1240498
+2026-05-18 11:46:46  INFO      Form updated
+2026-05-18 11:46:47  INFO      Work order set to WAITING
+2026-05-18 11:46:47  INFO      Note left on project
+2026-05-18 11:46:48  INFO      Slack sent to Thomas Morrow (C0ABGPQ871T)
+2026-05-18 11:46:56  INFO      Reply sent to Michael Paris <michael.paris@luxfinancial.io>
+2026-05-18 11:46:56  INFO      Done: Karen Werdlow (project 789732)
+2026-05-18 11:46:59  INFO      Processing stip for: Elvis Reitzell
+2026-05-18 11:46:59  INFO      Stips found: []
+2026-05-18 11:46:59  INFO      Matched to dropdowns: []
+2026-05-18 11:46:59  INFO      Project found: 760297 — Elvis Reitzell
+2026-05-18 11:47:00  INFO      NTP work order found: 2011743
+2026-05-18 11:47:00  INFO      NTP form found: 1240538
+2026-05-18 11:47:00  INFO      Skipping — Finance Status is already "M2 Approved"
+2026-05-18 11:47:04  INFO      Processing stip for: Mary Fassy
+2026-05-18 11:47:04  INFO      Stips found: []
+2026-05-18 11:47:04  INFO      Matched to dropdowns: []
+2026-05-18 11:47:04  INFO      Project found: 790699 — Mary Fassy
+2026-05-18 11:47:05  INFO      NTP work order found: 2011755
+2026-05-18 11:47:05  INFO      NTP form found: 1240544
+2026-05-18 11:47:05  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:47:09  INFO      Processing stip for: Sharon Anderson (Both Addresses)
+2026-05-18 11:47:09  INFO      Stips found: ['I have reviewed both offers for Sharon Anderson. We found the following things that we need resolved:', '3566 Joshua Grove Lane , Missouri City, TX 77459*', 'Need a utility bill. The one submited was for the other address.', 'Can we also get documentation that Sharon Anderson is a Trustee of the Anderson Family Trust? The trust is on the title of the property.', '1423 River Rock Drive , Missouri City, TX 77489*', 'Need a utility bill. The one provided is too old. I need one within the last 90 days.', '(Same as above) Can we also get documentation that Sharon Anderson is a Trustee of the Anderson Family Trust? The trust is on the title of the property.', "We also didn't get bank verification on this one. Looking at the agreements the accounts number has 1 number different than the other address. Can you confirm that the customer wants both offers to be setup with the same account and I will make this offer match the other offer."]
+2026-05-18 11:47:09  INFO      Matched to dropdowns: ['Address Discrepancy', 'Title Verification', 'Bank Verification']
+2026-05-18 11:47:09  ERROR     Failed to process <CADMtj9dJZKF6Q_sJW4KnsLAja5v0HmfBkA1-117eszKbEnx29Q@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 468, in main
+    process_stip_email(email)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 382, in process_stip_email
+    project    = find_project(customer_name)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 266, in find_project
+    raise ValueError(f'No project found for: {customer_name}')
+ValueError: No project found for: Sharon Anderson (Both Addresses)
+2026-05-18 11:47:12  INFO      Processing stip for: Jeremy Branske
+2026-05-18 11:47:12  INFO      Stips found: ['The utility bill shows the customer is usually late on their payment. There was not a recent enough picture of a summary on their bill showing they paid their entire bill. Please provide a bill within the last 90 days with all pages of bill showing they paid the balance on time.', 'The design/production shows AE panels and tesla inverter but our agreement and equipment in our system shows Qcell panels and Qcell inverters. Please confirm which equipment is being used. If it is the Qcell equipment, please provide a new Design/production.']
+2026-05-18 11:47:12  INFO      Matched to dropdowns: ['Utility Bill Needed', 'Behind on Utility Bill', 'Design Upload Needed', 'FEOC for Inverter/battery and racking']
+2026-05-18 11:47:12  INFO      Project found: 791771 — Jeremy Branske
+2026-05-18 11:47:13  INFO      NTP work order found: 2024781
+2026-05-18 11:47:14  INFO      NTP form found: 1248601
+2026-05-18 11:47:14  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:47:17  INFO      Processing stip for: Latoye Manley - Davis
+2026-05-18 11:47:17  INFO      Stips found: ['The design/production shows a tesla inverter but our agreement and equipment in our system shows Qcell inverters. Please confirm which equipment is being used. If it is the Qcell equipment, please provide a new Design/production.']
+2026-05-18 11:47:17  INFO      Matched to dropdowns: ['Design Upload Needed', 'FEOC for Inverter/battery and racking']
+2026-05-18 11:47:17  INFO      Project found: 749437 — Latoye Manley - Davis
+2026-05-18 11:47:18  INFO      NTP work order found: 1939103
+2026-05-18 11:47:18  INFO      NTP form found: 1210856
+2026-05-18 11:47:18  INFO      Skipping — Finance Status is already "M2 Approved"
+2026-05-18 11:47:22  INFO      Processing stip for: Charles Keller
+2026-05-18 11:47:22  INFO      Stips found: ['We need a current Utility Bill please.']
+2026-05-18 11:47:22  INFO      Matched to dropdowns: []
+2026-05-18 11:47:22  INFO      Project found: 792929 — Charles Keller
+2026-05-18 11:47:23  INFO      NTP work order found: 2024637
+2026-05-18 11:47:24  INFO      NTP form found: 1248508
+2026-05-18 11:47:24  INFO      Skipping — Finance Status is already "M2 Approved"
+2026-05-18 11:47:27  INFO      Processing stip for: Paul Barnett
+2026-05-18 11:47:27  INFO      Stips found: ['Paul Barnett is listed as a Previous owner of the address under consideration, not a current owner. We will need proof of ownership please.']
+2026-05-18 11:47:27  INFO      Matched to dropdowns: ['Address Discrepancy']
+2026-05-18 11:47:27  INFO      Project found: 791555 — Paul Barnett
+2026-05-18 11:47:28  INFO      NTP work order found: 2023852
+2026-05-18 11:47:29  INFO      NTP form found: 1247968
+2026-05-18 11:47:29  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:47:32  INFO      Processing stip for: Jondrea Freeman
+2026-05-18 11:47:32  INFO      Stips found: ['The utility bill shows the customer is late on their payment. Past due, with late fees, and current amount due combined are due on March 12, 2026. Please provide a bill within the last 90 days with all pages of bill showing they paid the balance on time.']
+2026-05-18 11:47:32  INFO      Matched to dropdowns: ['Utility Bill Needed', 'Behind on Utility Bill']
+2026-05-18 11:47:33  INFO      Project found: 793003 — Jondrea Freeman
+2026-05-18 11:47:33  INFO      NTP work order found: 2027334
+2026-05-18 11:47:34  INFO      NTP form found: 1250215
+2026-05-18 11:47:34  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:47:37  INFO      Processing stip for: Suvarna Barve
+2026-05-18 11:47:37  INFO      Stips found: ['The name on the utility bill does not match Suvarna Barves name. Please get proof that Suvarna is on the utility bill.', 'The ID front document is blurry and cannot be read. Please collect another document of the ID Front. The ID Back is perfectly clear.']
+2026-05-18 11:47:37  INFO      Matched to dropdowns: []
+2026-05-18 11:47:37  INFO      Project found: 792042 — Suvarna Barve
+2026-05-18 11:47:38  INFO      NTP work order found: 2027392
+2026-05-18 11:47:39  INFO      NTP form found: 1250240
+2026-05-18 11:47:39  INFO      Skipping — Finance Status is already "M2 Approved"
+2026-05-18 11:47:42  INFO      Processing stip for: Eric Warren
+2026-05-18 11:47:42  INFO      Stips found: ["Eric's ID Front has been approved (Identification card front) and the ID Back has been rejected (Drivers License back). We need the front and the back of one identification. We will not be able to accept a mix of two."]
+2026-05-18 11:47:42  INFO      Matched to dropdowns: []
+2026-05-18 11:47:42  INFO      Project found: 792840 — Eric Warren
+2026-05-18 11:47:43  INFO      NTP work order found: 2027114
+2026-05-18 11:47:44  INFO      NTP form found: 1250058
+2026-05-18 11:47:44  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:47:47  INFO      Processing stip for: Diana Tudela
+2026-05-18 11:47:47  INFO      Stips found: ["We need Diana's ID Front and Back uploaded please."]
+2026-05-18 11:47:47  INFO      Matched to dropdowns: []
+2026-05-18 11:47:48  INFO      Project found: 792072 — Diana Tudela
+2026-05-18 11:47:49  INFO      NTP work order found: 2027384
+2026-05-18 11:47:50  INFO      NTP form found: 1250238
+2026-05-18 11:47:50  INFO      Skipping — Finance Status is already "M2 Approved"
+2026-05-18 11:47:53  INFO      Processing stip for: Oriosky Jesus Garcia Morales
+2026-05-18 11:47:53  INFO      Stips found: ['Missing the Design/Production']
+2026-05-18 11:47:53  INFO      Matched to dropdowns: ['Design Upload Needed']
+2026-05-18 11:47:53  INFO      Project found: 793522 — Oriosky Jesus Garcia Morales
+2026-05-18 11:47:54  INFO      NTP work order found: 2027956
+2026-05-18 11:47:55  INFO      NTP form found: 1250641
+2026-05-18 11:47:55  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:47:58  INFO      Processing stip for: Tim Fontenot
+2026-05-18 11:47:58  INFO      Stips found: ['Please provide ID Front and Back', 'Please provide a utility bill with proof of payment in full and a zero balance within the last 90 days', 'Please provide a Design/Production document']
+2026-05-18 11:47:58  INFO      Matched to dropdowns: ['Behind on Utility Bill', 'Design Upload Needed']
+2026-05-18 11:47:58  INFO      Project found: 791421 — Tim Fontenot
+2026-05-18 11:47:59  INFO      NTP work order found: 2030800
+2026-05-18 11:48:00  INFO      NTP form found: 1252782
+2026-05-18 11:48:00  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:48:03  INFO      Processing stip for: Keith Woods
+2026-05-18 11:48:03  INFO      Stips found: ['The utility bill shows the customer is late on their payment. Please provide a bill within the last 90 days with all pages of bill showing they paid and have a zero balance.']
+2026-05-18 11:48:03  INFO      Matched to dropdowns: ['Utility Bill Needed', 'Behind on Utility Bill']
+2026-05-18 11:48:03  INFO      Project found: 796137 — Keith Woods
+2026-05-18 11:48:04  INFO      NTP work order found: 2034872
+2026-05-18 11:48:05  INFO      NTP form found: 1256606
+2026-05-18 11:48:05  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:48:08  INFO      Processing stip for: Earlene Bradshaw
+2026-05-18 11:48:08  INFO      Stips found: ['Please provide a current utility bill, within the last 90 days, that shows a paid in full and zero balance. The bill that was provided was from 2023', 'Please provide ID Front and ID Back', 'Pease provide a Design/Producion document', 'Please provide proof that Earlene Bradshaw is a current owner of the property. Document shows that she is a previous owner.']
+2026-05-18 11:48:08  INFO      Matched to dropdowns: ['Behind on Utility Bill', 'Design Upload Needed']
+2026-05-18 11:48:08  INFO      Project found: 796193 — Earlene Bradshaw
+2026-05-18 11:48:09  INFO      NTP work order found: 2034905
+2026-05-18 11:48:09  INFO      NTP form found: 1256627
+2026-05-18 11:48:09  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:48:12  INFO      Processing stip for: Joshua Atiba
+2026-05-18 11:48:12  INFO      Stips found: ['Please provide proof of property ownership. Our property search does not show him on the title.']
+2026-05-18 11:48:12  INFO      Matched to dropdowns: ['Title Verification']
+2026-05-18 11:48:13  INFO      Project found: 797763 — Joshua Atiba
+2026-05-18 11:48:13  INFO      NTP work order found: 2034933
+2026-05-18 11:48:14  INFO      NTP form found: 1256645
+2026-05-18 11:48:14  INFO      Form updated
+2026-05-18 11:48:15  INFO      Work order set to WAITING
+2026-05-18 11:48:15  INFO      Note left on project
+2026-05-18 11:48:16  INFO      Slack sent to Thomas Morrow (C0ABGPQ871T)
+2026-05-18 11:48:24  INFO      Reply sent to Kathy Treanor <kathy.treanor@luxfinancial.io>
+2026-05-18 11:48:24  INFO      Done: Joshua Atiba (project 797763)
+2026-05-18 11:48:27  INFO      Processing stip for: Bridiga Garza
+2026-05-18 11:48:27  INFO      Stips found: ['Please collect and upload ID Front and ID Back', 'Please collect and upload a current utility bill with a paid in full and zero balance within the last 90 days', 'Please provide a design/production document']
+2026-05-18 11:48:27  INFO      Matched to dropdowns: ['Behind on Utility Bill', 'Design Upload Needed']
+2026-05-18 11:48:28  INFO      Project found: 748446 — bridiga Garza
+2026-05-18 11:48:28  INFO      NTP work order found: 1939642
+2026-05-18 11:48:29  INFO      NTP form found: 1211257
+2026-05-18 11:48:30  INFO      Form updated
+2026-05-18 11:48:30  INFO      Work order set to WAITING
+2026-05-18 11:48:30  INFO      Note left on project
+2026-05-18 11:48:31  WARNING   Could not find Slack user for leonnogueira09+@gmail.com: users_not_found
+2026-05-18 11:48:31  WARNING   No ops channel found for Leon Nogueira, using fallback
+2026-05-18 11:48:31  INFO      Slack sent to Leon Nogueira (C0AB50H2K9R)
+2026-05-18 11:48:40  INFO      Reply sent to Kathy Treanor <kathy.treanor@luxfinancial.io>
+2026-05-18 11:48:40  INFO      Done: Bridiga Garza (project 748446)
+2026-05-18 11:48:43  INFO      Processing stip for: Phillip Suah
+2026-05-18 11:48:43  INFO      Stips found: ['Please provide proof that Phillip Suah is in the Brickwall Trust that is shown on the title document a property owner.']
+2026-05-18 11:48:43  INFO      Matched to dropdowns: ['Title Verification']
+2026-05-18 11:48:43  INFO      Project found: 799603 — Philip Suah
+2026-05-18 11:48:44  INFO      NTP work order found: 2038722
+2026-05-18 11:48:45  INFO      NTP form found: 1259511
+2026-05-18 11:48:45  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:48:48  INFO      Processing stip for: Jesse Jackson
+2026-05-18 11:48:48  INFO      Stips found: ["Because of a No_Hit on the Primary credit, Please provide an upload of Jesse's SS card"]
+2026-05-18 11:48:48  INFO      Matched to dropdowns: []
+2026-05-18 11:48:48  INFO      Project found: 799000 — Jesse Jackson
+2026-05-18 11:48:49  INFO      NTP work order found: 2039245
+2026-05-18 11:48:50  INFO      NTP form found: 1259782
+2026-05-18 11:48:50  INFO      Skipping — Finance Status is already "M2 Submitted"
+2026-05-18 11:48:53  INFO      Processing stip for: Seth Riklin
+2026-05-18 11:48:53  INFO      Stips found: ['Please provide ID Front and ID Back', 'Please provide a current utlility bill with a paid in full and a zero balance within the last 90 days', 'Please provide a design/production document']
+2026-05-18 11:48:53  INFO      Matched to dropdowns: ['Behind on Utility Bill', 'Design Upload Needed']
+2026-05-18 11:48:53  INFO      Project found: 796539 — Seth Riklin
+2026-05-18 11:48:54  INFO      NTP work order found: 2035052
+2026-05-18 11:48:55  INFO      NTP form found: 1256730
+2026-05-18 11:48:56  INFO      Form updated
+2026-05-18 11:48:57  INFO      Work order set to WAITING
+2026-05-18 11:48:57  INFO      Note left on project
+2026-05-18 11:48:58  INFO      Slack sent to Zachary Burton (C0ADDJXD4RX)
+2026-05-18 11:49:06  INFO      Reply sent to Kathy Treanor <kathy.treanor@luxfinancial.io>
+2026-05-18 11:49:06  INFO      Done: Seth Riklin (project 796539)
+2026-05-18 11:49:09  INFO      Processing stip for: Paul Hennigan
+2026-05-18 11:49:09  INFO      Stips found: ['Please provide a current utility bill with a paid in full and zero balance within the last 90 days', 'Please provide a SSN for Paul Hennigan']
+2026-05-18 11:49:09  INFO      Matched to dropdowns: ['Behind on Utility Bill', 'Social Security card']
+2026-05-18 11:49:10  INFO      Project found: 801293 — Paul Hennigan
+2026-05-18 11:49:10  INFO      NTP work order found: 2041785
+2026-05-18 11:49:11  INFO      NTP form found: 1261582
+2026-05-18 11:49:11  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:49:14  INFO      Processing stip for: Tammy Aljoe
+2026-05-18 11:49:14  INFO      Stips found: ['The utility documents provided shows a past due amount and a disconnect fee. Please provide a current utility bill paid in full with a zero balance within the last 90 days']
+2026-05-18 11:49:14  INFO      Matched to dropdowns: ['Behind on Utility Bill']
+2026-05-18 11:49:14  INFO      Project found: 801310 — Tammy Aljoe
+2026-05-18 11:49:15  INFO      NTP work order found: 2041820
+2026-05-18 11:49:16  INFO      NTP form found: 1261610
+2026-05-18 11:49:16  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:49:19  INFO      Processing stip for: Phillip Suah
+2026-05-18 11:49:19  INFO      Stips found: ['Please provide bank verification']
+2026-05-18 11:49:19  INFO      Matched to dropdowns: ['Bank Verification']
+2026-05-18 11:49:19  INFO      Project found: 799603 — Philip Suah
+2026-05-18 11:49:20  INFO      NTP work order found: 2038722
+2026-05-18 11:49:21  INFO      NTP form found: 1259511
+2026-05-18 11:49:21  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:49:24  INFO      Processing stip for: Ronald Smith
+2026-05-18 11:49:24  INFO      Stips found: ['Please provide Bank Verification']
+2026-05-18 11:49:24  INFO      Matched to dropdowns: ['Bank Verification']
+2026-05-18 11:49:24  INFO      Project found: 839505 — Faith Smith
+2026-05-18 11:49:25  INFO      NTP work order not found — creating from template...
+2026-05-18 11:49:26  INFO      NTP work order created: 2204349
+2026-05-18 11:49:26  INFO      NTP form found: 1373422
+2026-05-18 11:49:27  INFO      Form updated
+2026-05-18 11:49:27  INFO      Work order set to WAITING
+2026-05-18 11:49:28  INFO      Note left on project
+2026-05-18 11:49:29  INFO      Slack sent to Zachary Burton (C0ADDJXD4RX)
+2026-05-18 11:49:37  INFO      Reply sent to Kathy Treanor <kathy.treanor@luxfinancial.io>
+2026-05-18 11:49:37  INFO      Done: Ronald Smith (project 839505)
+2026-05-18 11:49:40  INFO      Processing stip for: Cavlin Philllips
+2026-05-18 11:49:40  INFO      Stips found: ['Please provide Bank Verification that includes the account number, routing number and full name. This can be a bank statement or a voided check.']
+2026-05-18 11:49:40  INFO      Matched to dropdowns: ['Bank Verification', 'Voided check']
+2026-05-18 11:49:41  ERROR     Failed to process <CAFf-deY4--dis4uxXRhZb7f+9AKFyykRWxXjrssi1JnLrRmVhg@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 468, in main
+    process_stip_email(email)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 382, in process_stip_email
+    project    = find_project(customer_name)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 266, in find_project
+    raise ValueError(f'No project found for: {customer_name}')
+ValueError: No project found for: Cavlin Philllips
+2026-05-18 11:49:44  INFO      Processing stip for: Cheryl Savitt
+2026-05-18 11:49:44  INFO      Stips found: ['Please provide bank verification, in the form of a voided check or an account statement that includes her name, bank name, routing and account number']
+2026-05-18 11:49:44  INFO      Matched to dropdowns: ['Bank Verification', 'Voided check']
+2026-05-18 11:49:44  INFO      Project found: 804345 — Cheryl Savitt
+2026-05-18 11:49:45  INFO      NTP work order found: 2054559
+2026-05-18 11:49:46  INFO      NTP form found: 1269929
+2026-05-18 11:49:46  INFO      Skipping — Finance Status is already "M2 Approved"
+2026-05-18 11:49:49  INFO      Processing stip for: Eric Seitz
+2026-05-18 11:49:49  INFO      Stips found: ['Please provide the first page of the utility bill including the name, service address and a paid off balance of zero within the last 90 days', 'Please confirm and provide a new design/production document that shows a Qcell inverter, quantity of 29 instead of a Tesla PW3 inverter']
+2026-05-18 11:49:49  INFO      Matched to dropdowns: ['Address Discrepancy', 'Behind on Utility Bill', 'Design Upload Needed', 'FEOC for Inverter/battery and racking']
+2026-05-18 11:49:49  INFO      Project found: 804481 — Eric Seitz
+2026-05-18 11:49:50  INFO      NTP work order not found — creating from template...
+2026-05-18 11:49:51  INFO      NTP work order created: 2204354
+2026-05-18 11:49:51  INFO      NTP form found: 1373428
+2026-05-18 11:49:52  INFO      Form updated
+2026-05-18 11:49:52  INFO      Work order set to WAITING
+2026-05-18 11:49:53  INFO      Note left on project
+2026-05-18 11:49:53  INFO      Slack sent to Jared Brough (C0AJNLQEQG4)
+2026-05-18 11:50:01  INFO      Reply sent to Kathy Treanor <kathy.treanor@luxfinancial.io>
+2026-05-18 11:50:01  INFO      Done: Eric Seitz (project 804481)
+2026-05-18 11:50:04  INFO      Processing stip for: Dealisa Frazier
+2026-05-18 11:50:04  INFO      Stips found: ['Please provide a utility bill including the name, service address, payment made and showing a balance of zero within the last 90 days']
+2026-05-18 11:50:04  INFO      Matched to dropdowns: ['Address Discrepancy', 'Behind on Utility Bill']
+2026-05-18 11:50:05  INFO      Project found: 805204 — Dealisa frazier
+2026-05-18 11:50:05  INFO      NTP work order found: 2057286
+2026-05-18 11:50:06  INFO      NTP form found: 1271660
+2026-05-18 11:50:06  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:50:09  INFO      Processing stip for: Juan Machuca
+2026-05-18 11:50:09  INFO      Stips found: ['Please provide a design/production document']
+2026-05-18 11:50:09  INFO      Matched to dropdowns: ['Design Upload Needed']
+2026-05-18 11:50:10  INFO      Project found: 805267 — Juan Machuca
+2026-05-18 11:50:11  INFO      NTP work order found: 2057276
+2026-05-18 11:50:11  INFO      NTP form found: 1271653
+2026-05-18 11:50:11  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:50:14  INFO      Processing stip for: Joseph Kearns
+2026-05-18 11:50:14  INFO      Stips found: ['Please provide proof of ownership of property', 'Please provide bank verification including name, bank, routing and account number in the form of a voided check or a bank statement.']
+2026-05-18 11:50:14  INFO      Matched to dropdowns: ['Bank Verification', 'Voided check']
+2026-05-18 11:50:14  INFO      Project found: 814498 — Joseph Kearns
+2026-05-18 11:50:15  INFO      NTP work order found: 2060589
+2026-05-18 11:50:16  INFO      NTP form found: 1274006
+2026-05-18 11:50:16  INFO      Form updated
+2026-05-18 11:50:17  INFO      Work order set to WAITING
+2026-05-18 11:50:17  INFO      Note left on project
+2026-05-18 11:50:18  INFO      Slack sent to Chase Armstrong (C0AJH0HFV8E)
+2026-05-18 11:50:26  INFO      Reply sent to Kathy Treanor <kathy.treanor@luxfinancial.io>
+2026-05-18 11:50:26  INFO      Done: Joseph Kearns (project 814498)
+2026-05-18 11:50:29  INFO      Processing stip for: Shakunthala Shetty
+2026-05-18 11:50:29  INFO      Stips found: ['Please provide a copy of a social security card', 'Please provide a design/production document']
+2026-05-18 11:50:29  INFO      Matched to dropdowns: ['Social Security card', 'Design Upload Needed']
+2026-05-18 11:50:29  INFO      Project found: 805705 — Shakunthala Shetty
+2026-05-18 11:50:30  INFO      NTP work order found: 2057271
+2026-05-18 11:50:31  INFO      NTP form found: 1271648
+2026-05-18 11:50:31  INFO      Form updated
+2026-05-18 11:50:32  INFO      Work order set to WAITING
+2026-05-18 11:50:32  INFO      Note left on project
+2026-05-18 11:50:33  INFO      Slack sent to Zachary Burton (C0ADDJXD4RX)
+2026-05-18 11:50:41  INFO      Reply sent to Kathy Treanor <kathy.treanor@luxfinancial.io>
+2026-05-18 11:50:41  INFO      Done: Shakunthala Shetty (project 805705)
+2026-05-18 11:50:44  INFO      Processing stip for: Jennifer Wilde
+2026-05-18 11:50:44  INFO      Stips found: ['Please provide a design/production document']
+2026-05-18 11:50:44  INFO      Matched to dropdowns: ['Design Upload Needed']
+2026-05-18 11:50:45  INFO      Project found: 817944 — Jennifer Wilde
+2026-05-18 11:50:46  INFO      NTP work order found: 2074662
+2026-05-18 11:50:46  INFO      NTP form found: 1283037
+2026-05-18 11:50:46  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:50:49  INFO      Processing stip for: Martin Chapa
+2026-05-18 11:50:49  INFO      Stips found: ['Please provide bank verification including name, bank, routing and account number in the form of a voided check or a bank statement.']
+2026-05-18 11:50:49  INFO      Matched to dropdowns: ['Bank Verification', 'Voided check']
+2026-05-18 11:50:50  INFO      Project found: 817593 — Martin Chapa
+2026-05-18 11:50:51  INFO      NTP work order found: 2075077
+2026-05-18 11:50:51  INFO      NTP form found: 1283288
+2026-05-18 11:50:51  INFO      Skipping — Finance Status is already "M2 Approved"
+2026-05-18 11:50:54  INFO      Processing stip for: William Cruz
+2026-05-18 11:50:54  INFO      Stips found: ['Documents show that William is a previous owner. Please provide additional proof of ownership']
+2026-05-18 11:50:54  INFO      Matched to dropdowns: []
+2026-05-18 11:50:55  INFO      Project found: 817475 — William Cruz
+2026-05-18 11:50:56  INFO      NTP work order found: 2075069
+2026-05-18 11:50:56  INFO      NTP form found: 1283280
+2026-05-18 11:50:56  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:50:59  INFO      Processing stip for: Creighton Medlock
+2026-05-18 11:50:59  INFO      Stips found: ['Documents show that Mr. Medlock is a previous Owner of the 14111 Briarsage Court proprerty and the current owner is Medlock Investments. Please provide proof that Mr. Medlock is an owner of the property through Medlock Investments.']
+2026-05-18 11:50:59  INFO      Matched to dropdowns: []
+2026-05-18 11:51:00  INFO      Project found: 817085 — Creighton Medlock
+2026-05-18 11:51:00  INFO      NTP work order found: 2069032
+2026-05-18 11:51:01  INFO      NTP form found: 1279680
+2026-05-18 11:51:01  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:51:04  INFO      Processing stip for: Ashley Williams
+2026-05-18 11:51:04  INFO      Stips found: ['The utility bill shows a past due amount. Please provide a utility bill including the name, service address, payment made and showing a balance of zero within the last 90 days.']
+2026-05-18 11:51:04  INFO      Matched to dropdowns: ['Address Discrepancy', 'Behind on Utility Bill']
+2026-05-18 11:51:04  INFO      Project found: 816835 — Ashley Williams
+2026-05-18 11:51:05  INFO      NTP work order found: 2074759
+2026-05-18 11:51:06  INFO      NTP form found: 1283081
+2026-05-18 11:51:06  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:51:09  INFO      Processing stip for: Manhal Naji
+2026-05-18 11:51:09  INFO      Stips found: ['The utility bill shows a past due balance. Please provide a utility bill including the name, service address, payment made and showing a balance of zero within the last 90 days', 'Please provide the customers front and back ID']
+2026-05-18 11:51:09  INFO      Matched to dropdowns: ['Address Discrepancy', 'Behind on Utility Bill']
+2026-05-18 11:51:09  INFO      Project found: 819138 — Manhal Naji
+2026-05-18 11:51:10  INFO      NTP work order found: 2072524
+2026-05-18 11:51:11  INFO      NTP form found: 1281811
+2026-05-18 11:51:11  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:51:14  INFO      Processing stip for: Chantell Coleman
+2026-05-18 11:51:14  INFO      Stips found: ['Please provide proof of ownership of property']
+2026-05-18 11:51:14  INFO      Matched to dropdowns: []
+2026-05-18 11:51:14  INFO      Project found: 818973 — Chantell Coleman
+2026-05-18 11:51:15  INFO      NTP work order found: 2074746
+2026-05-18 11:51:15  INFO      NTP form found: 1283076
+2026-05-18 11:51:15  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:51:19  INFO      Processing stip for: Bobby Dickerson
+2026-05-18 11:51:19  INFO      Stips found: ['Please provide a utility bill including the name, service address, payment made and showing a balance of zero within the last 90 days', 'Please provide a Front and Back Identification']
+2026-05-18 11:51:19  INFO      Matched to dropdowns: ['Address Discrepancy', 'Behind on Utility Bill']
+2026-05-18 11:51:19  INFO      Project found: 819485 — Bobby Dickerson
+2026-05-18 11:51:20  INFO      NTP work order found: 2074736
+2026-05-18 11:51:20  INFO      NTP form found: 1283070
+2026-05-18 11:51:20  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:51:23  INFO      Processing stip for: Jennifer Wilde
+2026-05-18 11:51:23  INFO      Stips found: ["Please provide a copy of Jennifer's SS card"]
+2026-05-18 11:51:23  INFO      Matched to dropdowns: []
+2026-05-18 11:51:24  INFO      Project found: 817944 — Jennifer Wilde
+2026-05-18 11:51:25  INFO      NTP work order found: 2074662
+2026-05-18 11:51:26  INFO      NTP form found: 1283037
+2026-05-18 11:51:26  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:51:29  INFO      Processing stip for: Trey Kirby
+2026-05-18 11:51:29  INFO      Stips found: ['Please provide proof of ownership of property', 'Please provide a utility bill including the name, service address, payment made and showing a balance of zero within the last 90 days', "Please provide a Front and Back copy of Trey's ID"]
+2026-05-18 11:51:29  INFO      Matched to dropdowns: ['Address Discrepancy', 'Behind on Utility Bill']
+2026-05-18 11:51:29  INFO      Project found: 819706 — Trey Kirby
+2026-05-18 11:51:30  INFO      NTP work order found: 2080954
+2026-05-18 11:51:31  INFO      NTP form found: 1287257
+2026-05-18 11:51:32  INFO      Form updated
+2026-05-18 11:51:32  INFO      Work order set to WAITING
+2026-05-18 11:51:33  INFO      Note left on project
+2026-05-18 11:51:33  INFO      Slack sent to Thomas Morrow (C0ABGPQ871T)
+2026-05-18 11:51:41  INFO      Reply sent to Kathy Treanor <kathy.treanor@luxfinancial.io>
+2026-05-18 11:51:41  INFO      Done: Trey Kirby (project 819706)
+2026-05-18 11:51:44  INFO      Processing stip for: Frederick Alex Jr.
+2026-05-18 11:51:44  INFO      Stips found: ['Please provide bank verification, including the name, bank, routing and account number in the form of a voided check or a bank statement.', 'Please provide a utility bill including the name, service address, payment made and showing a balance of zero within the last 90 days', 'Please provide a design/production document for the property']
+2026-05-18 11:51:44  INFO      Matched to dropdowns: ['Bank Verification', 'Voided check', 'Address Discrepancy', 'Behind on Utility Bill', 'Design Upload Needed']
+2026-05-18 11:51:45  INFO      Project found: 820838 — Frederick Alex Jr.
+2026-05-18 11:51:45  INFO      NTP work order found: 2080255
+2026-05-18 11:51:46  INFO      NTP form found: 1286834
+2026-05-18 11:51:46  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:51:49  INFO      Processing stip for: Jorge Benavides
+2026-05-18 11:51:49  INFO      Stips found: ['Please provide a design/production document for the property']
+2026-05-18 11:51:49  INFO      Matched to dropdowns: ['Design Upload Needed']
+2026-05-18 11:51:49  ERROR     Failed to process <CAFf-deZxb1u9VxJUbSK9+8d5gctMV3PM+bYy5d1S7L0uL-Kb+A@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 468, in main
+    process_stip_email(email)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 382, in process_stip_email
+    project    = find_project(customer_name)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 266, in find_project
+    raise ValueError(f'No project found for: {customer_name}')
+ValueError: No project found for: Jorge Benavides
+2026-05-18 11:51:52  INFO      Processing stip for: Jesse White
+2026-05-18 11:51:52  INFO      Stips found: ['The utility bill shows the customer has a past due balance. Please provide a bill within the last 90 days with all pages of bill showing they paid and have a zero balance.', 'The design/production shows a tesla inverter but our agreement and equipment in our system shows Qcell inverters. Please confirm which equipment is being used. If it is the Qcell equipment, please provide a new Design/production.']
+2026-05-18 11:51:52  INFO      Matched to dropdowns: ['Utility Bill Needed', 'Behind on Utility Bill', 'Design Upload Needed', 'FEOC for Inverter/battery and racking']
+2026-05-18 11:51:53  INFO      Project found: 818989 — Jesse White
+2026-05-18 11:51:54  INFO      NTP work order found: 2084890
+2026-05-18 11:51:54  INFO      NTP form found: 1291050
+2026-05-18 11:51:55  INFO      Form updated
+2026-05-18 11:51:55  INFO      Work order set to WAITING
+2026-05-18 11:51:56  INFO      Note left on project
+2026-05-18 11:51:56  INFO      Slack sent to Zachary Burton (C0ADDJXD4RX)
+2026-05-18 11:52:04  INFO      Reply sent to Kathy Treanor <kathy.treanor@luxfinancial.io>
+2026-05-18 11:52:04  INFO      Done: Jesse White (project 818989)
+2026-05-18 11:52:07  INFO      Processing stip for: Frederick Alex Jr
+2026-05-18 11:52:07  INFO      Stips found: ["We received a bank statement with Frederick's account number but it was missing the routing number. Please provide the routing number for his Chime account.", 'We still need a utility bill that shows a payment made in full, with a zero balance within the last 90 days.']
+2026-05-18 11:52:07  INFO      Matched to dropdowns: ['Bank Verification', 'Behind on Utility Bill']
+2026-05-18 11:52:08  INFO      Project found: 820838 — Frederick Alex Jr.
+2026-05-18 11:52:09  INFO      NTP work order found: 2080255
+2026-05-18 11:52:10  INFO      NTP form found: 1286834
+2026-05-18 11:52:10  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:52:13  INFO      Processing stip for: Erica Pittman
+2026-05-18 11:52:13  INFO      Stips found: ['The utility bill shows the customer has a past due amount. Please provide a bill within the last 90 days with all pages of bill showing they paid the balance on time.', "The Proof of Ownership states that Erica Pittman is a previous owner and Erica Hardy is a current owner. Please provide proof that Erica Pittman, the name on the account and driver's license is also the owner of the property."]
+2026-05-18 11:52:13  INFO      Matched to dropdowns: ['Utility Bill Needed', 'Behind on Utility Bill']
+2026-05-18 11:52:13  INFO      Project found: 821522 — Erica Pittman
+2026-05-18 11:52:14  INFO      NTP work order found: 2084979
+2026-05-18 11:52:15  INFO      NTP form found: 1291118
+2026-05-18 11:52:15  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:52:18  INFO      Processing stip for: Sharon Anderson 3566
+2026-05-18 11:52:18  INFO      Stips found: ['Upon further review of  *Sharon Anderson, *3566 Joshua Grove Lane , Missouri City, TX 77459 we need the following item addressed:', 'We are missing a utility bill. Please provide a utility bill showing a paid in full, zero balance within the last 90 days for the following address.', '3566 Joshua Grove Lane , Missouri City, TX 77459*']
+2026-05-18 11:52:18  INFO      Matched to dropdowns: ['Address Discrepancy', 'Behind on Utility Bill']
+2026-05-18 11:52:18  ERROR     Failed to process <CAFf-deZouD4GHHG7x0Xv-BjHzmz9P1bVfwuwzjZHxcXr0HSoNA@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 468, in main
+    log.info('Checking Gmail for NTP stipulation emails...')
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 382, in process_stip_email
+    project    = find_project(customer_name)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 266, in find_project
+    raise ValueError(f'No project found for: {customer_name}')
+ValueError: No project found for: Sharon Anderson 3566
+2026-05-18 11:52:21  INFO      Processing stip for: ALANA GOTCH
+2026-05-18 11:52:21  INFO      Stips found: ["The Proof of Ownership states that Alana Gotch is a previous owner but Alana Sayles is the current owner. Please provide proof that Alana Gotch, the name on the account and driver's license, also owns the property."]
+2026-05-18 11:52:21  INFO      Matched to dropdowns: []
+2026-05-18 11:52:21  ERROR     Failed to process <CAFf-deYs77TL_F8ORp8n3EiKcSUwjQ3Ah+t2AH+kw80cpX1nng@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 468, in main
+    log.info('Checking Gmail for NTP stipulation emails...')
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 382, in process_stip_email
+    project    = find_project(customer_name)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 266, in find_project
+    raise ValueError(f'No project found for: {customer_name}')
+ValueError: No project found for: ALANA GOTCH
+2026-05-18 11:52:24  INFO      Processing stip for: Saulette Omeke
+2026-05-18 11:52:24  INFO      Stips found: ['Please provide bank verification, including the name, bank, routing and account number in the form of a voided check or a bank statement. The bank statement must have the routing number.']
+2026-05-18 11:52:24  INFO      Matched to dropdowns: ['Bank Verification', 'Voided check']
+2026-05-18 11:52:25  INFO      Project found: 822263 — Saulette Omeke
+2026-05-18 11:52:26  INFO      NTP work order found: 2085024
+2026-05-18 11:52:26  INFO      NTP form found: 1291147
+2026-05-18 11:52:26  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:52:29  INFO      Processing stip for: Reymundo Cantu
+2026-05-18 11:52:29  INFO      Stips found: ['Please provide a design/production document', "Please provide bank verification, including the name, bank, routing and account number in the form of a voided check or a bank statement. The bank statement must include the institution's routing number."]
+2026-05-18 11:52:29  INFO      Matched to dropdowns: ['Design Upload Needed', 'Bank Verification', 'Voided check']
+2026-05-18 11:52:30  INFO      Project found: 822314 — Reymundo Cantu
+2026-05-18 11:52:30  INFO      NTP work order found: 2085033
+2026-05-18 11:52:31  INFO      NTP form found: 1291154
+2026-05-18 11:52:32  INFO      Form updated
+2026-05-18 11:52:32  INFO      Work order set to WAITING
+2026-05-18 11:52:32  INFO      Note left on project
+2026-05-18 11:52:34  INFO      Slack sent to Thomas Morrow (C0ABGPQ871T)
+2026-05-18 11:52:42  INFO      Reply sent to Kathy Treanor <kathy.treanor@luxfinancial.io>
+2026-05-18 11:52:42  INFO      Done: Reymundo Cantu (project 822314)
+2026-05-18 11:52:45  INFO      Processing stip for: Couzette Guy
+2026-05-18 11:52:45  INFO      Stips found: ['Please provide a design/production document.', 'The title information we have lists Couzette as a previous owner. Please provide proof that Couzette is a current owner of the property.']
+2026-05-18 11:52:45  INFO      Matched to dropdowns: ['Design Upload Needed', 'Title Verification']
+2026-05-18 11:52:45  INFO      Project found: 822402 — Couzette Guy
+2026-05-18 11:52:46  INFO      NTP work order found: 2085038
+2026-05-18 11:52:47  INFO      NTP form found: 1291158
+2026-05-18 11:52:47  INFO      Skipping — Finance Status is already "M2 Approved"
+2026-05-18 11:52:50  INFO      Processing stip for: Johnny Reeves
+2026-05-18 11:52:50  INFO      Stips found: ['Please provide a utility bill including the name, service address, payment made and showing a balance of zero within the last 90 days', 'Please provide a design/production document']
+2026-05-18 11:52:50  INFO      Matched to dropdowns: ['Address Discrepancy', 'Behind on Utility Bill', 'Design Upload Needed']
+2026-05-18 11:52:50  INFO      Project found: 822446 — Johnny Reeves
+2026-05-18 11:52:51  INFO      NTP work order found: 2084764
+2026-05-18 11:52:51  INFO      NTP form found: 1290981
+2026-05-18 11:52:52  INFO      Form updated
+2026-05-18 11:52:53  INFO      Work order set to WAITING
+2026-05-18 11:52:53  INFO      Note left on project
+2026-05-18 11:52:54  INFO      Slack sent to Thomas Morrow (C0ABGPQ871T)
+2026-05-18 11:53:01  INFO      Reply sent to Kathy Treanor <kathy.treanor@luxfinancial.io>
+2026-05-18 11:53:01  INFO      Done: Johnny Reeves (project 822446)
+2026-05-18 11:53:04  INFO      Processing stip for: Mary Fassy
+2026-05-18 11:53:04  INFO      Stips found: ['Another utility bill was recently uploaded, but it duplicates the one rejected in the portal. The utility bill must show an amount owed and that same amount paid in full, leaving a zero balance within the last 90 days. Please provide a statement showing all of the above.']
+2026-05-18 11:53:04  INFO      Matched to dropdowns: ['Behind on Utility Bill']
+2026-05-18 11:53:05  INFO      Project found: 790699 — Mary Fassy
+2026-05-18 11:53:06  INFO      NTP work order found: 2011755
+2026-05-18 11:53:06  INFO      NTP form found: 1240544
+2026-05-18 11:53:06  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:53:09  INFO      Processing stip for: Steven Gonzales
+2026-05-18 11:53:09  INFO      Stips found: ['Please provide bank verification, including the name, bank, routing and account number in the form of a voided check or a bank statement. The bank statement must include the banks routing number']
+2026-05-18 11:53:09  INFO      Matched to dropdowns: ['Bank Verification', 'Voided check']
+2026-05-18 11:53:09  ERROR     Failed to process <CAFf-debjXcx+eiPoQj1Nw9Q7bFaqCdLyaw6OLFY6_QB228rJ6Q@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 468, in main
+    log.info('Checking Gmail for NTP stipulation emails...')
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 382, in process_stip_email
+    project    = find_project(customer_name)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 266, in find_project
+    raise ValueError(f'No project found for: {customer_name}')
+ValueError: No project found for: Steven Gonzales
+2026-05-18 11:53:13  INFO      Processing stip for: Daniel Ruiz
+2026-05-18 11:53:13  INFO      Stips found: ['Please provide a copy of Daniels ID Back', 'Please provide Proof of Ownership to the property']
+2026-05-18 11:53:13  INFO      Matched to dropdowns: []
+2026-05-18 11:53:13  INFO      Project found: 819165 — Daniel Ruiz
+2026-05-18 11:53:14  INFO      NTP work order found: 2092159
+2026-05-18 11:53:15  INFO      NTP form found: 1294858
+2026-05-18 11:53:15  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:53:18  INFO      Processing stip for: Erica Pittman
+2026-05-18 11:53:18  INFO      Stips found: ["The Proof of Ownership states that Erica Pittman is a previous owner and Erica Hardy is a current owner. Please provide proof that Erica Pittman, the name on the account and driver's license, is also the owner of the property or a provide a marriage certificate showing her new name as Erica Hardy, which will match the title information."]
+2026-05-18 11:53:18  INFO      Matched to dropdowns: ['Title Verification']
+2026-05-18 11:53:18  INFO      Project found: 821522 — Erica Pittman
+2026-05-18 11:53:19  INFO      NTP work order found: 2084979
+2026-05-18 11:53:19  INFO      NTP form found: 1291118
+2026-05-18 11:53:19  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:53:22  INFO      Processing stip for: Margarine Mitchell
+2026-05-18 11:53:22  INFO      Stips found: ['Please provide ID Front and ID Back', 'Please provide a utility bill including the name, service address, payment made and showing a balance of zero within the last 90 days']
+2026-05-18 11:53:22  INFO      Matched to dropdowns: ['Address Discrepancy', 'Behind on Utility Bill']
+2026-05-18 11:53:24  INFO      Project found: 821682 — Margarine Mitchell
+2026-05-18 11:53:26  INFO      NTP work order found: 2080242
+2026-05-18 11:53:26  INFO      NTP form found: 1286826
+2026-05-18 11:53:26  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:53:29  INFO      Processing stip for: Frances Parker
+2026-05-18 11:53:29  INFO      Stips found: ['Please provide ID Front and ID Back', 'Please provide a utility bill including the name, service address, payment made and showing a balance of zero within the last 90 days']
+2026-05-18 11:53:29  INFO      Matched to dropdowns: ['Address Discrepancy', 'Behind on Utility Bill']
+2026-05-18 11:53:30  INFO      Project found: 843597 — Klarissa Parker
+2026-05-18 11:53:30  INFO      NTP work order found: 2122828
+2026-05-18 11:53:31  INFO      NTP form found: 1317637
+2026-05-18 11:53:31  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:53:34  INFO      Processing stip for: Frances Parker
+2026-05-18 11:53:34  INFO      Stips found: ['Please provide ID Front and ID Back', 'Please provide a utility bill including the name, service address, payment made and showing a balance of zero within the last 90 days', 'Please provide bank verification, including the name, bank, routing and account number in the form of a voided check or a bank statement. The bank statement must include the banks routing number.']
+2026-05-18 11:53:34  INFO      Matched to dropdowns: ['Address Discrepancy', 'Behind on Utility Bill', 'Bank Verification', 'Voided check']
+2026-05-18 11:53:35  INFO      Project found: 843597 — Klarissa Parker
+2026-05-18 11:53:35  INFO      NTP work order found: 2122828
+2026-05-18 11:53:36  INFO      NTP form found: 1317637
+2026-05-18 11:53:36  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:53:39  INFO      Processing stip for: Latonya Curvey
+2026-05-18 11:53:39  INFO      Stips found: ['Please provide bank verification, including the name, bank, routing and account number in the form of a voided check or a bank statement. The bank statement must include the routing number.']
+2026-05-18 11:53:39  INFO      Matched to dropdowns: ['Bank Verification', 'Voided check']
+2026-05-18 11:53:40  INFO      Project found: 820961 — Latonya Curvey
+2026-05-18 11:53:41  INFO      NTP work order found: 2092120
+2026-05-18 11:53:41  INFO      NTP form found: 1294846
+2026-05-18 11:53:41  INFO      Skipping — Finance Status is already "NTP Approved"
+2026-05-18 11:53:44  INFO      Processing stip for: Thomas Tillman
+2026-05-18 11:53:44  INFO      Stips found: ['Please provide an ID Front and ID Back', 'Please provide a design/production document', 'The utility bill in the portal shows a past due payment. Please provide a utility bill including the name, service address, payment made and showing a balance of zero within the last 90 days', 'Please provide proof of property ownership.']
+2026-05-18 11:53:44  INFO      Matched to dropdowns: ['Design Upload Needed', 'Address Discrepancy', 'Behind on Utility Bill']
+2026-05-18 11:53:45  INFO      Project found: 827725 — Thomas Tillman
+2026-05-18 11:53:46  INFO      NTP work order found: 2105277
+2026-05-18 11:53:46  INFO      NTP form found: 1306793
+2026-05-18 11:53:47  INFO      Form updated
+2026-05-18 11:53:47  INFO      Work order set to WAITING
+2026-05-18 11:53:47  INFO      Note left on project
+2026-05-18 11:53:48  INFO      Slack sent to Zachary Burton (C0ADDJXD4RX)
+2026-05-18 11:53:56  INFO      Reply sent to Kathy Treanor <kathy.treanor@luxfinancial.io>
+2026-05-18 11:53:56  INFO      Done: Thomas Tillman (project 827725)
+2026-05-18 11:53:59  INFO      Processing stip for: Barry Major
+2026-05-18 11:53:59  INFO      Stips found: ['Please provide an ID Front and ID Back.']
+2026-05-18 11:53:59  INFO      Matched to dropdowns: []
+2026-05-18 11:53:59  INFO      Project found: 827938 — Barry Major
+2026-05-18 11:54:00  INFO      NTP work order found: 2105445
+2026-05-18 11:54:01  INFO      NTP form found: 1306848
+2026-05-18 11:54:01  INFO      Skipping — Finance Status is already "NTP Approved"
+/Users/samlesueur/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2026-05-18 11:54:04  INFO      NTP Stip automation started — polling Gmail every 2 minutes.
+2026-05-18 11:54:04  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 11:54:06  INFO      No new emails.
+2026-05-18 11:56:06  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 11:56:08  INFO      No new emails.
+2026-05-18 11:58:08  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 11:58:09  INFO      No new emails.
+2026-05-18 12:00:10  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:00:11  INFO      No new emails.
+2026-05-18 12:02:12  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:02:13  INFO      No new emails.
+2026-05-18 12:04:13  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:04:15  INFO      No new emails.
+2026-05-18 12:06:15  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:06:16  INFO      No new emails.
+2026-05-18 12:08:17  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:08:18  INFO      No new emails.
+2026-05-18 12:10:18  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:10:20  INFO      No new emails.
+2026-05-18 12:12:20  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:12:22  INFO      No new emails.
+2026-05-18 12:14:22  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:14:24  INFO      Processing stip for: Rosie Powell
+2026-05-18 12:14:24  INFO      Stips found: ['The utility bill shows a past due payment due. Please provide a utility bill including the name, service address, payment made and showing a balance of zero within the last 90 days']
+2026-05-18 12:14:24  INFO      Matched to dropdowns: ['Address Discrepancy', 'Behind on Utility Bill']
+2026-05-18 12:14:25  INFO      Project found: 845359 — Rosie Powell
+2026-05-18 12:14:25  INFO      NTP work order found: 2128165
+2026-05-18 12:14:26  INFO      NTP form found: 1321547
+2026-05-18 12:14:27  INFO      Form updated
+2026-05-18 12:14:27  INFO      Work order set to WAITING
+2026-05-18 12:14:27  INFO      Note left on project
+2026-05-18 12:14:28  INFO      Slack sent to Zachary Burton (C0ADDJXD4RX)
+2026-05-18 12:14:36  INFO      Reply sent to Kathy Treanor <kathy.treanor@luxfinancial.io>
+2026-05-18 12:14:36  INFO      Done: Rosie Powell (project 845359)
+2026-05-18 12:16:39  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:16:43  INFO      No new emails.
+2026-05-18 12:18:44  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:18:46  INFO      No new emails.
+2026-05-18 12:20:46  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:20:48  INFO      No new emails.
+2026-05-18 12:22:48  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:22:50  INFO      No new emails.
+2026-05-18 12:24:51  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:24:53  INFO      No new emails.
+2026-05-18 12:26:53  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:26:55  INFO      No new emails.
+2026-05-18 12:28:55  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:28:57  INFO      No new emails.
+2026-05-18 12:30:57  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:30:58  INFO      No new emails.
+2026-05-18 12:32:58  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:33:01  INFO      No new emails.
+2026-05-18 12:35:01  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:35:03  INFO      No new emails.
+2026-05-18 12:37:03  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:37:04  INFO      No new emails.
+2026-05-18 12:39:04  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:39:07  INFO      No new emails.
+2026-05-18 12:41:07  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:41:18  INFO      No new emails.
+2026-05-18 12:43:18  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:43:19  INFO      No new emails.
+2026-05-18 12:45:20  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:45:21  INFO      No new emails.
+2026-05-18 12:47:21  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:47:23  INFO      No new emails.
+2026-05-18 12:49:23  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:49:24  INFO      No new emails.
+2026-05-18 12:51:24  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:51:26  INFO      No new emails.
+2026-05-18 12:53:26  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:53:29  INFO      No new emails.
+2026-05-18 12:55:29  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:55:30  INFO      No new emails.
+2026-05-18 12:57:30  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:57:32  INFO      No new emails.
+2026-05-18 12:59:32  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 12:59:34  INFO      No new emails.
+2026-05-18 13:01:34  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:01:36  INFO      No new emails.
+2026-05-18 13:03:36  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:03:38  INFO      No new emails.
+2026-05-18 13:05:38  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:05:40  INFO      No new emails.
+2026-05-18 13:07:40  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:07:42  INFO      No new emails.
+2026-05-18 13:09:42  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:09:44  INFO      No new emails.
+/Users/samlesueur/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2026-05-18 13:10:54  INFO      NTP Stip automation started — polling Gmail every 2 minutes.
+2026-05-18 13:10:54  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:10:55  INFO      No new emails.
+2026-05-18 13:12:55  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:12:57  INFO      No new emails.
+/Users/samlesueur/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2026-05-18 13:14:49  INFO      NTP Stip automation started — polling Gmail every 2 minutes.
+2026-05-18 13:14:49  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:14:51  INFO      No new emails.
+2026-05-18 13:16:51  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:16:53  INFO      No new emails.
+2026-05-18 13:18:53  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:18:55  INFO      No new emails.
+2026-05-18 13:20:55  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:20:56  INFO      No new emails.
+2026-05-18 13:22:56  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:22:58  INFO      No new emails.
+2026-05-18 13:24:58  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:25:00  INFO      No new emails.
+2026-05-18 13:27:00  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:27:02  INFO      No new emails.
+2026-05-18 13:29:02  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:29:03  INFO      No new emails.
+2026-05-18 13:31:03  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:31:05  INFO      No new emails.
+2026-05-18 13:33:05  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:33:07  INFO      No new emails.
+/Users/samlesueur/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2026-05-18 13:35:06  INFO      NTP Stip automation started — polling Gmail every 2 minutes.
+2026-05-18 13:35:06  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:35:07  INFO      No new emails.
+2026-05-18 13:37:07  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:37:09  INFO      No new emails.
+2026-05-18 13:39:09  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:39:11  INFO      No new emails.
+2026-05-18 13:41:11  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:41:12  INFO      No new emails.
+2026-05-18 13:43:12  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:43:14  INFO      No new emails.
+2026-05-18 13:45:14  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:45:16  INFO      No new emails.
+2026-05-18 13:47:16  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:47:17  INFO      No new emails.
+2026-05-18 13:49:17  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:49:22  INFO      No new emails.
+2026-05-18 13:51:22  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:51:23  INFO      No new emails.
+2026-05-18 13:53:23  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:53:29  INFO      No new emails.
+2026-05-18 13:55:29  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:55:31  INFO      No new emails.
+2026-05-18 13:57:31  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:57:33  INFO      No new emails.
+2026-05-18 13:59:33  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 13:59:34  INFO      No new emails.
+2026-05-18 14:01:35  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:01:36  INFO      No new emails.
+2026-05-18 14:03:36  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:03:38  INFO      No new emails.
+2026-05-18 14:05:38  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:05:40  INFO      No new emails.
+2026-05-18 14:07:40  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:07:42  INFO      No new emails.
+2026-05-18 14:09:42  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:09:44  INFO      No new emails.
+2026-05-18 14:11:44  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:11:45  INFO      No new emails.
+2026-05-18 14:13:45  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:13:47  INFO      No new emails.
+2026-05-18 14:15:48  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:15:49  INFO      No new emails.
+2026-05-18 14:17:49  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:17:51  INFO      No new emails.
+2026-05-18 14:19:51  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:19:53  INFO      No new emails.
+2026-05-18 14:21:53  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:21:55  INFO      No new emails.
+2026-05-18 14:23:55  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:23:57  INFO      No new emails.
+2026-05-18 14:25:57  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:25:58  INFO      No new emails.
+2026-05-18 14:27:59  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:28:01  INFO      No new emails.
+2026-05-18 14:30:01  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:30:02  INFO      No new emails.
+2026-05-18 14:32:02  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:32:04  INFO      No new emails.
+2026-05-18 14:34:04  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:34:06  INFO      No new emails.
+2026-05-18 14:36:06  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:36:08  INFO      No new emails.
+2026-05-18 14:38:08  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:38:09  INFO      No new emails.
+2026-05-18 14:40:10  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:40:11  INFO      No new emails.
+2026-05-18 14:42:11  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:42:13  INFO      No new emails.
+2026-05-18 14:44:13  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:44:15  INFO      Processing stip for: Donnell Warren
+2026-05-18 14:44:15  INFO      Stips found: ['Please provide an ID Front and an ID Back']
+2026-05-18 14:44:15  INFO      Matched to dropdowns: []
+2026-05-18 14:44:16  INFO      Project found: 869572 — Donnell Warren
+2026-05-18 14:44:17  INFO      NTP work order not found — creating from template...
+2026-05-18 14:44:18  INFO      NTP phase not started — starting it now...
+2026-05-18 14:44:19  WARNING   WO creation returned template ID — retrying without phaseInstanceId
+2026-05-18 14:44:19  INFO      NTP work order created: 2205285
+2026-05-18 14:44:20  INFO      NTP form found: 1374053
+2026-05-18 14:44:21  INFO      Form updated
+2026-05-18 14:44:21  INFO      Work order set to WAITING
+2026-05-18 14:44:21  INFO      Note left on project
+2026-05-18 14:44:22  INFO      Slack sent to Zachary Burton (C0ADDJXD4RX)
+2026-05-18 14:44:30  INFO      Reply sent to Kathy Treanor <kathy.treanor@luxfinancial.io>
+2026-05-18 14:44:30  INFO      Done: Donnell Warren (project 869572)
+2026-05-18 14:46:33  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:46:35  INFO      No new emails.
+/Users/samlesueur/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2026-05-18 14:48:08  INFO      NTP Stip automation started — polling Gmail every 2 minutes.
+2026-05-18 14:48:08  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:48:09  INFO      Processing stip for: Donnell Warren
+2026-05-18 14:48:09  INFO      Stips found: ['Please provide an ID Front and an ID Back']
+2026-05-18 14:48:09  INFO      Matched to dropdowns: ['Copy of ID']
+2026-05-18 14:48:10  INFO      Project found: 869572 — Donnell Warren
+2026-05-18 14:48:11  INFO      NTP work order found: 2205285
+2026-05-18 14:48:11  INFO      NTP form found: 1374053
+2026-05-18 14:48:12  INFO      Form updated
+2026-05-18 14:48:13  INFO      Work order set to WAITING
+2026-05-18 14:48:13  INFO      Note left on project
+2026-05-18 14:48:14  INFO      Slack sent to Zachary Burton (C0ADDJXD4RX)
+2026-05-18 14:48:21  INFO      Reply sent to Kathy Treanor <kathy.treanor@luxfinancial.io>
+2026-05-18 14:48:21  INFO      Done: Donnell Warren (project 869572)
+2026-05-18 14:50:24  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:50:26  INFO      No new emails.
+/Users/samlesueur/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2026-05-18 14:52:00  INFO      NTP Stip automation started — polling Gmail every 2 minutes.
+2026-05-18 14:52:00  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:52:02  INFO      No new emails.
+2026-05-18 14:54:02  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:54:04  INFO      No new emails.
+2026-05-18 14:56:04  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:56:05  INFO      No new emails.
+/Users/samlesueur/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2026-05-18 14:57:59  INFO      NTP Stip automation started — polling Gmail every 2 minutes.
+2026-05-18 14:57:59  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 14:58:00  INFO      Processing stip for: Donnell Warren
+2026-05-18 14:58:00  INFO      Stips found: ['Please provide an ID Front and an ID Back']
+2026-05-18 14:58:00  INFO      Matched to dropdowns: ['Copy of ID']
+2026-05-18 14:58:01  INFO      Project found: 869572 — Donnell Warren
+2026-05-18 14:58:01  INFO      NTP work order not found — creating from template...
+2026-05-18 14:58:02  INFO      NTP phase not started — starting it now...
+2026-05-18 14:58:43  WARNING   Phase started but no NTP WO auto-created after 30s
+2026-05-18 14:58:43  WARNING   NTP phase still NOT_STARTED — WO would land in Other, aborting manual creation
+2026-05-18 14:58:43  ERROR     Failed to process <CAFf-debrT+YrjEmr1uFtnbWqZsBBRJ6gSWy1uKy9-gxfnz=i8Q@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 550, in main
+    process_stip_email(email)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 472, in process_stip_email
+    wo = get_or_create_ntp_wo(project_id)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 361, in get_or_create_ntp_wo
+    raise RuntimeError('NTP phase did not start — cannot safely create WO')
+RuntimeError: NTP phase did not start — cannot safely create WO
+2026-05-18 15:00:46  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:00:48  INFO      Processing stip for: Donnell Warren
+2026-05-18 15:00:48  INFO      Stips found: ['Please provide an ID Front and an ID Back']
+2026-05-18 15:00:48  INFO      Matched to dropdowns: ['Copy of ID']
+2026-05-18 15:00:49  INFO      Project found: 869572 — Donnell Warren
+2026-05-18 15:00:50  INFO      NTP work order not found — creating from template...
+2026-05-18 15:00:50  INFO      NTP phase not started — starting it now...
+2026-05-18 15:01:32  WARNING   Phase started but no NTP WO auto-created after 30s
+2026-05-18 15:01:33  WARNING   NTP phase still NOT_STARTED — WO would land in Other, aborting manual creation
+2026-05-18 15:01:33  ERROR     Failed to process <CAFf-debrT+YrjEmr1uFtnbWqZsBBRJ6gSWy1uKy9-gxfnz=i8Q@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 550, in main
+    process_stip_email(email)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 472, in process_stip_email
+    wo = get_or_create_ntp_wo(project_id)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 361, in get_or_create_ntp_wo
+    raise RuntimeError('NTP phase did not start — cannot safely create WO')
+RuntimeError: NTP phase did not start — cannot safely create WO
+/Users/samlesueur/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2026-05-18 15:02:23  INFO      NTP Stip automation started — polling Gmail every 2 minutes.
+2026-05-18 15:02:23  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:02:25  INFO      Processing stip for: Donnell Warren
+2026-05-18 15:02:25  INFO      Stips found: ['Please provide an ID Front and an ID Back']
+2026-05-18 15:02:25  INFO      Matched to dropdowns: ['Copy of ID']
+2026-05-18 15:02:26  INFO      Project found: 869572 — Donnell Warren
+2026-05-18 15:02:26  INFO      NTP work order not found — creating from template...
+2026-05-18 15:02:27  INFO      NTP phase not started — starting it now...
+2026-05-18 15:03:11  WARNING   NTP phase did not become IN_PROGRESS after 30s — WO would land in Other, aborting
+2026-05-18 15:03:11  ERROR     Failed to process <CAFf-debrT+YrjEmr1uFtnbWqZsBBRJ6gSWy1uKy9-gxfnz=i8Q@mail.gmail.com>
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 542, in main
+    process_stip_email(email)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 464, in process_stip_email
+    wo = get_or_create_ntp_wo(project_id)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 351, in get_or_create_ntp_wo
+    raise RuntimeError('NTP phase did not start — cannot safely create WO')
+RuntimeError: NTP phase did not start — cannot safely create WO
+2026-05-18 15:05:14  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:05:16  INFO      Processing stip for: Donnell Warren
+2026-05-18 15:05:16  INFO      Stips found: ['Please provide an ID Front and an ID Back']
+2026-05-18 15:05:16  INFO      Matched to dropdowns: ['Copy of ID']
+2026-05-18 15:05:16  INFO      Project found: 869572 — Donnell Warren
+2026-05-18 15:05:17  INFO      NTP work order not found — creating from template...
+2026-05-18 15:05:17  INFO      NTP phase not started — starting it now...
+2026-05-18 15:05:24  INFO      NTP phase is now IN_PROGRESS
+2026-05-18 15:05:26  INFO      NTP work order created: 2205395
+2026-05-18 15:05:26  INFO      NTP form found: 1374122
+2026-05-18 15:05:27  INFO      Form updated
+2026-05-18 15:05:27  INFO      Work order set to WAITING
+2026-05-18 15:05:27  INFO      Note left on project
+2026-05-18 15:05:28  INFO      Slack sent to Zachary Burton (C0ADDJXD4RX)
+2026-05-18 15:05:36  INFO      Reply sent to Kathy Treanor <kathy.treanor@luxfinancial.io>
+2026-05-18 15:05:36  INFO      Done: Donnell Warren (project 869572)
+2026-05-18 15:07:39  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:07:41  INFO      No new emails.
+2026-05-18 15:09:41  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:09:43  INFO      No new emails.
+2026-05-18 15:11:43  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:11:45  INFO      No new emails.
+2026-05-18 15:13:45  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:13:47  INFO      No new emails.
+2026-05-18 15:15:47  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:15:50  INFO      No new emails.
+2026-05-18 15:17:50  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:17:52  INFO      No new emails.
+2026-05-18 15:19:52  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:19:54  INFO      No new emails.
+/Users/samlesueur/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2026-05-18 15:20:48  INFO      NTP Stip automation started — polling Gmail every 2 minutes.
+2026-05-18 15:20:48  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:20:50  INFO      No new emails.
+2026-05-18 15:22:50  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:22:51  INFO      No new emails.
+2026-05-18 15:24:51  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:24:53  INFO      No new emails.
+2026-05-18 15:26:53  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:26:55  INFO      No new emails.
+2026-05-18 15:28:55  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:28:57  INFO      No new emails.
+2026-05-18 15:30:57  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:30:59  INFO      No new emails.
+2026-05-18 15:32:59  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:33:01  INFO      No new emails.
+2026-05-18 15:35:01  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:35:03  INFO      No new emails.
+2026-05-18 15:37:03  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:37:05  INFO      No new emails.
+2026-05-18 15:39:05  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:39:07  INFO      No new emails.
+2026-05-18 15:41:07  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:41:09  INFO      No new emails.
+2026-05-18 15:43:09  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:43:11  INFO      No new emails.
+2026-05-18 15:45:11  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:45:13  INFO      No new emails.
+2026-05-18 15:47:13  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:47:15  INFO      No new emails.
+2026-05-18 15:49:15  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:49:17  INFO      No new emails.
+2026-05-18 15:51:18  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:51:20  INFO      No new emails.
+2026-05-18 15:53:20  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:53:22  INFO      No new emails.
+2026-05-18 15:55:22  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:55:24  INFO      No new emails.
+2026-05-18 15:57:24  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:57:26  INFO      No new emails.
+2026-05-18 15:59:27  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 15:59:28  INFO      No new emails.
+2026-05-18 16:01:29  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 16:01:31  INFO      No new emails.
+2026-05-18 16:04:02  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 16:04:02  ERROR     Unexpected error — will retry on next poll.
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 539, in main
+    emails = fetch_new_stip_emails(processed_ids)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 218, in fetch_new_stip_emails
+    mail = imaplib.IMAP4_SSL('imap.gmail.com')
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/imaplib.py", line 1324, in __init__
+    IMAP4.__init__(self, host, port, timeout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/imaplib.py", line 202, in __init__
+    self.open(host, port, timeout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/imaplib.py", line 1337, in open
+    IMAP4.open(self, host, port, timeout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/imaplib.py", line 312, in open
+    self.sock = self._create_socket(timeout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/imaplib.py", line 1327, in _create_socket
+    sock = IMAP4._create_socket(self, timeout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/imaplib.py", line 302, in _create_socket
+    return socket.create_connection(address)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socket.py", line 822, in create_connection
+    for res in getaddrinfo(host, port, 0, SOCK_STREAM):
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socket.py", line 953, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+2026-05-18 23:32:21  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-18 23:32:24  INFO      No new emails.
+2026-05-19 07:08:34  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 07:08:37  INFO      No new emails.
+2026-05-19 08:11:38  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:11:47  INFO      No new emails.
+2026-05-19 08:13:48  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:13:49  INFO      No new emails.
+2026-05-19 08:15:50  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:15:51  INFO      No new emails.
+2026-05-19 08:17:51  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:17:53  INFO      No new emails.
+2026-05-19 08:19:53  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:19:56  INFO      No new emails.
+2026-05-19 08:21:57  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:21:59  INFO      No new emails.
+2026-05-19 08:23:59  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:24:02  INFO      No new emails.
+2026-05-19 08:26:02  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:26:05  INFO      No new emails.
+2026-05-19 08:28:05  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:28:09  INFO      No new emails.
+2026-05-19 08:30:09  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:30:12  INFO      No new emails.
+2026-05-19 08:32:12  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:32:15  INFO      No new emails.
+2026-05-19 08:34:15  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:34:17  INFO      No new emails.
+2026-05-19 08:36:17  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:36:19  INFO      No new emails.
+2026-05-19 08:38:19  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:38:22  INFO      No new emails.
+2026-05-19 08:40:22  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:40:25  INFO      No new emails.
+2026-05-19 08:42:25  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:42:27  INFO      No new emails.
+2026-05-19 08:44:27  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:44:28  INFO      No new emails.
+2026-05-19 08:46:29  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:46:31  INFO      No new emails.
+2026-05-19 08:48:31  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:48:33  INFO      No new emails.
+2026-05-19 08:50:33  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:50:35  INFO      No new emails.
+2026-05-19 08:52:35  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:52:38  INFO      No new emails.
+2026-05-19 08:54:38  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:54:40  INFO      No new emails.
+2026-05-19 08:56:40  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:56:41  INFO      No new emails.
+2026-05-19 08:58:42  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 08:58:44  INFO      No new emails.
+2026-05-19 09:00:44  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:00:46  INFO      No new emails.
+2026-05-19 09:02:46  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:02:48  INFO      No new emails.
+2026-05-19 09:04:48  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:04:51  INFO      No new emails.
+2026-05-19 09:06:51  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:06:56  INFO      No new emails.
+2026-05-19 09:08:56  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:08:58  INFO      No new emails.
+2026-05-19 09:10:58  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:11:00  INFO      No new emails.
+2026-05-19 09:13:01  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:13:03  INFO      No new emails.
+2026-05-19 09:15:03  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:15:07  INFO      No new emails.
+2026-05-19 09:17:07  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:17:20  INFO      No new emails.
+2026-05-19 09:19:20  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:19:23  INFO      No new emails.
+2026-05-19 09:21:23  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:21:26  INFO      No new emails.
+2026-05-19 09:23:26  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:23:29  INFO      No new emails.
+2026-05-19 09:25:29  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:25:33  INFO      No new emails.
+2026-05-19 09:27:33  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:27:36  INFO      No new emails.
+2026-05-19 09:29:36  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:29:39  INFO      No new emails.
+2026-05-19 09:31:39  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:31:42  INFO      No new emails.
+2026-05-19 09:33:42  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:33:45  INFO      No new emails.
+2026-05-19 09:35:45  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:35:49  INFO      No new emails.
+2026-05-19 09:37:49  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:37:51  INFO      No new emails.
+2026-05-19 09:39:51  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:40:01  INFO      No new emails.
+2026-05-19 09:42:01  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:42:03  INFO      No new emails.
+2026-05-19 09:44:04  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:44:07  INFO      No new emails.
+2026-05-19 09:46:07  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:46:09  INFO      No new emails.
+2026-05-19 09:48:09  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:48:12  INFO      No new emails.
+2026-05-19 09:50:12  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:50:15  INFO      No new emails.
+2026-05-19 09:52:15  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:52:17  INFO      No new emails.
+2026-05-19 09:54:17  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:54:19  INFO      No new emails.
+2026-05-19 09:56:19  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:56:21  INFO      No new emails.
+2026-05-19 09:58:21  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 09:58:24  INFO      No new emails.
+2026-05-19 10:00:24  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:00:26  INFO      No new emails.
+2026-05-19 10:02:26  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:02:30  INFO      No new emails.
+2026-05-19 10:04:30  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:04:34  INFO      No new emails.
+2026-05-19 10:06:34  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:06:36  INFO      No new emails.
+2026-05-19 10:08:36  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:08:38  INFO      No new emails.
+2026-05-19 10:10:38  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:10:42  INFO      No new emails.
+2026-05-19 10:12:42  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:12:45  INFO      No new emails.
+2026-05-19 10:14:45  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:14:47  INFO      No new emails.
+2026-05-19 10:16:48  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:16:49  INFO      No new emails.
+2026-05-19 10:18:50  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:18:54  INFO      No new emails.
+2026-05-19 10:20:55  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:20:56  INFO      No new emails.
+2026-05-19 10:22:57  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:22:59  INFO      No new emails.
+2026-05-19 10:24:59  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:25:01  INFO      No new emails.
+2026-05-19 10:27:02  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:27:03  INFO      No new emails.
+2026-05-19 10:29:03  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:29:23  INFO      No new emails.
+2026-05-19 10:31:23  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:31:25  INFO      No new emails.
+2026-05-19 10:33:25  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:33:27  INFO      No new emails.
+2026-05-19 10:35:27  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:35:30  INFO      No new emails.
+2026-05-19 10:37:30  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:37:34  INFO      No new emails.
+2026-05-19 10:39:34  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:39:45  INFO      No new emails.
+2026-05-19 10:41:45  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:41:48  INFO      No new emails.
+2026-05-19 10:43:48  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:43:55  INFO      No new emails.
+2026-05-19 10:45:55  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:45:57  INFO      No new emails.
+2026-05-19 10:47:57  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:48:00  INFO      No new emails.
+2026-05-19 10:50:00  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:50:03  INFO      No new emails.
+2026-05-19 10:52:03  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:52:05  INFO      No new emails.
+2026-05-19 10:54:05  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:54:08  INFO      No new emails.
+2026-05-19 10:56:08  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:56:13  INFO      No new emails.
+2026-05-19 10:58:13  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 10:58:15  INFO      No new emails.
+2026-05-19 11:00:15  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:00:22  INFO      No new emails.
+2026-05-19 11:02:22  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:02:24  INFO      No new emails.
+2026-05-19 11:04:25  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:04:27  INFO      No new emails.
+2026-05-19 11:06:28  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:06:31  INFO      No new emails.
+2026-05-19 11:08:31  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:08:34  INFO      No new emails.
+2026-05-19 11:10:34  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:10:51  INFO      No new emails.
+2026-05-19 11:12:51  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:13:06  INFO      No new emails.
+2026-05-19 11:15:06  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:15:13  INFO      No new emails.
+2026-05-19 11:17:13  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:17:16  INFO      No new emails.
+2026-05-19 11:19:16  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:19:19  INFO      No new emails.
+2026-05-19 11:21:19  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:21:21  INFO      No new emails.
+2026-05-19 11:23:21  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:23:24  INFO      No new emails.
+2026-05-19 11:25:24  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:25:27  INFO      No new emails.
+2026-05-19 11:27:27  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:27:30  INFO      No new emails.
+2026-05-19 11:29:30  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:29:32  INFO      No new emails.
+2026-05-19 11:31:32  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:31:34  INFO      No new emails.
+2026-05-19 11:33:34  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:33:38  INFO      No new emails.
+2026-05-19 11:35:38  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:35:41  INFO      No new emails.
+2026-05-19 11:37:41  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:37:44  INFO      No new emails.
+2026-05-19 11:39:44  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:39:45  INFO      No new emails.
+2026-05-19 11:41:46  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:41:47  INFO      No new emails.
+2026-05-19 11:43:48  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:43:50  INFO      No new emails.
+2026-05-19 11:45:50  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:45:52  INFO      No new emails.
+2026-05-19 11:47:52  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:47:58  INFO      No new emails.
+2026-05-19 11:49:58  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:49:59  INFO      No new emails.
+2026-05-19 11:51:59  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:52:02  INFO      No new emails.
+2026-05-19 11:54:02  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:54:06  INFO      No new emails.
+2026-05-19 11:56:06  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:56:11  INFO      No new emails.
+2026-05-19 11:58:12  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 11:58:14  INFO      No new emails.
+2026-05-19 12:00:14  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:01:32  INFO      No new emails.
+2026-05-19 12:03:32  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:03:34  INFO      No new emails.
+2026-05-19 12:05:34  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:05:36  INFO      No new emails.
+2026-05-19 12:07:36  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:07:38  INFO      No new emails.
+2026-05-19 12:09:38  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:09:41  INFO      No new emails.
+2026-05-19 12:11:41  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:11:43  INFO      No new emails.
+2026-05-19 12:13:43  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:13:45  INFO      No new emails.
+2026-05-19 12:15:45  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:15:50  INFO      No new emails.
+2026-05-19 12:17:50  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:17:54  INFO      No new emails.
+2026-05-19 12:19:54  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:19:55  INFO      No new emails.
+2026-05-19 12:21:56  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:21:59  INFO      No new emails.
+2026-05-19 12:23:59  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:24:02  INFO      No new emails.
+2026-05-19 12:26:02  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:26:05  INFO      No new emails.
+2026-05-19 12:28:05  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:28:08  INFO      No new emails.
+2026-05-19 12:30:08  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:30:11  INFO      No new emails.
+2026-05-19 12:32:12  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:32:17  INFO      No new emails.
+2026-05-19 12:34:17  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:34:20  INFO      No new emails.
+2026-05-19 12:36:20  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:36:25  INFO      No new emails.
+2026-05-19 12:38:25  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:38:33  INFO      No new emails.
+2026-05-19 12:40:33  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:40:35  INFO      No new emails.
+2026-05-19 12:42:35  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:42:38  INFO      No new emails.
+2026-05-19 12:44:38  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:44:40  INFO      No new emails.
+2026-05-19 12:46:40  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:46:43  INFO      No new emails.
+2026-05-19 12:48:43  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:48:49  INFO      No new emails.
+2026-05-19 12:50:49  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:50:51  INFO      No new emails.
+2026-05-19 12:52:52  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:52:55  INFO      No new emails.
+2026-05-19 12:54:55  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:54:57  INFO      No new emails.
+2026-05-19 12:56:57  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:57:00  INFO      No new emails.
+2026-05-19 12:59:00  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 12:59:03  INFO      No new emails.
+2026-05-19 13:01:03  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:01:05  INFO      No new emails.
+2026-05-19 13:03:05  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:03:08  INFO      No new emails.
+2026-05-19 13:05:08  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:05:13  INFO      No new emails.
+2026-05-19 13:07:13  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:07:16  INFO      No new emails.
+2026-05-19 13:09:16  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:09:18  INFO      No new emails.
+2026-05-19 13:11:18  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:11:20  INFO      No new emails.
+2026-05-19 13:13:21  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:13:22  INFO      No new emails.
+2026-05-19 13:15:22  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:15:24  INFO      No new emails.
+2026-05-19 13:17:24  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:17:26  INFO      No new emails.
+2026-05-19 13:19:26  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:19:28  INFO      No new emails.
+2026-05-19 13:21:28  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:21:30  INFO      No new emails.
+2026-05-19 13:23:30  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:23:33  INFO      No new emails.
+2026-05-19 13:25:33  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:25:35  INFO      No new emails.
+2026-05-19 13:27:35  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:27:37  INFO      No new emails.
+2026-05-19 13:29:37  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:29:39  INFO      No new emails.
+2026-05-19 13:31:39  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:31:41  INFO      No new emails.
+2026-05-19 13:33:41  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:33:43  INFO      No new emails.
+2026-05-19 13:35:43  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:35:45  INFO      No new emails.
+2026-05-19 13:37:45  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:37:48  INFO      No new emails.
+2026-05-19 13:39:48  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:39:50  INFO      No new emails.
+2026-05-19 13:41:50  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:41:51  INFO      No new emails.
+2026-05-19 13:43:52  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:43:53  INFO      No new emails.
+2026-05-19 13:45:53  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:45:55  INFO      No new emails.
+2026-05-19 13:47:55  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:47:57  INFO      No new emails.
+2026-05-19 13:49:57  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:49:59  INFO      No new emails.
+2026-05-19 13:51:59  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:52:01  INFO      No new emails.
+2026-05-19 13:54:01  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:54:03  INFO      No new emails.
+2026-05-19 13:56:03  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:56:05  INFO      No new emails.
+2026-05-19 13:58:05  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 13:58:07  INFO      No new emails.
+2026-05-19 14:00:07  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:00:10  INFO      No new emails.
+2026-05-19 14:02:10  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:02:12  INFO      No new emails.
+2026-05-19 14:04:12  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:04:13  INFO      No new emails.
+2026-05-19 14:06:13  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:06:15  INFO      No new emails.
+2026-05-19 14:08:15  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:08:17  INFO      No new emails.
+2026-05-19 14:10:17  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:10:19  INFO      No new emails.
+2026-05-19 14:12:19  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:12:20  INFO      No new emails.
+2026-05-19 14:14:20  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:14:22  INFO      No new emails.
+2026-05-19 14:16:22  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:16:24  INFO      No new emails.
+2026-05-19 14:18:24  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:18:26  INFO      No new emails.
+2026-05-19 14:20:26  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:20:28  INFO      No new emails.
+2026-05-19 14:22:28  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:22:30  INFO      No new emails.
+2026-05-19 14:24:30  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:24:33  INFO      No new emails.
+2026-05-19 14:26:33  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:26:34  INFO      No new emails.
+2026-05-19 14:28:35  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:28:36  INFO      No new emails.
+2026-05-19 14:30:36  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:30:39  INFO      No new emails.
+2026-05-19 14:32:39  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:32:40  INFO      No new emails.
+2026-05-19 14:34:41  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:34:42  INFO      No new emails.
+2026-05-19 14:36:42  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:36:45  INFO      No new emails.
+2026-05-19 14:38:45  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:38:49  INFO      No new emails.
+2026-05-19 14:40:49  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:40:50  INFO      No new emails.
+2026-05-19 14:42:51  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:42:52  INFO      No new emails.
+2026-05-19 14:44:52  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:44:54  INFO      No new emails.
+2026-05-19 14:46:54  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:46:56  INFO      No new emails.
+2026-05-19 14:48:56  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:48:58  INFO      No new emails.
+2026-05-19 14:50:58  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:51:00  INFO      No new emails.
+2026-05-19 14:53:00  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:53:03  INFO      No new emails.
+2026-05-19 14:55:03  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:55:05  INFO      No new emails.
+2026-05-19 14:57:05  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:57:08  INFO      No new emails.
+2026-05-19 14:59:08  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 14:59:10  INFO      No new emails.
+2026-05-19 15:01:11  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:01:15  INFO      No new emails.
+2026-05-19 15:03:15  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:03:18  INFO      No new emails.
+2026-05-19 15:05:18  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:05:19  INFO      No new emails.
+2026-05-19 15:07:19  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:07:22  INFO      No new emails.
+2026-05-19 15:09:22  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:09:23  INFO      No new emails.
+2026-05-19 15:11:23  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:11:26  INFO      No new emails.
+2026-05-19 15:13:26  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:13:28  INFO      No new emails.
+2026-05-19 15:15:28  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:15:30  INFO      No new emails.
+2026-05-19 15:17:30  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:17:32  INFO      No new emails.
+2026-05-19 15:19:32  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:19:34  INFO      No new emails.
+2026-05-19 15:21:34  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:21:36  INFO      No new emails.
+2026-05-19 15:23:36  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:23:37  INFO      No new emails.
+2026-05-19 15:25:37  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:25:39  INFO      No new emails.
+2026-05-19 15:27:40  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:27:43  INFO      No new emails.
+2026-05-19 15:29:44  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:29:46  INFO      No new emails.
+2026-05-19 15:31:46  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:31:48  INFO      No new emails.
+2026-05-19 15:33:48  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:33:50  INFO      No new emails.
+2026-05-19 15:35:50  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:35:52  INFO      No new emails.
+2026-05-19 15:37:52  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:37:54  INFO      No new emails.
+2026-05-19 15:39:54  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:39:55  INFO      No new emails.
+2026-05-19 15:41:57  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 15:42:01  INFO      No new emails.
+2026-05-19 20:02:12  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 20:02:12  ERROR     Unexpected error — will retry on next poll.
+Traceback (most recent call last):
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 539, in main
+    emails = fetch_new_stip_emails(processed_ids)
+  File "/Users/samlesueur/vero-power/ntp_stip_automation.py", line 218, in fetch_new_stip_emails
+    mail = imaplib.IMAP4_SSL('imap.gmail.com')
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/imaplib.py", line 1324, in __init__
+    IMAP4.__init__(self, host, port, timeout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/imaplib.py", line 202, in __init__
+    self.open(host, port, timeout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/imaplib.py", line 1337, in open
+    IMAP4.open(self, host, port, timeout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/imaplib.py", line 312, in open
+    self.sock = self._create_socket(timeout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/imaplib.py", line 1327, in _create_socket
+    sock = IMAP4._create_socket(self, timeout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/imaplib.py", line 302, in _create_socket
+    return socket.create_connection(address)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socket.py", line 822, in create_connection
+    for res in getaddrinfo(host, port, 0, SOCK_STREAM):
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socket.py", line 953, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+2026-05-19 20:34:05  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 20:34:13  INFO      No new emails.
+/Users/samlesueur/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2026-05-19 20:36:05  INFO      NTP Stip automation started — polling Gmail every 2 minutes.
+2026-05-19 20:36:05  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 20:36:08  INFO      No new emails.
+2026-05-19 20:38:08  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 20:38:15  INFO      No new emails.
+2026-05-19 20:40:15  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 20:40:17  INFO      No new emails.
+2026-05-19 20:42:17  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 20:42:19  INFO      No new emails.
+2026-05-19 20:44:19  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 20:44:21  INFO      No new emails.
+2026-05-19 20:46:21  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 20:46:24  INFO      No new emails.
+2026-05-19 20:48:24  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 20:48:26  INFO      No new emails.
+2026-05-19 20:50:26  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 20:50:28  INFO      No new emails.
+2026-05-19 20:52:28  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 20:52:30  INFO      No new emails.
+2026-05-19 20:54:31  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 20:54:33  INFO      No new emails.
+2026-05-19 20:56:33  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 20:56:35  INFO      No new emails.
+2026-05-19 20:58:35  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 20:58:37  INFO      No new emails.
+2026-05-19 21:00:37  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:01:17  INFO      No new emails.
+2026-05-19 21:03:17  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:03:19  INFO      No new emails.
+2026-05-19 21:05:19  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:05:21  INFO      No new emails.
+2026-05-19 21:07:21  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:07:23  INFO      No new emails.
+2026-05-19 21:09:23  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:09:25  INFO      No new emails.
+2026-05-19 21:11:26  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:11:27  INFO      No new emails.
+2026-05-19 21:13:28  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:13:30  INFO      No new emails.
+2026-05-19 21:15:30  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:15:32  INFO      No new emails.
+2026-05-19 21:17:32  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:17:34  INFO      No new emails.
+2026-05-19 21:19:34  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:19:37  INFO      No new emails.
+2026-05-19 21:21:37  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:21:39  INFO      No new emails.
+2026-05-19 21:23:39  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:23:41  INFO      No new emails.
+2026-05-19 21:25:41  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:25:43  INFO      No new emails.
+2026-05-19 21:27:43  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:27:45  INFO      No new emails.
+2026-05-19 21:29:45  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:29:48  INFO      No new emails.
+2026-05-19 21:31:48  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:31:51  INFO      No new emails.
+2026-05-19 21:33:51  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:33:54  INFO      No new emails.
+2026-05-19 21:35:54  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:35:56  INFO      No new emails.
+2026-05-19 21:37:56  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:37:59  INFO      No new emails.
+2026-05-19 21:39:59  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:40:01  INFO      No new emails.
+2026-05-19 21:42:01  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:42:04  INFO      No new emails.
+2026-05-19 21:44:04  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:44:06  INFO      No new emails.
+2026-05-19 21:46:06  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:46:09  INFO      No new emails.
+2026-05-19 21:48:09  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:48:12  INFO      No new emails.
+2026-05-19 21:50:12  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:50:14  INFO      No new emails.
+2026-05-19 21:52:14  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:52:16  INFO      No new emails.
+2026-05-19 21:54:16  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:54:19  INFO      No new emails.
+2026-05-19 21:56:19  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:56:21  INFO      No new emails.
+2026-05-19 21:58:21  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 21:58:24  INFO      No new emails.
+2026-05-19 22:00:24  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 22:00:26  INFO      No new emails.
+2026-05-19 22:02:27  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 22:02:29  INFO      No new emails.
+2026-05-19 22:04:30  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 22:04:32  INFO      No new emails.
+2026-05-19 22:06:32  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 22:06:35  INFO      No new emails.
+2026-05-19 22:08:35  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 22:08:37  INFO      No new emails.
+2026-05-19 22:10:38  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 22:10:40  INFO      No new emails.
+2026-05-19 22:12:40  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 22:12:43  INFO      No new emails.
+2026-05-19 22:14:43  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 22:14:45  INFO      No new emails.
+2026-05-19 22:16:45  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 22:16:49  INFO      No new emails.
+2026-05-19 22:18:49  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 22:18:52  INFO      No new emails.
+2026-05-19 22:20:52  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 22:20:55  INFO      No new emails.
+2026-05-19 22:22:55  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 22:22:57  INFO      No new emails.
+2026-05-19 22:24:57  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 22:24:59  INFO      No new emails.
+2026-05-19 22:27:00  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 22:27:02  INFO      No new emails.
+2026-05-19 22:29:02  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 22:29:04  INFO      No new emails.
+2026-05-19 22:31:04  INFO      Checking Gmail for NTP stipulation emails...
+2026-05-19 22:31:07  INFO      No new emails.
+2026-05-19 22:56:24  INFO      Checking Gmail for NTP stipulation emails...
