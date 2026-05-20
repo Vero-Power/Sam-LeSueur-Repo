@@ -347,6 +347,18 @@ def get_or_create_ntp_wo(project_id: int) -> dict:
         else:
             log.warning('NTP phase still NOT_STARTED after 60s — WO creation will likely fail')
 
+        # Re-check for existing WO now that phase is active — Coperniq hides WOs in NOT_STARTED phases
+        refreshed_wos = _api_get(f'{COPERNIQ_BASE}/projects/{project_id}/work-orders').json()
+        wo = next(
+            (w for w in refreshed_wos
+             if not w.get('isArchived')
+             and 'Notice to Proceed' in (w.get('title') or '')),
+            None,
+        )
+        if wo:
+            log.info(f'NTP work order found after phase start: {wo["id"]}')
+            return wo
+
     # Create WO with phaseInstanceId so it lands in the NTP phase, not Other
     body = {'templateId': NTP_WO_TEMPLATE_ID}
     if ntp_phase_id:
