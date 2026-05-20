@@ -22,7 +22,7 @@ from dotenv import load_dotenv
 
 def _api_get(url, params=None, max_retries=5):
     for attempt in range(max_retries):
-        r = requests.get(url, params=params, headers=GET_H)
+        r = requests.get(url, params=params, headers=GET_H, timeout=30)
         if r.status_code == 429:
             wait = 15 * (attempt + 1)
             log.warning(f'Rate limited — waiting {wait}s before retry {attempt + 1}/{max_retries}')
@@ -35,7 +35,7 @@ def _api_get(url, params=None, max_retries=5):
 
 def _api_patch(url, json_body, max_retries=5):
     for attempt in range(max_retries):
-        r = requests.patch(url, headers=POST_H, json=json_body)
+        r = requests.patch(url, headers=POST_H, json=json_body, timeout=30)
         if r.status_code == 429:
             wait = 15 * (attempt + 1)
             log.warning(f'Rate limited — waiting {wait}s before retry {attempt + 1}/{max_retries}')
@@ -48,7 +48,7 @@ def _api_patch(url, json_body, max_retries=5):
 
 def _api_post(url, json_body, max_retries=5):
     for attempt in range(max_retries):
-        r = requests.post(url, headers=POST_H, json=json_body)
+        r = requests.post(url, headers=POST_H, json=json_body, timeout=30)
         if r.status_code == 429:
             wait = 15 * (attempt + 1)
             log.warning(f'Rate limited — waiting {wait}s before retry {attempt + 1}/{max_retries}')

@@ -92,7 +92,7 @@ log = logging.getLogger(__name__)
 
 def _api_get(url, params=None, max_retries=5):
     for attempt in range(max_retries):
-        r = requests.get(url, params=params, headers=GET_H)
+        r = requests.get(url, params=params, headers=GET_H, timeout=30)
         if r.status_code == 429:
             wait = 15 * (attempt + 1)
             log.warning(f'Rate limited — waiting {wait}s (retry {attempt+1}/{max_retries})')
@@ -105,7 +105,7 @@ def _api_get(url, params=None, max_retries=5):
 
 def _api_patch(url, body, max_retries=5):
     for attempt in range(max_retries):
-        r = requests.patch(url, headers=POST_H, json=body)
+        r = requests.patch(url, headers=POST_H, json=body, timeout=30)
         if r.status_code == 429:
             wait = 15 * (attempt + 1)
             log.warning(f'Rate limited — waiting {wait}s (retry {attempt+1}/{max_retries})')
@@ -118,7 +118,7 @@ def _api_patch(url, body, max_retries=5):
 
 def _api_post(url, body, max_retries=5):
     for attempt in range(max_retries):
-        r = requests.post(url, headers=POST_H, json=body)
+        r = requests.post(url, headers=POST_H, json=body, timeout=30)
         if r.status_code == 429:
             wait = 15 * (attempt + 1)
             log.warning(f'Rate limited — waiting {wait}s (retry {attempt+1}/{max_retries})')
@@ -412,6 +412,7 @@ def _slack_user_id_from_email(email: str):
         'https://slack.com/api/users.lookupByEmail',
         params={'email': email},
         headers={'Authorization': f'Bearer {SLACK_BOT_TOKEN}'},
+        timeout=30,
     )
     data = r.json()
     if data.get('ok'):
@@ -426,6 +427,7 @@ def _slack_channel_for_closer(closer_name: str) -> str:
         'https://slack.com/api/conversations.list',
         params={'limit': 200, 'types': 'public_channel,private_channel'},
         headers={'Authorization': f'Bearer {SLACK_BOT_TOKEN}'},
+        timeout=30,
     )
     data = r.json()
     if data.get('ok'):
@@ -442,6 +444,7 @@ def send_slack(channel: str, text: str):
         'https://slack.com/api/chat.postMessage',
         headers={'Authorization': f'Bearer {SLACK_BOT_TOKEN}', 'Content-Type': 'application/json'},
         json={'channel': channel, 'text': text},
+        timeout=30,
     )
     data = r.json()
     if not data.get('ok'):

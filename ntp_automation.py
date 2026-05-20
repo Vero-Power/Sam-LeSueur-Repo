@@ -108,6 +108,7 @@ def process_ntp_approval(subject: str) -> dict:
         f'{BASE_URL}/projects/search',
         params={'prop1': 'title', 'op1': 'contains', 'value1': customer_name},
         headers=_get_headers(),
+        timeout=30,
     )
     projects = r.json()
     if not projects:
@@ -118,7 +119,7 @@ def process_ntp_approval(subject: str) -> dict:
 
     # 2. Find or create NTP work order
     work_orders = requests.get(
-        f'{BASE_URL}/projects/{project_id}/work-orders', headers=_get_headers()
+        f'{BASE_URL}/projects/{project_id}/work-orders', headers=_get_headers(), timeout=30
     ).json()
     ntp_wo = next(
         (wo for wo in work_orders
@@ -132,6 +133,7 @@ def process_ntp_approval(subject: str) -> dict:
             f'{BASE_URL}/projects/{project_id}/work-orders',
             headers=_post_headers(),
             json={'templateId': NTP_WO_TEMPLATE_ID},
+            timeout=30,
         ).json()
     log.info(f'Work order ID: {ntp_wo["id"]}')
 
@@ -141,11 +143,12 @@ def process_ntp_approval(subject: str) -> dict:
         f'{BASE_URL}/projects/{project_id}/work-orders/{ntp_wo["id"]}',
         headers=_post_headers(),
         json={'checklist': checklist},
+        timeout=30,
     )
 
     # 4. Find or create NTP form
     forms = requests.get(
-        f'{BASE_URL}/projects/{project_id}/forms', headers=_get_headers()
+        f'{BASE_URL}/projects/{project_id}/forms', headers=_get_headers(), timeout=30
     ).json()
     ntp_form_stub = next(
         (f for f in forms
@@ -158,12 +161,13 @@ def process_ntp_approval(subject: str) -> dict:
             f'{BASE_URL}/projects/{project_id}/forms',
             headers=_post_headers(),
             json={'templateId': NTP_FORM_TEMPLATE_ID},
+            timeout=30,
         ).json()
     log.info(f'Form ID: {ntp_form_stub["id"]}')
 
     # 5. Get full form to resolve column IDs
     ntp_form = requests.get(
-        f'{BASE_URL}/forms/{ntp_form_stub["id"]}', headers=_get_headers()
+        f'{BASE_URL}/forms/{ntp_form_stub["id"]}', headers=_get_headers(), timeout=30
     ).json()
 
     all_props = []
@@ -200,11 +204,13 @@ def process_ntp_approval(subject: str) -> dict:
         f'{BASE_URL}/forms/{ntp_form_stub["id"]}',
         headers=_post_headers(),
         json={'fields': fields},
+        timeout=30,
     )
     form_result = requests.patch(
         f'{BASE_URL}/forms/{ntp_form_stub["id"]}',
         headers=_post_headers(),
         json={'status': 'COMPLETED'},
+        timeout=30,
     ).json()
 
     # 7. Complete work order
@@ -212,6 +218,7 @@ def process_ntp_approval(subject: str) -> dict:
         f'{BASE_URL}/projects/{project_id}/work-orders/{ntp_wo["id"]}',
         headers=_post_headers(),
         json={'status': 'COMPLETED'},
+        timeout=30,
     ).json()
 
     # 8. Leave comment
@@ -219,6 +226,7 @@ def process_ntp_approval(subject: str) -> dict:
         f'{BASE_URL}/projects/{project_id}/comments',
         headers=_post_headers(),
         json={'body': 'NTP Approved - automated via LUX Financial approval email.'},
+        timeout=30,
     )
 
     result = {
