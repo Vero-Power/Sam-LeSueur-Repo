@@ -10,6 +10,7 @@ import os
 import time
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+from typing import Optional
 
 import requests
 from dotenv import load_dotenv
@@ -236,6 +237,78 @@ def complete_install_coperniq(project_id: int) -> dict:
             log.info(f'[coperniq] Form {form_id} marked COMPLETED (no date fields found)')
 
     return result
+
+
+def _slack_user_id_from_email(email: str) -> Optional[str]:
+    r = requests.get(
+        'https://slack.com/api/users.lookupByEmail',
+        params={'email': email},
+        headers={'Authorization': f'Bearer {SLACK_BOT_TOKEN}'},
+    )
+    data = r.json()
+    return data['user']['id'] if data.get('ok') else None
+
+
+def send_install_slack(project: dict, photos: list):
+    """Post install notification to #vero with customer/rep info and photos."""
+    VERO_CHANNEL = 'C0AC5MSF4PJ'
+
+    customer_name = project.get('title') or 'Unknown'
+    custom = project.get('custom') or {}
+
+    setter_name = custom.get('sales_setter_name') or ''
+    closer_name = custom.get('sales_closer_name') or ''
+    setter_email = custom.get('sales_setter_email') or ''
+    closer_email = custom.get('sales_closer_email') or ''
+
+    setter_id = _slack_user_id_from_email(setter_email) if setter_email else None
+    closer_id = _slack_user_id_from_email(closer_email) if closer_email else None
+    setter_tag = f'<@{setter_id}>' if setter_id else setter_name
+    closer_tag = f'<@{closer_id}>' if closer_id else closer_name
+
+    # System size from top-level 'size' field (kW)
+    system_size = project.get('size')
+    size_val = f'{system_size}' if system_size else '?'
+
+    # Battery detection via custom fields
+    has_battery = bool(
+        custom.get('battery_manufacturer') or
+        custom.get('battery_model') or
+        custom.get('battery_qty')
+    )
+    size_str = f'{size_val}kW+battery 🔋' if has_battery else f'{size_val}kW'
+
+    # City from top-level 'city' field
+    city = project.get('city') or ''
+
+    text = (
+        f'Customer: {customer_name}\n\n'
+        f'Setter: {setter_tag}\n'
+        f'Closer: {closer_tag}\n\n'
+        f'{size_str}\n\n'
+        f'Area: {city}'
+    )
+
+    r = requests.post(
+        'https://slack.com/api/chat.postMessage',
+        headers={'Authorization': f'Bearer {SLACK_BOT_TOKEN}', 'Content-Type': 'application/json'},
+        json={'channel': VERO_CHANNEL, 'text': text},
+    )
+    r.raise_for_status()
+    log.info(f'Slack message sent for {customer_name}')
+
+    # Upload photos to same channel (not threaded)
+    for i, photo_bytes in enumerate(photos):
+        requests.post(
+            'https://slack.com/api/files.upload',
+            headers={'Authorization': f'Bearer {SLACK_BOT_TOKEN}'},
+            data={
+                'channels': VERO_CHANNEL,
+                'filename': f'install_{i+1}.jpg',
+            },
+            files={'file': (f'install_{i+1}.jpg', photo_bytes, 'image/jpeg')},
+        )
+    log.info(f'Uploaded {len(photos)} photos to Slack for {customer_name}')
 
 
 def get_todays_installs() -> list:
