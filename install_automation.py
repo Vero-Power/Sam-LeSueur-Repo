@@ -4,6 +4,8 @@ Install Automation
 Monitors Coperniq for completed solar installs and runs post-install workflow.
 """
 
+import email as emaillib
+import imaplib
 import json
 import logging
 import os
@@ -388,6 +390,70 @@ def get_todays_installs() -> list:
 
     log.info(f'Found {len(projects)} solar install(s) scheduled for {today}')
     return projects
+
+
+def download_bom_from_gmail(customer_name: str) -> list:
+    """Return list of (filename, bytes) tuples from the most recent [Customer] Solar Materials email."""
+    mail = imaplib.IMAP4_SSL('imap.gmail.com')
+    mail.login(GMAIL_ADDRESS, GMAIL_APP_PW)
+    mail.select('inbox')
+
+    _, data = mail.search(None, f'SUBJECT "{customer_name} Solar Materials"')
+    if not data[0].split():
+        last = customer_name.split()[-1]
+        _, data = mail.search(None, f'SUBJECT "{last} Solar Materials"')
+
+    attachments = []
+    for num in reversed(data[0].split()):
+        _, raw = mail.fetch(num, '(RFC822)')
+        msg = emaillib.message_from_bytes(raw[0][1])
+        for part in msg.walk():
+            if part.get_content_disposition() == 'attachment':
+                filename = part.get_filename() or 'attachment.pdf'
+                payload = part.get_payload(decode=True)
+                if payload:
+                    attachments.append((filename, payload))
+        if attachments:
+            break
+
+    mail.logout()
+    log.info(f'Downloaded {len(attachments)} BOM attachment(s) for {customer_name}')
+    return attachments
+
+
+def download_cad_from_coperniq(project_id: int):
+    """Return (filename, bytes) tuple for the most recent CAD/planset file, or None if not found."""
+    r = requests.get(f'{COPERNIQ_BASE}/projects/{project_id}/files', headers=COP_GET)
+    if r.status_code != 200:
+        log.warning(f'Coperniq /files returned {r.status_code} for project {project_id}')
+        return None
+
+    files = r.json() if isinstance(r.json(), list) else r.json().get('rows', [])
+    cad_keywords = ['cad', 'planset', 'plan set', 'engineering', 'design', 'stamped']
+    cad_files = [
+        f for f in files
+        if any(kw in (f.get('name') or f.get('filename') or '').lower() for kw in cad_keywords)
+    ]
+
+    if not cad_files:
+        log.warning(f'No CAD/planset found for project {project_id}')
+        return None
+
+    latest = sorted(
+        cad_files,
+        key=lambda f: f.get('createdAt') or f.get('created_at') or '',
+        reverse=True,
+    )[0]
+    url = latest.get('downloadUrl') or latest.get('url') or latest.get('file_url')
+    if not url:
+        log.warning(f'CAD file found but no download URL for project {project_id}')
+        return None
+
+    resp = requests.get(url)
+    resp.raise_for_status()
+    filename = latest.get('name') or latest.get('filename') or 'planset.pdf'
+    log.info(f'Downloaded CAD/planset: {filename}')
+    return (filename, resp.content)
 
 
 # --- Main loop ---
