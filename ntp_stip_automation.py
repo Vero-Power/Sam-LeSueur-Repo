@@ -62,7 +62,7 @@ SLACK_CHANNEL_MAP = {
 
 STIP_KEYWORDS = {
     'Bank Verification':                     ['bank verification', 'bank'],
-    'Title Verification':                    ['title'],
+    'Title Verification':                    ['title', 'property ownership', 'proof of ownership'],
     'Energy Community Error':                ['energy community'],
     'Finance Contract Signature Needed':     ['signature', 'contract'],
     'Pending Change Order':                  ['change order'],
