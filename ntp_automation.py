@@ -65,7 +65,7 @@ def save_processed_ids(ids: set):
 
 
 def fetch_new_ntp_emails(processed_ids: set) -> list:
-    mail = imaplib.IMAP4_SSL('imap.gmail.com')
+    mail = imaplib.IMAP4_SSL('imap.gmail.com', timeout=30)
     mail.login(GMAIL_ADDRESS, GMAIL_APP_PW)
     mail.select('inbox')
 
