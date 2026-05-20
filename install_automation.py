@@ -239,6 +239,57 @@ def complete_install_coperniq(project_id: int) -> dict:
     return result
 
 
+def send_customer_sms(project_id: int, customer_name: str):
+    """Send a post-install thank-you SMS to the customer via Coperniq.
+
+    Coperniq's REST API does not expose a dedicated SMS-send endpoint — the
+    /communications, /messages, and /sms routes all return 404.  The built-in
+    Twilio integration is only reachable through the Coperniq web UI.
+
+    Current strategy:
+      1. Attempt POST /projects/{id}/communications (in case the endpoint is
+         added or enabled for this account in the future).
+      2. If that returns non-2xx, fall back to POST /projects/{id}/notes so
+         the outgoing message text is recorded on the project as a paper trail,
+         and log a WARNING so the operator knows a manual SMS is needed.
+    """
+    first_name = customer_name.split()[0]
+    message = (
+        f"Hey {first_name}! This is Sam with Vero, just checking in to make sure the install "
+        f"went well and to thank you for being great to work with. If you ever have any neighbors "
+        f"or friends who are interested in the program, let us know so we can send ya a $500 referral bonus!"
+    )
+
+    # Attempt 1: /communications (may be activated for this account in future)
+    r = requests.post(
+        f'{COPERNIQ_BASE}/projects/{project_id}/communications',
+        headers=COP_POST,
+        json={'body': message, 'type': 'SMS'},
+    )
+    if r.status_code in (200, 201):
+        log.info(f'SMS sent to {customer_name} via Coperniq /communications')
+        return
+
+    log.warning(
+        f'Coperniq /communications returned {r.status_code} — SMS not sent automatically. '
+        f'Recording message as a project note instead. Send manually to {customer_name}.'
+    )
+
+    # Fallback: leave the message text as a note so it is not lost
+    note_body = (
+        f'[PENDING MANUAL SMS — send to customer]\n\n{message}'
+    )
+    note_r = requests.post(
+        f'{COPERNIQ_BASE}/projects/{project_id}/notes',
+        headers=COP_POST,
+        json={'body': note_body},
+    )
+    if note_r.status_code not in (200, 201):
+        log.warning(f'Also failed to leave note: {note_r.status_code} {note_r.text[:200]}')
+    else:
+        log.info(f'Note left on project {project_id} with pending SMS text for {customer_name}')
+
+
 def _slack_user_id_from_email(email: str) -> Optional[str]:
     r = requests.get(
         'https://slack.com/api/users.lookupByEmail',
