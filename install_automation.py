@@ -9,8 +9,10 @@ import imaplib
 import json
 import logging
 import os
+import smtplib
 import time
 from datetime import datetime, timezone, timedelta
+from email.mime.text import MIMEText
 from pathlib import Path
 from typing import Optional
 
@@ -454,6 +456,169 @@ def download_cad_from_coperniq(project_id: int):
     filename = latest.get('name') or latest.get('filename') or 'planset.pdf'
     log.info(f'Downloaded CAD/planset: {filename}')
     return (filename, resp.content)
+
+
+# ─── M2 phase ─────────────────────────────────────────────────────────────────
+
+M2_WO_TEMPLATE_ID   = 1907088
+M2_FORM_TEMPLATE_ID = 1191547
+
+
+def send_m2_email_kathy(customer_name: str):
+    """Email Kathy at Lux Financial notifying her that M2 was submitted."""
+    msg = MIMEText(
+        f'Hi Kathy,\n\n'
+        f'Please see that M2 has been submitted for {customer_name}. '
+        f'All required documents have been uploaded to the Lux portal.\n\n'
+        f'Thank you!'
+    )
+    msg['From']    = GMAIL_ADDRESS
+    msg['To']      = KATHY_EMAIL
+    msg['Subject'] = f'M2 Submitted — {customer_name}'
+    with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        server.starttls()
+        server.login(GMAIL_ADDRESS, GMAIL_APP_PW)
+        server.send_message(msg)
+    log.info(f'M2 email sent to Kathy for {customer_name}')
+
+
+def _get_or_create_m2_work_order(project_id: int) -> dict:
+    """Return the existing M2 work order or create one from the template."""
+    r = requests.get(f'{COPERNIQ_BASE}/projects/{project_id}/work-orders', headers=COP_GET)
+    r.raise_for_status()
+    wo = next(
+        (w for w in r.json()
+         if not w.get('isArchived')
+         and any(kw in (w.get('title') or '').lower() for kw in ['milestone 2', 'm2'])),
+        None,
+    )
+    if wo:
+        log.info(f'M2 WO found: {wo["id"]} — {wo.get("title")}')
+        return wo
+
+    # Create from template
+    log.info(f'No M2 WO found for project {project_id} — creating from template {M2_WO_TEMPLATE_ID}')
+    cr = requests.post(
+        f'{COPERNIQ_BASE}/projects/{project_id}/work-orders',
+        headers=COP_POST,
+        json={'templateId': M2_WO_TEMPLATE_ID},
+    )
+    cr.raise_for_status()
+    wo = cr.json()
+    log.info(f'M2 WO created: {wo["id"]}')
+    return wo
+
+
+def _get_or_create_m2_form(project_id: int) -> dict:
+    """Return the full M2 form (with formLayouts) or create one from the template."""
+    r = requests.get(f'{COPERNIQ_BASE}/projects/{project_id}/forms', headers=COP_GET)
+    r.raise_for_status()
+    stub = next(
+        (f for f in r.json()
+         if not f.get('isArchived')
+         and any(kw in (f.get('name') or '').lower() for kw in ['milestone 2', 'm2'])),
+        None,
+    )
+    if not stub:
+        log.info(f'No M2 form found for project {project_id} — creating from template {M2_FORM_TEMPLATE_ID}')
+        cr = requests.post(
+            f'{COPERNIQ_BASE}/projects/{project_id}/forms',
+            headers=COP_POST,
+            json={'templateId': M2_FORM_TEMPLATE_ID},
+        )
+        cr.raise_for_status()
+        stub = cr.json()
+        log.info(f'M2 form created: {stub["id"]}')
+
+    r2 = requests.get(f'{COPERNIQ_BASE}/forms/{stub["id"]}', headers=COP_GET)
+    r2.raise_for_status()
+    form = r2.json()
+    log.info(f'M2 form loaded: {stub["id"]} — {stub.get("name")}')
+    return form
+
+
+def start_m2_coperniq(project_id: int, customer_name: str):
+    """Kick off the M2 phase in Coperniq for the given project.
+
+    Steps:
+      1. Find or create M2 work order.
+      2. Find or create M2 form.
+      3. Build field_map from formLayouts.
+      4. Set Finance Status → 'M2 Submitted', M2 Submitted Date and M2 Completed Date → today.
+      5. Mark form COMPLETED.
+      6. Set WO status → 'WAITING'.
+      7. Leave note on project.
+    """
+    today = _today_et()
+
+    # 1. Work order
+    wo = _get_or_create_m2_work_order(project_id)
+    wo_id = wo['id']
+
+    # 2. Form (full detail with formLayouts)
+    form    = _get_or_create_m2_form(project_id)
+    form_id = form['id']
+
+    # 3. Build field map — mirrors m2_automation.build_field_map()
+    all_props = []
+    for layout in form.get('formLayouts', []):
+        for prop in layout.get('properties', []):
+            all_props.append(prop)
+            for field in prop.get('fields', []):
+                all_props.append(field)
+    field_map = {p['name']: p for p in all_props if 'name' in p}
+    log.info(f'M2 form fields available: {list(field_map.keys())}')
+
+    # 4. Set form fields
+    desired = {
+        'Finance Status':    'M2 Submitted',
+        'M2 Submitted Date': today,
+        'M2 Completed Date': today,
+    }
+    fields = [
+        {'columnId': field_map[name]['columnId'], 'value': value}
+        for name, value in desired.items()
+        if name in field_map
+    ]
+    log.info(f'Patching {len(fields)} M2 form fields')
+    patch_r = requests.patch(
+        f'{COPERNIQ_BASE}/forms/{form_id}',
+        headers=COP_POST,
+        json={'fields': fields},
+    )
+    patch_r.raise_for_status()
+
+    # 5. Complete form
+    patch_r2 = requests.patch(
+        f'{COPERNIQ_BASE}/forms/{form_id}',
+        headers=COP_POST,
+        json={'status': 'COMPLETED'},
+    )
+    patch_r2.raise_for_status()
+    log.info(f'M2 form {form_id} marked COMPLETED')
+
+    # 6. Set WO status to WAITING
+    wo_patch = requests.patch(
+        f'{COPERNIQ_BASE}/projects/{project_id}/work-orders/{wo_id}',
+        headers=COP_POST,
+        json={'status': 'WAITING'},
+    )
+    wo_patch.raise_for_status()
+    log.info(f'M2 WO {wo_id} set to WAITING')
+
+    # 7. Leave note
+    note = (
+        f'M2 submitted for {customer_name}. '
+        f'Documents uploaded to Lux portal. '
+        f'[Sam LeSueur|~id:14206]'
+    )
+    note_r = requests.post(
+        f'{COPERNIQ_BASE}/projects/{project_id}/comments',
+        headers=COP_POST,
+        json={'body': note},
+    )
+    note_r.raise_for_status()
+    log.info(f'M2 note left on project {project_id}')
 
 
 # --- Main loop ---
