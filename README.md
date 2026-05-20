@@ -35,11 +35,11 @@ Watches for emails with subject `Vero NTP Stipulation: [Customer Name]` from Lux
 **Actions:**
 1. Skips if project is already NTP Approved, M2 Approved, M2 Submitted, CANCELLED, or ON_HOLD
 2. Starts the NTP phase in Coperniq if not already in progress
-3. Creates NTP work order under the Notice to Proceed phase
+3. Finds or creates the NTP work order (re-checks after phase start to avoid duplicates — Coperniq hides WOs in NOT_STARTED phases)
 4. Updates NTP form: Finance Status → Pending Stipulation, sets Stipulations dropdown
 5. Sets NTP work order to WAITING
 6. Leaves a note tagging Sam LeSueur
-7. Sends a Slack message to the rep's `-ops` channel
+7. Notifies the rep — Slack message to their `-ops` channel if it exists, otherwise emails the rep directly
 8. Replies to Lux: "Hi Kathy, Thank you for the heads up — we are on it!"
 
 ---
@@ -71,7 +71,7 @@ python m2_automation.py
 python ntp_stip_automation.py
 ```
 
-Each script polls Gmail every 2 minutes and runs indefinitely.
+Each script polls Gmail every 2 minutes and runs indefinitely. All network calls (IMAP and Coperniq/Slack API) have a 30-second timeout so a hung connection won't freeze the process.
 
 ---
 
