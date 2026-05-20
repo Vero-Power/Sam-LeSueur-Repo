@@ -58,6 +58,14 @@ def save_processed(ids: set):
     PROCESSED_FILE.write_text(json.dumps(list(ids)))
 
 
+def _is_completed(obj: dict) -> bool:
+    """Return True if the Coperniq object's status is COMPLETED."""
+    status = obj.get('status')
+    if isinstance(status, dict):
+        status = status.get('id', '')
+    return (status or '').upper() == 'COMPLETED'
+
+
 def complete_install_coperniq(project_id: int) -> dict:
     """Complete the Solar Installation work order, form, and field visit in Coperniq.
 
@@ -94,8 +102,7 @@ def complete_install_coperniq(project_id: int) -> dict:
             continue
         if wo.get('isArchived'):
             continue
-        status_id = wo.get('status') if isinstance(wo.get('status'), str) else (wo.get('status') or {}).get('id', '')
-        if str(status_id).upper() == 'COMPLETED':
+        if _is_completed(wo):
             continue
         install_wo = wo
         break
@@ -133,7 +140,9 @@ def complete_install_coperniq(project_id: int) -> dict:
         log.info(f'[coperniq] WO {wo_id} marked COMPLETED')
 
         # Check for incomplete field visits and complete them
-        for visit in wo_detail.get('visits', {}).get('visits', []):
+        visits = wo_detail.get('visits', {}).get('visits', [])
+        log.info(f'Found {len(visits)} visits on install WO')
+        for visit in visits:
             if not visit.get('isCompleted'):
                 v_id = visit['id']
                 v_r = requests.patch(
@@ -159,7 +168,7 @@ def complete_install_coperniq(project_id: int) -> dict:
             continue
         if f.get('isArchived'):
             continue
-        if str(f.get('status') or '').upper() == 'COMPLETED':
+        if _is_completed(f):
             continue
         install_form = f
         break
@@ -176,28 +185,46 @@ def complete_install_coperniq(project_id: int) -> dict:
         r.raise_for_status()
         form_detail = r.json()
 
-        # Build field map: id -> field dict, from all formLayouts groups
-        fields_to_update = {}
-        for group in form_detail.get('formLayouts', []):
-            for field in group.get('fields', []):
-                if field.get('type') != 'DATE':
-                    continue
-                fname = (field.get('name') or '').lower()
-                if any(kw in fname for kw in ('install', 'date', 'completed')):
-                    fields_to_update[field['id']] = field
+        # Build field map keyed by name, from formLayouts → properties → fields
+        all_props = []
+        for layout in form_detail.get('formLayouts', []):
+            for prop in layout.get('properties', []):
+                all_props.append(prop)
+                for field in prop.get('fields', []):
+                    all_props.append(field)
+        field_map = {p['name']: p for p in all_props if 'name' in p}
 
-        if fields_to_update:
-            fields_payload = [
-                {'id': fid, 'value': today_iso}
-                for fid in fields_to_update
-            ]
+        # Look up date fields by exact name first, fall back to keyword matching
+        DATE_FIELDS = ['Install Completed Date', 'Install Scheduled Date']
+        fields_payload = []
+        matched_names = []
+        for exact_name in DATE_FIELDS:
+            if exact_name in field_map:
+                col_id = field_map[exact_name].get('columnId')
+                if col_id:
+                    fields_payload.append({'columnId': col_id, 'value': today_iso})
+                    matched_names.append(exact_name)
+
+        if not fields_payload:
+            # Fall back: any DATE field whose name contains install/date/completed
+            for name, prop in field_map.items():
+                if prop.get('type') != 'DATE':
+                    continue
+                lname = name.lower()
+                if any(kw in lname for kw in ('install', 'date', 'completed')):
+                    col_id = prop.get('columnId')
+                    if col_id:
+                        fields_payload.append({'columnId': col_id, 'value': today_iso})
+                        matched_names.append(name)
+
+        if fields_payload:
             patch_r = requests.patch(
                 f'{COPERNIQ_BASE}/forms/{form_id}',
                 headers=COP_POST,
                 json={'fields': fields_payload, 'status': 'COMPLETED'},
             )
             patch_r.raise_for_status()
-            log.info(f'[coperniq] Form {form_id} updated fields {list(fields_to_update.keys())} and marked COMPLETED')
+            log.info(f'[coperniq] Form {form_id} updated fields {matched_names} and marked COMPLETED')
         else:
             # No date fields to update — just mark completed
             patch_r = requests.patch(
