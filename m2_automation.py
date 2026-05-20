@@ -157,7 +157,7 @@ def save_processed_ids(ids: set):
 
 
 def fetch_new_m2_emails(processed_ids: set) -> list[dict]:
-    mail = imaplib.IMAP4_SSL('imap.gmail.com')
+    mail = imaplib.IMAP4_SSL('imap.gmail.com', timeout=30)
     mail.login(GMAIL_ADDRESS, GMAIL_APP_PW)
     mail.select('inbox')
 

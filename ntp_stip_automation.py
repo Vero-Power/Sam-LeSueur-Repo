@@ -215,7 +215,7 @@ def _extract_body(msg) -> str:
 
 
 def fetch_new_stip_emails(processed_ids: set) -> list[dict]:
-    mail = imaplib.IMAP4_SSL('imap.gmail.com')
+    mail = imaplib.IMAP4_SSL('imap.gmail.com', timeout=30)
     mail.login(GMAIL_ADDRESS, GMAIL_APP_PW)
     mail.select('inbox')
 
