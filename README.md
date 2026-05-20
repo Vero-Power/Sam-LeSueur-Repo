@@ -1,18 +1,48 @@
-# Vero Power — NTP Approval Automation
+# Vero Power — Email Automations
 
-Monitors Gmail for LUX Financial NTP approval emails and automatically updates Coperniq.
+Python scripts running on the office Mac mini that monitor Gmail and automatically update Coperniq, replacing all Zapier workflows.
 
-## What it does
+## Automations
 
-When an email with subject `Vero LLC NTP Approval: [Customer Name]` arrives:
+### `ntp_automation.py` — NTP Approval
+Watches for emails with subject `Vero LLC NTP Approval: [Customer Name]` from Lux Financial.
 
+**Actions:**
 1. Finds the customer's project in Coperniq
-2. Finds or creates the Notice to Proceed work order
-3. Checks off all checklist items
-4. Finds or creates the Notice to Proceed form
-5. Sets Finance Status, dates, Stipulations, Finance Provider
+2. Finds or creates the Notice to Proceed work order (under NTP phase)
+3. Checks off all WO checklist items
+4. Finds or creates the NTP form
+5. Sets Finance Status → NTP Approved, Stipulations → NA, Finance Provider → Lux Financial
 6. Completes the form and work order
-7. Leaves a comment on the project
+
+---
+
+### `m2_automation.py` — M2 Approval
+Watches for emails with subject `Vero LLC M2 Approval: [Customer Name]` from Lux Financial.
+
+**Actions:**
+1. Finds the customer's project in Coperniq
+2. Fills M2 form fields
+3. Completes the work order
+4. Leaves a note on the project
+5. Replies "Thank you!" to Lux Financial
+
+---
+
+### `ntp_stip_automation.py` — NTP Stipulation
+Watches for emails with subject `Vero NTP Stipulation: [Customer Name]` from Lux Financial.
+
+**Actions:**
+1. Skips if project is already NTP Approved, M2 Approved, M2 Submitted, CANCELLED, or ON_HOLD
+2. Starts the NTP phase in Coperniq if not already in progress
+3. Creates NTP work order under the Notice to Proceed phase
+4. Updates NTP form: Finance Status → Pending Stipulation, sets Stipulations dropdown
+5. Sets NTP work order to WAITING
+6. Leaves a note tagging Sam LeSueur
+7. Sends a Slack message to the rep's `-ops` channel
+8. Replies to Lux: "Hi Kathy, Thank you for the heads up — we are on it!"
+
+---
 
 ## Setup
 
@@ -22,28 +52,58 @@ When an email with subject `Vero LLC NTP Approval: [Customer Name]` arrives:
 pip install -r requirements.txt
 ```
 
-### 2. Set up Gmail API credentials
+### 2. Configure environment
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a project (or use an existing one)
-3. Enable the **Gmail API**
-4. Go to **Credentials → Create Credentials → OAuth 2.0 Client ID**
-5. Application type: **Desktop app**
-6. Download the JSON file and save it as `credentials.json` in this folder
+Create a `.env` file in this folder:
 
-### 3. Run
+```
+GMAIL_ADDRESS=sam@veropwr.com
+GMAIL_APP_PASSWORD=your_app_password
+COPERNIQ_API_KEY=your_api_key
+SLACK_BOT_TOKEN=your_slack_bot_token
+```
+
+### 3. Run a script
 
 ```bash
 python ntp_automation.py
+python m2_automation.py
+python ntp_stip_automation.py
 ```
 
-On first run, a browser window will open for Gmail OAuth authorization. After that, it runs headlessly and polls every 2 minutes.
+Each script polls Gmail every 2 minutes and runs indefinitely.
+
+---
+
+## Running as background services (launchd)
+
+All three automations run as launchd daemons on the Mac mini so they survive reboots and auto-restart on failure.
+
+Plist files are in `~/Library/LaunchAgents/`. To restart a daemon after a code change:
+
+```bash
+# Kill the process — launchd will auto-restart it
+pkill -f ntp_automation.py
+pkill -f m2_automation.py
+pkill -f ntp_stip_automation.py
+```
+
+> **Note:** `processed_stip_emails.json` is loaded into memory at startup. Restart the daemon after editing it manually.
+
+---
 
 ## Files
 
 | File | Description |
 |------|-------------|
-| `ntp_automation.py` | Main script |
-| `credentials.json` | Gmail OAuth credentials (**not committed**) |
-| `token.json` | Gmail auth token, auto-generated (**not committed**) |
-| `processed_emails.json` | Tracks already-processed email IDs (**not committed**) |
+| `ntp_automation.py` | NTP Approval automation |
+| `m2_automation.py` | M2 Approval automation |
+| `ntp_stip_automation.py` | NTP Stipulation automation |
+| `requirements.txt` | Python dependencies |
+| `.env` | Credentials — **not committed** |
+| `processed_emails.json` | Tracks processed NTP approval emails — **not committed** |
+| `processed_m2_emails.json` | Tracks processed M2 approval emails — **not committed** |
+| `processed_stip_emails.json` | Tracks processed stipulation emails — **not committed** |
+| `ntp_automation.log` | NTP automation log output |
+| `m2_automation.log` | M2 automation log output |
+| `ntp_stip_automation.log` | Stipulation automation log output |
