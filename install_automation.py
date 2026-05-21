@@ -476,7 +476,7 @@ def find_company_cam_project(customer_name: str) -> Optional[dict]:
         )
         if r.status_code != 200:
             log.warning(f'Company Cam project search returned {r.status_code}: {r.text[:200]}')
-            return None
+            continue
         data = r.json()
         projects = data if isinstance(data, list) else data.get('projects', [])
         if projects:
@@ -549,9 +549,12 @@ def get_install_photos(cc_project_id: str) -> list:
     log.info(f'Found {len(photo_urls)} install/battery photo(s)')
     photos_bytes = []
     for url in photo_urls:
-        resp = requests.get(url, timeout=30)
-        if resp.status_code == 200:
-            photos_bytes.append(resp.content)
+        try:
+            resp = requests.get(url, timeout=30)
+            if resp.status_code == 200:
+                photos_bytes.append(resp.content)
+        except Exception as e:
+            log.warning(f'Failed to download photo from {url[:80]}: {e}')
     return photos_bytes
 
 
@@ -900,30 +903,54 @@ def process_install(install: dict) -> bool:
     photos = get_install_photos(cc_project_id)
 
     # 3. Complete Coperniq install WO, form, and visit
-    complete_install_coperniq(project_id)
+    try:
+        complete_install_coperniq(project_id)
+    except Exception:
+        log.exception(f'complete_install_coperniq failed for {customer_name}')
 
     # 4. Send Slack to #vero with photos
-    send_install_slack(install, photos)
+    try:
+        send_install_slack(install, photos)
+    except Exception:
+        log.exception(f'send_install_slack failed for {customer_name}')
 
     # 5. Send customer SMS
-    send_customer_sms(project_id, customer_name)
+    try:
+        send_customer_sms(project_id, customer_name)
+    except Exception:
+        log.exception(f'send_customer_sms failed for {customer_name}')
 
     # 6. Download BOM from Gmail + CAD from Coperniq
-    bom_files = download_bom_from_gmail(customer_name)
-    cad_file = download_cad_from_coperniq(project_id)
+    bom_files = []
+    try:
+        bom_files = download_bom_from_gmail(customer_name)
+    except Exception:
+        log.exception(f'download_bom_from_gmail failed for {customer_name}')
+
+    cad_file = None
+    try:
+        cad_file = download_cad_from_coperniq(project_id)
+    except Exception:
+        log.exception(f'download_cad_from_coperniq failed for {customer_name}')
 
     # 7. Browser tasks: export CC checklist PDF, upload all docs to Lux
     try:
         uploaded_count = run_browser_tasks(cc_project_id, customer_name, address_str, bom_files, cad_file)
         log.info(f'Browser tasks complete: {uploaded_count} file(s) uploaded to Lux')
     except Exception:
-        log.exception(f'Browser tasks failed for {customer_name} — continuing with remaining steps')
+        log.exception(f'Browser tasks failed for {customer_name}')
 
     # 8. Email Kathy that M2 was submitted
-    send_m2_email_kathy(customer_name)
+    try:
+        send_m2_email_kathy(customer_name)
+    except Exception:
+        log.exception(f'send_m2_email_kathy failed for {customer_name}')
 
     # 9. Start M2 in Coperniq
-    start_m2_coperniq(project_id, customer_name)
+    try:
+        start_m2_coperniq(project_id, customer_name)
+    except Exception:
+        log.exception(f'start_m2_coperniq failed for {customer_name}')
 
     log.info(f'--- Completed full install workflow for {customer_name} ---')
     return True
