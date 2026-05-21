@@ -463,6 +463,98 @@ def download_cad_from_coperniq(project_id: int):
     return (filename, resp.content)
 
 
+# ─── Company Cam ───────────────────────────────────────────────────────────────
+
+def find_company_cam_project(customer_name: str) -> Optional[dict]:
+    """Find a Company Cam project by customer name. Returns project dict or None."""
+    last_name = customer_name.split()[-1]
+    for search_term in [customer_name, last_name]:
+        r = requests.get(
+            f'{COMPANY_CAM_BASE}/projects',
+            params={'search': search_term},
+            headers=CC_GET,
+        )
+        if r.status_code != 200:
+            log.warning(f'Company Cam project search returned {r.status_code}: {r.text[:200]}')
+            return None
+        data = r.json()
+        projects = data if isinstance(data, list) else data.get('projects', [])
+        if projects:
+            log.info(f'Company Cam project found: {projects[0].get("id")} — {projects[0].get("name")}')
+            return projects[0]
+    log.warning(f'No Company Cam project found for {customer_name}')
+    return None
+
+
+def is_install_checklist_complete(cc_project_id: str) -> bool:
+    """Return True if VERO SOLAR INSTALLER CHECKLIST has all items completed."""
+    r = requests.get(
+        f'{COMPANY_CAM_BASE}/projects/{cc_project_id}/checklists',
+        headers=CC_GET,
+    )
+    if r.status_code != 200:
+        log.warning(f'Company Cam checklists returned {r.status_code} for project {cc_project_id}')
+        return False
+    data = r.json()
+    checklists = data if isinstance(data, list) else data.get('checklists', [])
+    for checklist in checklists:
+        name = (checklist.get('name') or '').upper()
+        if 'VERO SOLAR INSTALLER CHECKLIST' in name:
+            total = checklist.get('total_items') or checklist.get('fields_count') or 0
+            completed = checklist.get('completed_items') or checklist.get('completed_fields_count') or 0
+            is_complete = total > 0 and completed >= total
+            log.info(f'Install checklist: {completed}/{total} — {"COMPLETE" if is_complete else "INCOMPLETE"}')
+            return is_complete
+    log.info('VERO SOLAR INSTALLER CHECKLIST not found in Company Cam')
+    return False
+
+
+def get_install_photos(cc_project_id: str) -> list:
+    """Return list of photo bytes from 'installed panels' and 'battery' checklist items."""
+    r = requests.get(
+        f'{COMPANY_CAM_BASE}/projects/{cc_project_id}/checklists',
+        headers=CC_GET,
+    )
+    if r.status_code != 200:
+        log.warning(f'Company Cam checklists returned {r.status_code}')
+        return []
+    data = r.json()
+    checklists = data if isinstance(data, list) else data.get('checklists', [])
+
+    checklist_id = None
+    for c in checklists:
+        if 'VERO SOLAR INSTALLER CHECKLIST' in (c.get('name') or '').upper():
+            checklist_id = c['id']
+            break
+    if not checklist_id:
+        return []
+
+    r2 = requests.get(f'{COMPANY_CAM_BASE}/checklists/{checklist_id}', headers=CC_GET)
+    if r2.status_code != 200:
+        log.warning(f'Company Cam checklist detail returned {r2.status_code}')
+        return []
+    checklist_data = r2.json()
+
+    photo_urls = []
+    items = checklist_data.get('items') or checklist_data.get('fields') or []
+    for item in items:
+        item_name = (item.get('label') or item.get('name') or '').lower()
+        if any(kw in item_name for kw in ['installed panel', 'panels', 'battery', 'powerwall']):
+            photos = item.get('photos') or item.get('responses') or []
+            for photo in photos:
+                url = photo.get('uri') or photo.get('url') or photo.get('original')
+                if url:
+                    photo_urls.append(url)
+
+    log.info(f'Found {len(photo_urls)} install/battery photo(s)')
+    photos_bytes = []
+    for url in photo_urls:
+        resp = requests.get(url, timeout=30)
+        if resp.status_code == 200:
+            photos_bytes.append(resp.content)
+    return photos_bytes
+
+
 # ─── M2 phase ─────────────────────────────────────────────────────────────────
 
 M2_WO_TEMPLATE_ID   = 1907088
@@ -731,6 +823,112 @@ def get_tesla_commissioning_data(customer_address: str) -> Optional[dict]:
         return None
 
 
+# ─── Browser tasks ────────────────────────────────────────────────────────────
+
+def run_browser_tasks(
+    cc_project_id: str,
+    customer_name: str,
+    customer_address: str,
+    bom_files: list,
+    cad_file,
+) -> int:
+    """Run all Playwright tasks (CC PDF export, Lux upload). Returns count of files uploaded."""
+    import asyncio
+    from install_browser import export_cc_checklist_pdf, upload_to_lux_portal
+
+    async def _run():
+        pdf = await export_cc_checklist_pdf(cc_project_id)
+
+        lux_files = []
+        if pdf:
+            lux_files.append(('install_checklist.pdf', pdf))
+        if cad_file:
+            lux_files.append(cad_file)
+        for name, data in bom_files:
+            lux_files.append((name, data))
+
+        # Tesla commissioning data is retrieved via API (get_tesla_commissioning_data),
+        # not via browser — no Tesla file to add here
+
+        if lux_files:
+            await upload_to_lux_portal(customer_name, lux_files)
+        return len(lux_files)
+
+    return asyncio.run(_run())
+
+
+# ─── Orchestration ────────────────────────────────────────────────────────────
+
+def process_install(install: dict) -> bool:
+    """Run full post-install workflow for one completed solar install.
+
+    Returns True when the full workflow completes successfully.
+    Returns False when processing should be retried next poll
+    (Company Cam project not found, or checklist not yet complete).
+    """
+    project_id = install.get('id')
+    customer_name = install.get('title') or 'Unknown'
+
+    log.info(f'--- Processing install: {customer_name} (project {project_id}) ---')
+
+    # Build address string for Tesla lookup
+    address_raw = install.get('address') or {}
+    if isinstance(address_raw, list):
+        address_str = address_raw[0] if address_raw else ''
+    elif isinstance(address_raw, dict):
+        address_str = ', '.join(filter(None, [
+            address_raw.get('street'),
+            address_raw.get('city'),
+            address_raw.get('state'),
+            address_raw.get('zip'),
+        ]))
+    else:
+        address_str = str(address_raw)
+
+    # 1. Check Company Cam checklist
+    cc_project = find_company_cam_project(customer_name)
+    if not cc_project:
+        log.warning(f'{customer_name}: no Company Cam project found — skipping')
+        return False
+    cc_project_id = str(cc_project.get('id', ''))
+
+    if not is_install_checklist_complete(cc_project_id):
+        log.info(f'{customer_name}: install checklist not complete — will retry next poll')
+        return False
+
+    # 2. Get install photos
+    photos = get_install_photos(cc_project_id)
+
+    # 3. Complete Coperniq install WO, form, and visit
+    complete_install_coperniq(project_id)
+
+    # 4. Send Slack to #vero with photos
+    send_install_slack(install, photos)
+
+    # 5. Send customer SMS
+    send_customer_sms(project_id, customer_name)
+
+    # 6. Download BOM from Gmail + CAD from Coperniq
+    bom_files = download_bom_from_gmail(customer_name)
+    cad_file = download_cad_from_coperniq(project_id)
+
+    # 7. Browser tasks: export CC checklist PDF, upload all docs to Lux
+    try:
+        uploaded_count = run_browser_tasks(cc_project_id, customer_name, address_str, bom_files, cad_file)
+        log.info(f'Browser tasks complete: {uploaded_count} file(s) uploaded to Lux')
+    except Exception:
+        log.exception(f'Browser tasks failed for {customer_name} — continuing with remaining steps')
+
+    # 8. Email Kathy that M2 was submitted
+    send_m2_email_kathy(customer_name)
+
+    # 9. Start M2 in Coperniq
+    start_m2_coperniq(project_id, customer_name)
+
+    log.info(f'--- Completed full install workflow for {customer_name} ---')
+    return True
+
+
 # --- Main loop ---
 
 def main():
@@ -746,9 +944,13 @@ def main():
                 if str(project_id) in processed:
                     continue
                 log.info(f'New install to process: {install}')
-                # TODO: run 10-step post-install workflow
-                processed.add(str(project_id))
-                save_processed(processed)
+                try:
+                    did_process = process_install(install)
+                    if did_process:
+                        processed.add(str(project_id))
+                        save_processed(processed)
+                except Exception:
+                    log.exception(f'Failed to process install for project {project_id}')
         except Exception:
             log.exception('Unexpected error — will retry on next poll.')
         time.sleep(POLL_INTERVAL)
