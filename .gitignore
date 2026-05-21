@@ -5,3 +5,4 @@ __pycache__/
 *.pyc
 .env
 lux_session.json
+lux_browser_profile/

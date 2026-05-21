@@ -529,7 +529,8 @@ def get_install_photos(cc_project_id: str) -> list:
     photo_urls = []
     for task in tasks:
         task_name = (task.get('title') or task.get('label') or task.get('name') or '').lower()
-        if any(kw in task_name for kw in ['installed panel', 'panels', 'battery', 'powerwall']):
+        if (any(kw in task_name for kw in ['installed panel', 'installed battery'])
+                and 'serial number' not in task_name and 'barcode' not in task_name):
             for photo in task.get('photos') or []:
                 url = photo.get('url') or photo.get('uri') or photo.get('original')
                 if url:
@@ -825,11 +826,12 @@ def run_browser_tasks(
 
         lux_files = []
         if pdf:
-            lux_files.append(('install_checklist.pdf', pdf))
+            lux_files.append(('install_checklist.pdf', pdf, 'Installation Photos'))
         if cad_file:
-            lux_files.append(cad_file)
+            cad_name, cad_data = cad_file
+            lux_files.append((cad_name, cad_data, 'CAD/Plan Set'))
         for name, data in bom_files:
-            lux_files.append((name, data))
+            lux_files.append((name, data, 'Bill of Materials'))
 
         # Tesla commissioning data is retrieved via API (get_tesla_commissioning_data),
         # not via browser — no Tesla file to add here

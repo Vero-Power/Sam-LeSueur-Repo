@@ -5,9 +5,12 @@ Handles: Company Cam PDF export, Tesla PowerHub screenshot, Lux portal upload.
 """
 
 import asyncio
+import email as emaillib
+import imaplib
 import logging
 import os
 import tempfile
+import time
 from pathlib import Path
 from typing import Optional, List
 from playwright.async_api import async_playwright
@@ -25,6 +28,50 @@ CC_PASSWORD = os.environ.get('CC_PASSWORD', 'Firstblood84')
 DIR = Path(__file__).parent
 SESSION_FILE = DIR / 'lux_session.json'
 LUX_URL = 'https://app.luxfinancial.io/installer/?partnerId=49937750-8974-491e-9d25-b1b2fe86f715&page=1'
+GMAIL_APP_PASSWORD = os.environ.get('GMAIL_APP_PASSWORD', '')
+
+
+def _fetch_lux_2fa_code(max_wait: int = 60) -> Optional[str]:
+    """Poll Gmail via IMAP for the Lux Financial 2FA code. Waits up to max_wait seconds."""
+    deadline = time.time() + max_wait
+    while time.time() < deadline:
+        try:
+            mail = imaplib.IMAP4_SSL('imap.gmail.com')
+            mail.login(GMAIL_ADDRESS, GMAIL_APP_PASSWORD)
+            mail.select('inbox')
+            _, data = mail.search(None, 'FROM "no-reply@luxfinancial.io" SUBJECT "2FA Code" UNSEEN')
+            ids = data[0].split()
+            if ids:
+                _, raw = mail.fetch(ids[-1], '(RFC822)')
+                msg = emaillib.message_from_bytes(raw[0][1])
+                body = ''
+                if msg.is_multipart():
+                    for part in msg.walk():
+                        if part.get_content_type() == 'text/plain':
+                            body = part.get_payload(decode=True).decode('utf-8', errors='ignore')
+                            break
+                else:
+                    body = msg.get_payload(decode=True).decode('utf-8', errors='ignore')
+                mail.store(ids[-1], '+FLAGS', '\\Seen')
+                mail.logout()
+                for line in body.splitlines():
+                    line = line.strip()
+                    if line.isdigit() and len(line) == 6:
+                        log.info(f'Lux 2FA code found: {line}')
+                        return line
+                    if 'code is:' in line.lower():
+                        parts = line.split()
+                        code = parts[-1].strip()
+                        if code.isdigit() and len(code) == 6:
+                            log.info(f'Lux 2FA code found: {code}')
+                            return code
+            else:
+                mail.logout()
+        except Exception as e:
+            log.warning(f'Gmail 2FA fetch error: {e}')
+        time.sleep(5)
+    log.error('Timed out waiting for Lux 2FA code in Gmail')
+    return None
 
 
 async def export_cc_checklist_pdf(cc_project_id: str) -> Optional[bytes]:
@@ -305,164 +352,244 @@ async def screenshot_tesla_commissioning(customer_address: str) -> Optional[byte
     return None
 
 
-async def upload_to_lux_portal(customer_name: str, files: List) -> bool:
-    """Log into Lux portal using saved session, find job, upload all files.
+async def _lux_google_auth(page) -> None:
+    """Click Google sign-in on Lux login page and complete Google OAuth."""
+    on_lux_login = 'account.luxfinancial.io/auth/login' in page.url
+    if on_lux_login:
+        google_btn = page.locator('button:has-text("Google"), a:has-text("Google"), button:has-text("Sign in with Google")').first
+        try:
+            if await google_btn.is_visible(timeout=5000):
+                await google_btn.click()
+                await page.wait_for_load_state('domcontentloaded')
+                await page.wait_for_timeout(2000)
+        except Exception:
+            pass
 
-    files: list of (filename, bytes) tuples
+    email_input = page.locator('input[type="email"]').first
+    if await email_input.is_visible(timeout=5000):
+        await email_input.fill(GMAIL_ADDRESS)
+        await page.locator('#identifierNext, button:has-text("Next")').first.click()
+        await page.wait_for_timeout(2000)
+        await page.locator('input[type="password"]').first.fill(LUX_GOOGLE_PASSWORD)
+        await page.locator('#passwordNext, button:has-text("Next")').first.click()
+        await page.wait_for_load_state('domcontentloaded')
+        await page.wait_for_timeout(3000)
+
+
+async def _lux_handle_2fa(page) -> None:
+    """If Lux shows a 2FA input, fetch the code from Gmail and submit it."""
+    # Look for a 6-digit code input
+    code_input = page.locator('input[type="text"][maxlength="6"], input[name*="code" i], input[placeholder*="code" i]').first
+    try:
+        visible = await code_input.is_visible(timeout=4000)
+    except Exception:
+        visible = False
+
+    if not visible:
+        return
+
+    log.info('Lux 2FA prompt detected — fetching code from Gmail...')
+    code = await asyncio.get_event_loop().run_in_executor(None, _fetch_lux_2fa_code, 90)
+    if not code:
+        log.error('Could not get Lux 2FA code from Gmail')
+        return
+
+    await code_input.fill(code)
+    submit = page.locator('button[type="submit"], button:has-text("Verify"), button:has-text("Submit"), button:has-text("Continue")').first
+    try:
+        if await submit.is_visible(timeout=3000):
+            await submit.click()
+            await page.wait_for_load_state('domcontentloaded')
+            await page.wait_for_timeout(3000)
+    except Exception:
+        await code_input.press('Enter')
+        await page.wait_for_timeout(3000)
+    log.info(f'Lux 2FA code submitted: {code}')
+
+
+BROWSER_PROFILE_DIR = DIR / 'lux_browser_profile'
+
+
+async def _lux_ensure_on_portal(page, context) -> bool:
+    """Handle auth redirects and get to app.luxfinancial.io. Returns True if on portal."""
+    for _ in range(60):
+        await asyncio.sleep(2)
+        url = page.url
+        if url.startswith('https://app.luxfinancial.io'):
+            return True
+        if 'account.luxfinancial.io/auth/login' in url or 'accounts.google.com' in url:
+            log.info(f'Auth redirect — filling Google credentials: {url}')
+            await _lux_google_auth(page)
+            await page.wait_for_timeout(3000)
+        if 'auth/challenge' in url:
+            log.info(f'Lux 2FA challenge: {url}')
+            await _lux_handle_2fa(page)
+        log.info(f'Waiting for portal... URL: {url}')
+    log.error(f'Never reached app.luxfinancial.io — URL: {page.url}')
+    return False
+
+
+async def upload_to_lux_portal(customer_name: str, files: List) -> bool:
+    """Log into Lux portal, find job, upload files to the correct document sections.
+
+    files: list of (filename, bytes, section_name) tuples.
+    section_name must match the Lux portal option text exactly, e.g.:
+      'Bill of Materials', 'CAD/Plan Set', 'Installation Photos'
+    Falls back to (filename, bytes) format for backward compatibility (uses 'Bill of Materials').
     """
-    if not SESSION_FILE.exists():
-        log.error('lux_session.json not found — run create_lux_session.py first')
+    if not BROWSER_PROFILE_DIR.exists() and not SESSION_FILE.exists():
+        log.error('No lux_browser_profile/ and no lux_session.json — run create_lux_session.py first')
         return False
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        context = await browser.new_context(
-            storage_state=str(SESSION_FILE),
-            viewport={'width': 1600, 'height': 900},
-            accept_downloads=True,
-        )
+        if BROWSER_PROFILE_DIR.exists():
+            context = await p.chromium.launch_persistent_context(
+                str(BROWSER_PROFILE_DIR),
+                headless=True,
+                viewport={'width': 1920, 'height': 1080},
+                args=['--no-sandbox'],
+            )
+            browser = None
+        else:
+            browser = await p.chromium.launch(headless=True)
+            context = await browser.new_context(
+                storage_state=str(SESSION_FILE),
+                viewport={'width': 1920, 'height': 1080},
+            )
+
         page = await context.new_page()
 
         try:
             log.info(f'Navigating to Lux portal for {customer_name}')
-            await page.goto(LUX_URL, wait_until='domcontentloaded', timeout=60000)
+            await page.goto(LUX_URL, wait_until='networkidle', timeout=60000)
             await page.wait_for_timeout(3000)
 
-            current_url = page.url
-            log.info(f'Lux portal URL after load: {current_url}')
-
-            # If session expired — handle both Lux's own login page and Google OAuth redirect
-            on_lux_login = 'account.luxfinancial.io/auth/login' in current_url
-            on_google_login = 'accounts.google.com' in current_url
-            if on_lux_login or on_google_login:
-                log.info(f'Session expired — re-authenticating ({"Lux login" if on_lux_login else "Google OAuth"})')
-
-                if on_lux_login:
-                    # Click "Sign in with Google" on Lux's login page
-                    google_btn = page.locator('button:has-text("Google"), a:has-text("Google"), button:has-text("Sign in with Google")').first
-                    try:
-                        if await google_btn.is_visible(timeout=5000):
-                            await google_btn.click()
-                            await page.wait_for_load_state('domcontentloaded')
-                            await page.wait_for_timeout(2000)
-                    except Exception:
-                        pass
-
-                # Fill Google credentials
-                email_input = page.locator('input[type="email"]').first
-                if await email_input.is_visible(timeout=5000):
-                    await email_input.fill(GMAIL_ADDRESS)
-                    await page.locator('#identifierNext, button:has-text("Next")').first.click()
-                    await page.wait_for_timeout(2000)
-                    await page.locator('input[type="password"]').first.fill(LUX_GOOGLE_PASSWORD)
-                    await page.locator('#passwordNext, button:has-text("Next")').first.click()
-                    await page.wait_for_load_state('domcontentloaded')
-                    await page.wait_for_timeout(5000)
-
-                # Save refreshed session
-                try:
-                    await context.storage_state(path=str(SESSION_FILE))
-                    log.info('Refreshed Lux session saved')
-                except Exception as e:
-                    log.warning(f'Could not save refreshed session: {e}')
-
-            # Verify we're on the Lux portal (app.luxfinancial.io)
-            if 'app.luxfinancial.io' not in page.url:
-                log.error(f'Not on Lux app portal after auth — URL: {page.url}')
+            if not await _lux_ensure_on_portal(page, context):
                 return False
 
-            # Search for the customer
+            # Save refreshed session
+            try:
+                await context.storage_state(path=str(SESSION_FILE))
+            except Exception:
+                pass
+
+            # Wait for search input (confirms list page is loaded)
+            search_input = page.locator('input[placeholder*="Search" i]').first
+            try:
+                await search_input.wait_for(state='visible', timeout=15000)
+            except Exception:
+                log.error('Search input never appeared on Lux portal')
+                return False
+
+            # Search for customer by last name
             last_name = customer_name.split()[-1]
             log.info(f'Searching Lux portal for: {last_name}')
+            await search_input.fill(last_name)
+            await page.wait_for_timeout(2000)
 
-            # Try various search input patterns
-            search_selectors = [
-                'input[placeholder*="search" i]',
-                'input[type="search"]',
-                'input[placeholder*="customer" i]',
-                'input[placeholder*="name" i]',
-            ]
-            search_input = None
-            for selector in search_selectors:
-                loc = page.locator(selector).first
-                if await loc.is_visible(timeout=2000):
-                    search_input = loc
-                    log.info(f'Found search input: {selector}')
-                    break
-
-            if search_input:
-                await search_input.fill(last_name)
-                await page.keyboard.press('Enter')
+            # Click the HRID (first .font-bold.cursor-pointer = the job ID link)
+            hrid = page.locator('.font-bold.cursor-pointer').first
+            try:
+                await hrid.wait_for(state='visible', timeout=8000)
+                hrid_text = await hrid.inner_text()
+                log.info(f'Clicking job HRID: {hrid_text}')
+                await hrid.click()
+                await page.wait_for_url('**/installer/customer/**', timeout=15000)
                 await page.wait_for_timeout(2000)
-            else:
-                log.warning('No search input found — trying to find job in listing directly')
+                log.info(f'Job page URL: {page.url}')
+            except Exception as e:
+                log.error(f'Could not navigate to job page for {customer_name}: {e}')
+                return False
 
-            # Click into the job row
-            job_clicked = False
-            for name_part in [customer_name, last_name, customer_name.split()[0]]:
-                try:
-                    job_row = page.locator(f'text={name_part}').first
-                    if await job_row.is_visible(timeout=3000):
-                        await job_row.click()
-                        await page.wait_for_load_state('domcontentloaded')
-                        await page.wait_for_timeout(2000)
-                        job_clicked = True
-                        log.info(f'Clicked job row for: {name_part}')
-                        break
-                except Exception:
-                    continue
+            # Click DOCUMENTS tab button
+            docs_btn = page.locator('button:has-text("DOCUMENTS")').first
+            await docs_btn.scroll_into_view_if_needed()
+            await docs_btn.click()
+            await page.wait_for_timeout(3000)
+            log.info('Opened DOCUMENTS panel')
 
-            if not job_clicked:
-                log.warning(f'Could not find job row for {customer_name} in Lux portal — attempting upload on current page anyway')
-
-            log.info(f'Current Lux URL: {page.url}')
-
-            # Write files to temp dir
+            # Write files to temp dir for upload
             with tempfile.TemporaryDirectory() as tmpdir:
                 tmp_paths = []
-                for filename, data in files:
+                section_names = []
+                for entry in files:
+                    if len(entry) == 3:
+                        filename, data, section = entry
+                    else:
+                        filename, data = entry
+                        section = 'Bill of Materials'
                     path = Path(tmpdir) / filename
                     path.write_bytes(data)
                     tmp_paths.append(str(path))
-                    log.info(f'Temp file: {path} ({len(data)} bytes)')
+                    section_names.append(section)
+                    log.info(f'  {filename} → [{section}] ({len(data)} bytes)')
 
-                # Find all file upload inputs
-                upload_inputs = page.locator('input[type="file"]')
-                input_count = await upload_inputs.count()
-                log.info(f'Found {input_count} file input(s) on Lux portal job page')
+                # Find the upload label and click it to open the modal
+                upload_label = page.locator('label[for="file-uploader"]').first
+                await upload_label.scroll_into_view_if_needed()
+                bbox = await upload_label.bounding_box()
+                if not bbox:
+                    log.error('Upload label has no bounding box')
+                    return False
+                cx = bbox['x'] + bbox['width'] / 2
+                cy = bbox['y'] + bbox['height'] / 2
+                await page.mouse.click(cx, cy)
+                await page.wait_for_timeout(2000)
 
-                if input_count > 0:
-                    # Try to upload all files to available inputs
-                    # Multiple inputs may map to different doc types (checklist, CAD, BOM, Tesla)
-                    for i, tmp_path in enumerate(tmp_paths):
-                        input_idx = min(i, input_count - 1)
+                # Wait for modal to open
+                modal_box = page.locator('.modal-box').last
+                try:
+                    await modal_box.wait_for(state='visible', timeout=8000)
+                except Exception:
+                    log.error('Upload modal did not open')
+                    return False
+                log.info('Upload modal is open')
+
+                # Set all files on the file input at once
+                file_input = page.locator('input[type="file"]#files').first
+                await file_input.set_input_files(tmp_paths)
+                await page.wait_for_timeout(2000)
+
+                # Wait for file rows to appear (one li per file)
+                file_rows = modal_box.locator('li')
+                try:
+                    await file_rows.nth(len(tmp_paths) - 1).wait_for(state='visible', timeout=8000)
+                except Exception:
+                    log.warning('File rows may not have all appeared — proceeding anyway')
+
+                # For each file, select the correct section via its dropdown
+                selects = modal_box.locator('select')
+                select_count = await selects.count()
+                log.info(f'Section selects in modal: {select_count} (expected {len(section_names)})')
+                for i, section in enumerate(section_names):
+                    if i < select_count:
                         try:
-                            await upload_inputs.nth(input_idx).set_input_files(tmp_path)
-                            await page.wait_for_timeout(1500)
-                            log.info(f'Uploaded {Path(tmp_path).name} to input[{input_idx}]')
+                            await selects.nth(i).select_option(label=section)
+                            log.info(f'  [{i}] {Path(tmp_paths[i]).name} → {section}')
                         except Exception as e:
-                            log.warning(f'Could not upload {Path(tmp_path).name}: {e}')
+                            log.warning(f'  [{i}] Could not select section "{section}": {e}')
+
+                # Wait for UPLOAD button to be enabled, then click it
+                upload_btn = modal_box.locator('button[type="submit"]').first
+                for _ in range(10):
+                    await asyncio.sleep(0.5)
+                    disabled = await upload_btn.get_attribute('disabled')
+                    if disabled is None:
+                        break
+
+                await upload_btn.click()
+                log.info('Clicked UPLOAD button')
+
+                # Wait for modal to close (upload complete)
+                for _ in range(30):
+                    await asyncio.sleep(2)
+                    if not await modal_box.is_visible():
+                        log.info('Upload modal closed — upload complete')
+                        break
                 else:
-                    # Try drag-and-drop zones or other upload mechanisms
-                    log.warning('No file inputs found — Lux portal may use drag-and-drop upload zone')
-                    drop_zones = page.locator('[class*="upload" i], [class*="dropzone" i], [class*="drop" i]')
-                    dz_count = await drop_zones.count()
-                    log.info(f'Found {dz_count} potential drop zones')
+                    log.warning('Modal did not close after 60s — upload may have completed anyway')
 
-                # Look for Save/Submit/Upload/Confirm buttons
-                for btn_text in ['Save', 'Submit', 'Upload', 'Confirm', 'Update']:
-                    btn = page.locator(f'button:has-text("{btn_text}")').first
-                    try:
-                        if await btn.is_visible(timeout=2000):
-                            await btn.click()
-                            await page.wait_for_load_state('domcontentloaded')
-                            await page.wait_for_timeout(2000)
-                            log.info(f'Clicked "{btn_text}" button on Lux portal')
-                            break
-                    except Exception:
-                        continue
-
-            log.info(f'Lux portal upload complete for {customer_name}: {len(files)} files')
+            log.info(f'Lux portal upload done for {customer_name}: {len(files)} file(s)')
             return True
 
         except Exception as e:
@@ -470,7 +597,8 @@ async def upload_to_lux_portal(customer_name: str, files: List) -> bool:
             return False
         finally:
             await context.close()
-            await browser.close()
+            if browser:
+                await browser.close()
 
 
 if __name__ == '__main__':
