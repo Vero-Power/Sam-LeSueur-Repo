@@ -310,8 +310,6 @@ async def upload_to_lux_portal(customer_name: str, files: List) -> bool:
 
     files: list of (filename, bytes) tuples
     """
-    import tempfile
-
     if not SESSION_FILE.exists():
         log.error('lux_session.json not found — run create_lux_session.py first')
         return False
@@ -334,7 +332,7 @@ async def upload_to_lux_portal(customer_name: str, files: List) -> bool:
             log.info(f'Lux portal URL after load: {current_url}')
 
             # If session expired and redirected to Google login, re-authenticate
-            if 'accounts.google.com' in current_url or 'google.com' in current_url:
+            if 'accounts.google.com' in current_url:
                 log.info('Session expired — attempting Google re-authentication')
                 email_input = page.locator('input[type="email"]').first
                 if await email_input.is_visible(timeout=5000):
@@ -365,7 +363,6 @@ async def upload_to_lux_portal(customer_name: str, files: List) -> bool:
             # Try various search input patterns
             search_selectors = [
                 'input[placeholder*="search" i]',
-                'input[placeholder*="Search" i]',
                 'input[type="search"]',
                 'input[placeholder*="customer" i]',
                 'input[placeholder*="name" i]',
@@ -401,7 +398,7 @@ async def upload_to_lux_portal(customer_name: str, files: List) -> bool:
                     continue
 
             if not job_clicked:
-                log.warning(f'Could not find job row for {customer_name} in Lux portal')
+                log.warning(f'Could not find job row for {customer_name} in Lux portal — attempting upload on current page anyway')
 
             log.info(f'Current Lux URL: {page.url}')
 
