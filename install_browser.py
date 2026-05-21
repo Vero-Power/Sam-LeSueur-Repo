@@ -331,9 +331,24 @@ async def upload_to_lux_portal(customer_name: str, files: List) -> bool:
             current_url = page.url
             log.info(f'Lux portal URL after load: {current_url}')
 
-            # If session expired and redirected to Google login, re-authenticate
-            if 'accounts.google.com' in current_url:
-                log.info('Session expired — attempting Google re-authentication')
+            # If session expired — handle both Lux's own login page and Google OAuth redirect
+            on_lux_login = 'account.luxfinancial.io/auth/login' in current_url
+            on_google_login = 'accounts.google.com' in current_url
+            if on_lux_login or on_google_login:
+                log.info(f'Session expired — re-authenticating ({"Lux login" if on_lux_login else "Google OAuth"})')
+
+                if on_lux_login:
+                    # Click "Sign in with Google" on Lux's login page
+                    google_btn = page.locator('button:has-text("Google"), a:has-text("Google"), button:has-text("Sign in with Google")').first
+                    try:
+                        if await google_btn.is_visible(timeout=5000):
+                            await google_btn.click()
+                            await page.wait_for_load_state('domcontentloaded')
+                            await page.wait_for_timeout(2000)
+                    except Exception:
+                        pass
+
+                # Fill Google credentials
                 email_input = page.locator('input[type="email"]').first
                 if await email_input.is_visible(timeout=5000):
                     await email_input.fill(GMAIL_ADDRESS)
@@ -342,7 +357,7 @@ async def upload_to_lux_portal(customer_name: str, files: List) -> bool:
                     await page.locator('input[type="password"]').first.fill(LUX_GOOGLE_PASSWORD)
                     await page.locator('#passwordNext, button:has-text("Next")').first.click()
                     await page.wait_for_load_state('domcontentloaded')
-                    await page.wait_for_timeout(3000)
+                    await page.wait_for_timeout(5000)
 
                 # Save refreshed session
                 try:
@@ -351,9 +366,9 @@ async def upload_to_lux_portal(customer_name: str, files: List) -> bool:
                 except Exception as e:
                     log.warning(f'Could not save refreshed session: {e}')
 
-            # Verify we're on the Lux portal
-            if 'luxfinancial.io' not in page.url:
-                log.error(f'Not on Lux portal after auth — URL: {page.url}')
+            # Verify we're on the Lux portal (app.luxfinancial.io)
+            if 'app.luxfinancial.io' not in page.url:
+                log.error(f'Not on Lux app portal after auth — URL: {page.url}')
                 return False
 
             # Search for the customer

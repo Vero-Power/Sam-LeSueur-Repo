@@ -349,26 +349,25 @@ def send_install_slack(project: dict, photos: list):
         f'Area: {city}'
     )
 
+    # Build blocks: text section + image blocks for each photo URL
+    blocks = [{'type': 'section', 'text': {'type': 'mrkdwn', 'text': text}}]
+    for i, photo_url in enumerate(photos):
+        blocks.append({
+            'type': 'image',
+            'image_url': photo_url,
+            'alt_text': f'Install photo {i + 1}',
+        })
+
     r = requests.post(
         'https://slack.com/api/chat.postMessage',
         headers={'Authorization': f'Bearer {SLACK_BOT_TOKEN}', 'Content-Type': 'application/json'},
-        json={'channel': VERO_CHANNEL, 'text': text},
+        json={'channel': VERO_CHANNEL, 'text': text, 'blocks': blocks},
     )
     r.raise_for_status()
-    log.info(f'Slack message sent for {customer_name}')
-
-    # Upload photos to same channel (not threaded)
-    for i, photo_bytes in enumerate(photos):
-        requests.post(
-            'https://slack.com/api/files.upload',
-            headers={'Authorization': f'Bearer {SLACK_BOT_TOKEN}'},
-            data={
-                'channels': VERO_CHANNEL,
-                'filename': f'install_{i+1}.jpg',
-            },
-            files={'file': (f'install_{i+1}.jpg', photo_bytes, 'image/jpeg')},
-        )
-    log.info(f'Uploaded {len(photos)} photos to Slack for {customer_name}')
+    resp_data = r.json()
+    if not resp_data.get('ok'):
+        log.warning(f'Slack postMessage error: {resp_data.get("error")}')
+    log.info(f'Slack message sent for {customer_name} with {len(photos)} photos')
 
 
 def get_todays_installs() -> list:
@@ -471,7 +470,7 @@ def find_company_cam_project(customer_name: str) -> Optional[dict]:
     for search_term in [customer_name, last_name]:
         r = requests.get(
             f'{COMPANY_CAM_BASE}/projects',
-            params={'search': search_term},
+            params={'query': search_term},
             headers=CC_GET,
         )
         if r.status_code != 200:
@@ -487,7 +486,7 @@ def find_company_cam_project(customer_name: str) -> Optional[dict]:
 
 
 def is_install_checklist_complete(cc_project_id: str) -> bool:
-    """Return True if VERO SOLAR INSTALLER CHECKLIST has all items completed."""
+    """Return True if VERO SOLAR INSTALLER CHECKLIST has been completed (completed_at is set)."""
     r = requests.get(
         f'{COMPANY_CAM_BASE}/projects/{cc_project_id}/checklists',
         headers=CC_GET,
@@ -500,10 +499,8 @@ def is_install_checklist_complete(cc_project_id: str) -> bool:
     for checklist in checklists:
         name = (checklist.get('name') or '').upper()
         if 'VERO SOLAR INSTALLER CHECKLIST' in name:
-            total = checklist.get('total_items') or checklist.get('fields_count') or 0
-            completed = checklist.get('completed_items') or checklist.get('completed_fields_count') or 0
-            is_complete = total > 0 and completed >= total
-            log.info(f'Install checklist: {completed}/{total} — {"COMPLETE" if is_complete else "INCOMPLETE"}')
+            is_complete = bool(checklist.get('completed_at'))
+            log.info(f'Install checklist: {"COMPLETE" if is_complete else "INCOMPLETE"} (completed_at={checklist.get("completed_at")})')
             return is_complete
     log.info('VERO SOLAR INSTALLER CHECKLIST not found in Company Cam')
     return False
@@ -521,41 +518,25 @@ def get_install_photos(cc_project_id: str) -> list:
     data = r.json()
     checklists = data if isinstance(data, list) else data.get('checklists', [])
 
-    checklist_id = None
-    for c in checklists:
-        if 'VERO SOLAR INSTALLER CHECKLIST' in (c.get('name') or '').upper():
-            checklist_id = c['id']
-            break
-    if not checklist_id:
+    checklist = next(
+        (c for c in checklists if 'VERO SOLAR INSTALLER CHECKLIST' in (c.get('name') or '').upper()),
+        None,
+    )
+    if not checklist:
         return []
 
-    r2 = requests.get(f'{COMPANY_CAM_BASE}/checklists/{checklist_id}', headers=CC_GET)
-    if r2.status_code != 200:
-        log.warning(f'Company Cam checklist detail returned {r2.status_code}')
-        return []
-    checklist_data = r2.json()
-
+    tasks = checklist.get('sectionless_tasks') or []
     photo_urls = []
-    items = checklist_data.get('items') or checklist_data.get('fields') or []
-    for item in items:
-        item_name = (item.get('label') or item.get('name') or '').lower()
-        if any(kw in item_name for kw in ['installed panel', 'panels', 'battery', 'powerwall']):
-            photos = item.get('photos') or item.get('responses') or []
-            for photo in photos:
-                url = photo.get('uri') or photo.get('url') or photo.get('original')
+    for task in tasks:
+        task_name = (task.get('title') or task.get('label') or task.get('name') or '').lower()
+        if any(kw in task_name for kw in ['installed panel', 'panels', 'battery', 'powerwall']):
+            for photo in task.get('photos') or []:
+                url = photo.get('url') or photo.get('uri') or photo.get('original')
                 if url:
                     photo_urls.append(url)
 
     log.info(f'Found {len(photo_urls)} install/battery photo(s)')
-    photos_bytes = []
-    for url in photo_urls:
-        try:
-            resp = requests.get(url, timeout=30)
-            if resp.status_code == 200:
-                photos_bytes.append(resp.content)
-        except Exception as e:
-            log.warning(f'Failed to download photo from {url[:80]}: {e}')
-    return photos_bytes
+    return photo_urls
 
 
 # ─── M2 phase ─────────────────────────────────────────────────────────────────
