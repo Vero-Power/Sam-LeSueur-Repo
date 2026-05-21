@@ -44,6 +44,23 @@ Watches for emails with subject `Vero NTP Stipulation: [Customer Name]` from Lux
 
 ---
 
+### `install_automation.py` — Install Completion
+Watches Coperniq every 30 minutes for solar installs completed today (VERO SOLAR INSTALLER CHECKLIST done in Company Cam).
+
+**Actions:**
+1. Finds today's Solar Installation projects in Coperniq
+2. Checks Company Cam for a completed VERO SOLAR INSTALLER CHECKLIST
+3. Completes the install work order, form, and field visit in Coperniq
+4. Sends Slack to #vero with panel + battery photos, tagging setter and closer
+5. Sends customer a follow-up SMS with referral ask
+6. Downloads BOM from Gmail and CAD/planset from Coperniq
+7. Exports Company Cam checklist as PDF (Playwright)
+8. Uploads all docs to Lux Financial portal (Playwright)
+9. Emails Kathy at Lux that M2 was submitted
+10. Creates M2 work order + form in Coperniq, sets Finance Status → M2 Submitted, WO → WAITING
+
+---
+
 ## Setup
 
 ### 1. Install dependencies
@@ -107,3 +124,9 @@ pkill -f ntp_stip_automation.py
 | `ntp_automation.log` | NTP automation log output |
 | `m2_automation.log` | M2 automation log output |
 | `ntp_stip_automation.log` | Stipulation automation log output |
+| `install_automation.py` | Install Completion automation |
+| `install_browser.py` | Playwright browser automation for install (CC PDF, Lux upload) |
+| `create_lux_session.py` | One-time Lux portal Google OAuth session creation |
+| `processed_installs.json` | Tracks processed install project IDs — **not committed** |
+| `install_automation.log` | Install automation log output |
+| `lux_session.json` | Saved Lux portal session — **not committed** |
