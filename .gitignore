@@ -4,3 +4,4 @@ processed_emails.json
 __pycache__/
 *.pyc
 .env
+lux_session.json

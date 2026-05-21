@@ -306,8 +306,159 @@ async def screenshot_tesla_commissioning(customer_address: str) -> Optional[byte
 
 
 async def upload_to_lux_portal(customer_name: str, files: List) -> bool:
-    """Log into Lux portal using saved session, find job, upload all files."""
-    pass  # Task 11
+    """Log into Lux portal using saved session, find job, upload all files.
+
+    files: list of (filename, bytes) tuples
+    """
+    import tempfile
+
+    if not SESSION_FILE.exists():
+        log.error('lux_session.json not found — run create_lux_session.py first')
+        return False
+
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+        context = await browser.new_context(
+            storage_state=str(SESSION_FILE),
+            viewport={'width': 1600, 'height': 900},
+            accept_downloads=True,
+        )
+        page = await context.new_page()
+
+        try:
+            log.info(f'Navigating to Lux portal for {customer_name}')
+            await page.goto(LUX_URL, wait_until='domcontentloaded', timeout=60000)
+            await page.wait_for_timeout(3000)
+
+            current_url = page.url
+            log.info(f'Lux portal URL after load: {current_url}')
+
+            # If session expired and redirected to Google login, re-authenticate
+            if 'accounts.google.com' in current_url or 'google.com' in current_url:
+                log.info('Session expired — attempting Google re-authentication')
+                email_input = page.locator('input[type="email"]').first
+                if await email_input.is_visible(timeout=5000):
+                    await email_input.fill(GMAIL_ADDRESS)
+                    await page.locator('#identifierNext, button:has-text("Next")').first.click()
+                    await page.wait_for_timeout(2000)
+                    await page.locator('input[type="password"]').first.fill(LUX_GOOGLE_PASSWORD)
+                    await page.locator('#passwordNext, button:has-text("Next")').first.click()
+                    await page.wait_for_load_state('domcontentloaded')
+                    await page.wait_for_timeout(3000)
+
+                # Save refreshed session
+                try:
+                    await context.storage_state(path=str(SESSION_FILE))
+                    log.info('Refreshed Lux session saved')
+                except Exception as e:
+                    log.warning(f'Could not save refreshed session: {e}')
+
+            # Verify we're on the Lux portal
+            if 'luxfinancial.io' not in page.url:
+                log.error(f'Not on Lux portal after auth — URL: {page.url}')
+                return False
+
+            # Search for the customer
+            last_name = customer_name.split()[-1]
+            log.info(f'Searching Lux portal for: {last_name}')
+
+            # Try various search input patterns
+            search_selectors = [
+                'input[placeholder*="search" i]',
+                'input[placeholder*="Search" i]',
+                'input[type="search"]',
+                'input[placeholder*="customer" i]',
+                'input[placeholder*="name" i]',
+            ]
+            search_input = None
+            for selector in search_selectors:
+                loc = page.locator(selector).first
+                if await loc.is_visible(timeout=2000):
+                    search_input = loc
+                    log.info(f'Found search input: {selector}')
+                    break
+
+            if search_input:
+                await search_input.fill(last_name)
+                await page.keyboard.press('Enter')
+                await page.wait_for_timeout(2000)
+            else:
+                log.warning('No search input found — trying to find job in listing directly')
+
+            # Click into the job row
+            job_clicked = False
+            for name_part in [customer_name, last_name, customer_name.split()[0]]:
+                try:
+                    job_row = page.locator(f'text={name_part}').first
+                    if await job_row.is_visible(timeout=3000):
+                        await job_row.click()
+                        await page.wait_for_load_state('domcontentloaded')
+                        await page.wait_for_timeout(2000)
+                        job_clicked = True
+                        log.info(f'Clicked job row for: {name_part}')
+                        break
+                except Exception:
+                    continue
+
+            if not job_clicked:
+                log.warning(f'Could not find job row for {customer_name} in Lux portal')
+
+            log.info(f'Current Lux URL: {page.url}')
+
+            # Write files to temp dir
+            with tempfile.TemporaryDirectory() as tmpdir:
+                tmp_paths = []
+                for filename, data in files:
+                    path = Path(tmpdir) / filename
+                    path.write_bytes(data)
+                    tmp_paths.append(str(path))
+                    log.info(f'Temp file: {path} ({len(data)} bytes)')
+
+                # Find all file upload inputs
+                upload_inputs = page.locator('input[type="file"]')
+                input_count = await upload_inputs.count()
+                log.info(f'Found {input_count} file input(s) on Lux portal job page')
+
+                if input_count > 0:
+                    # Try to upload all files to available inputs
+                    # Multiple inputs may map to different doc types (checklist, CAD, BOM, Tesla)
+                    for i, tmp_path in enumerate(tmp_paths):
+                        input_idx = min(i, input_count - 1)
+                        try:
+                            await upload_inputs.nth(input_idx).set_input_files(tmp_path)
+                            await page.wait_for_timeout(1500)
+                            log.info(f'Uploaded {Path(tmp_path).name} to input[{input_idx}]')
+                        except Exception as e:
+                            log.warning(f'Could not upload {Path(tmp_path).name}: {e}')
+                else:
+                    # Try drag-and-drop zones or other upload mechanisms
+                    log.warning('No file inputs found — Lux portal may use drag-and-drop upload zone')
+                    drop_zones = page.locator('[class*="upload" i], [class*="dropzone" i], [class*="drop" i]')
+                    dz_count = await drop_zones.count()
+                    log.info(f'Found {dz_count} potential drop zones')
+
+                # Look for Save/Submit/Upload/Confirm buttons
+                for btn_text in ['Save', 'Submit', 'Upload', 'Confirm', 'Update']:
+                    btn = page.locator(f'button:has-text("{btn_text}")').first
+                    try:
+                        if await btn.is_visible(timeout=2000):
+                            await btn.click()
+                            await page.wait_for_load_state('domcontentloaded')
+                            await page.wait_for_timeout(2000)
+                            log.info(f'Clicked "{btn_text}" button on Lux portal')
+                            break
+                    except Exception:
+                        continue
+
+            log.info(f'Lux portal upload complete for {customer_name}: {len(files)} files')
+            return True
+
+        except Exception as e:
+            log.exception(f'upload_to_lux_portal failed for {customer_name}: {e}')
+            return False
+        finally:
+            await context.close()
+            await browser.close()
 
 
 if __name__ == '__main__':
