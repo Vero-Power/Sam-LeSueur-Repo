@@ -16,9 +16,9 @@ Monitors Coperniq for completed solar installs and runs the full post-install wo
 2. Checks Company Cam for completed VERO SOLAR INSTALLER CHECKLIST
 3. Completes the Solar Installation work order, form, and field visit in Coperniq
 4. Sends Slack message to #vero with panel + battery photos, tagging setter and closer
-5. Sends customer follow-up SMS via Coperniq
+5. Sends customer follow-up SMS via Twilio (requires TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM_NUMBER in .env)
 6. Downloads BOM from Gmail (`[Customer] Solar Materials` email) and CAD/planset from Coperniq
-7. Exports the Company Cam installer checklist as PDF (via Playwright)
+7. Exports Company Cam install photos as a multi-page PDF (via CC API + Pillow — no browser needed). Filters to 'installed panel' and 'installed battery' photos only, excludes serial number/barcode tasks.
 8. Uploads all documents (checklist PDF, CAD/planset, BOM) to Lux portal
 9. Emails kathy.treanor@luxfinancial.io that M2 was submitted
 10. Finds or creates the M2 work order and form in Coperniq, sets Finance Status → M2 Submitted, WO → WAITING, leaves a note
@@ -88,14 +88,19 @@ tail -f install_automation.log
 | `TESLA_CLIENT_SECRET` | Tesla PowerHub API client secret |
 | `TESLA_GROUP_ID` | Tesla PowerHub group ID |
 | `KATHY_EMAIL` | Kathy's email at Lux Financial |
+| `TWILIO_ACCOUNT_SID` | Twilio account SID for customer SMS |
+| `TWILIO_AUTH_TOKEN` | Twilio auth token |
+| `TWILIO_FROM_NUMBER` | Twilio phone number to send SMS from |
 
 ## Files
 
 | File | Description |
 |------|-------------|
 | `install_automation.py` | Main script |
-| `install_browser.py` | Playwright browser automation (CC PDF export, Lux upload) |
-| `create_lux_session.py` | One-time script to create saved Lux Google OAuth session |
+| `install_browser.py` | Playwright browser automation (Lux upload, Tesla screenshot) |
+| `create_lux_session.py` | One-time script to create saved Lux Google OAuth + 2FA session |
+| `create_tesla_session.py` | One-time script to create saved Tesla PowerHub browser session |
 | `install_automation.log` | Log output |
 | `processed_installs.json` | Tracks processed project IDs — do not delete |
 | `lux_session.json` | Saved Lux portal session — do not commit |
+| `tesla_session.json` | Saved Tesla PowerHub session — do not commit |

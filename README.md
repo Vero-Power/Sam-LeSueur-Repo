@@ -51,8 +51,8 @@ Watches Coperniq every 30 minutes for solar installs completed today (VERO SOLAR
 1. Finds today's Solar Installation projects in Coperniq
 2. Checks Company Cam for a completed VERO SOLAR INSTALLER CHECKLIST
 3. Completes the install work order, form, and field visit in Coperniq
-4. Sends Slack to #vero with panel + battery photos, tagging setter and closer
-5. Sends customer a follow-up SMS with referral ask
+4. Sends Slack to #vero with panel + battery photos (filtered to installed panel/battery only), tagging setter and closer
+5. Sends customer a follow-up SMS via Twilio with referral ask
 6. Downloads BOM from Gmail and CAD/planset from Coperniq
 7. Exports Company Cam checklist as PDF (Playwright)
 8. Uploads all docs to Lux Financial portal (Playwright)
@@ -125,8 +125,9 @@ pkill -f ntp_stip_automation.py
 | `m2_automation.log` | M2 automation log output |
 | `ntp_stip_automation.log` | Stipulation automation log output |
 | `install_automation.py` | Install Completion automation |
-| `install_browser.py` | Playwright browser automation for install (CC PDF, Lux upload) |
-| `create_lux_session.py` | One-time Lux portal Google OAuth session creation |
+| `install_browser.py` | Playwright browser automation for install (Lux upload, Tesla screenshot) |
+| `create_lux_session.py` | One-time Lux portal Google OAuth + 2FA session creation |
+| `create_tesla_session.py` | One-time Tesla PowerHub browser session creation |
 | `processed_installs.json` | Tracks processed install project IDs — **not committed** |
 | `install_automation.log` | Install automation log output |
 | `lux_session.json` | Saved Lux portal session — **not committed** |

@@ -30,6 +30,9 @@ KATHY_EMAIL = os.environ['KATHY_EMAIL']
 TESLA_CLIENT_ID = os.environ['TESLA_CLIENT_ID']
 TESLA_CLIENT_SECRET = os.environ['TESLA_CLIENT_SECRET']
 TESLA_GROUP_ID = os.environ['TESLA_GROUP_ID']
+TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID', '')
+TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN', '')
+TWILIO_FROM_NUMBER = os.environ.get('TWILIO_FROM_NUMBER', '')
 
 COPERNIQ_BASE = 'https://api.coperniq.io/v1'
 TESLA_AUTH_URL = 'https://gridlogic-api.sn.tesla.services/v1/auth/token'
@@ -248,20 +251,8 @@ def complete_install_coperniq(project_id: int) -> dict:
     return result
 
 
-def send_customer_sms(project_id: int, customer_name: str):
-    """Send a post-install thank-you SMS to the customer via Coperniq.
-
-    Coperniq's REST API does not expose a dedicated SMS-send endpoint — the
-    /communications, /messages, and /sms routes all return 404.  The built-in
-    Twilio integration is only reachable through the Coperniq web UI.
-
-    Current strategy:
-      1. Attempt POST /projects/{id}/communications (in case the endpoint is
-         added or enabled for this account in the future).
-      2. If that returns non-2xx, fall back to POST /projects/{id}/notes so
-         the outgoing message text is recorded on the project as a paper trail,
-         and log a WARNING so the operator knows a manual SMS is needed.
-    """
+def send_customer_sms(project_id: int, customer_name: str, customer_phone: str = ''):
+    """Send a post-install thank-you SMS to the customer via Twilio."""
     first_name = customer_name.split()[0]
     message = (
         f"Hey {first_name}! This is Sam with Vero, just checking in to make sure the install "
@@ -269,34 +260,22 @@ def send_customer_sms(project_id: int, customer_name: str):
         f"or friends who are interested in the program, let us know so we can send ya a $500 referral bonus!"
     )
 
-    # Attempt 1: /communications (may be activated for this account in future)
-    r = requests.post(
-        f'{COPERNIQ_BASE}/projects/{project_id}/communications',
-        headers=COP_POST,
-        json={'body': message, 'type': 'SMS'},
-    )
-    if r.status_code in (200, 201):
-        log.info(f'SMS sent to {customer_name} via Coperniq /communications')
-        return
+    if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN and TWILIO_FROM_NUMBER and customer_phone:
+        r = requests.post(
+            f'https://api.twilio.com/2010-04-01/Accounts/{TWILIO_ACCOUNT_SID}/Messages.json',
+            auth=(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN),
+            data={
+                'From': TWILIO_FROM_NUMBER,
+                'To': customer_phone,
+                'Body': message,
+            },
+        )
+        if r.status_code in (200, 201):
+            log.info(f'SMS sent to {customer_name} ({customer_phone}) via Twilio')
+            return
+        log.warning(f'Twilio SMS failed: {r.status_code} {r.text[:200]}')
 
-    log.warning(
-        f'Coperniq /communications returned {r.status_code} — SMS not sent automatically. '
-        f'Recording message as a project note instead. Send manually to {customer_name}.'
-    )
-
-    # Fallback: leave the message text as a note so it is not lost
-    note_body = (
-        f'[PENDING MANUAL SMS — send to customer]\n\n{message}'
-    )
-    note_r = requests.post(
-        f'{COPERNIQ_BASE}/projects/{project_id}/notes',
-        headers=COP_POST,
-        json={'body': note_body},
-    )
-    if note_r.status_code not in (200, 201):
-        log.warning(f'Also failed to leave note: {note_r.status_code} {note_r.text[:200]}')
-    else:
-        log.info(f'Note left on project {project_id} with pending SMS text for {customer_name}')
+    log.warning(f'SMS not sent for {customer_name} — add TWILIO_ACCOUNT_SID/AUTH_TOKEN to .env')
 
 
 def _slack_user_id_from_email(email: str) -> Optional[str]:
@@ -349,25 +328,72 @@ def send_install_slack(project: dict, photos: list):
         f'Area: {city}'
     )
 
-    # Build blocks: text section + image blocks for each photo URL
-    blocks = [{'type': 'section', 'text': {'type': 'mrkdwn', 'text': text}}]
-    for i, photo_url in enumerate(photos):
-        blocks.append({
-            'type': 'image',
-            'image_url': photo_url,
-            'alt_text': f'Install photo {i + 1}',
-        })
+    slack_headers = {'Authorization': f'Bearer {SLACK_BOT_TOKEN}'}
 
+    # Download photos from Company Cam (URLs require Bearer auth)
+    photo_bytes_list = []
+    for url in photos:
+        try:
+            resp = requests.get(url, headers=CC_GET, timeout=30)
+            if resp.status_code == 200 and resp.content:
+                photo_bytes_list.append(resp.content)
+            else:
+                log.warning(f'Photo download failed: {resp.status_code} {url[:60]}')
+        except Exception as e:
+            log.warning(f'Photo download error: {e}')
+
+    # Upload all photos to Slack in one message using files.getUploadURLExternal
+    file_ids = []
+    for i, photo_data in enumerate(photo_bytes_list):
+        try:
+            r = requests.get(
+                'https://slack.com/api/files.getUploadURLExternal',
+                headers=slack_headers,
+                params={'filename': f'install_photo_{i + 1}.jpg', 'length': len(photo_data)},
+            )
+            r.raise_for_status()
+            resp_data = r.json()
+            if not resp_data.get('ok'):
+                log.warning(f'getUploadURLExternal failed: {resp_data.get("error")}')
+                continue
+            upload_url = resp_data['upload_url']
+            file_id = resp_data['file_id']
+            put_r = requests.put(upload_url, data=photo_data,
+                                 headers={'Content-Type': 'image/jpeg'})
+            put_r.raise_for_status()
+            file_ids.append(file_id)
+        except Exception as e:
+            log.warning(f'Photo upload to Slack failed (photo {i}): {e}')
+
+    if file_ids:
+        r = requests.post(
+            'https://slack.com/api/files.completeUploadExternal',
+            headers={**slack_headers, 'Content-Type': 'application/json'},
+            json={
+                'files': [{'id': fid} for fid in file_ids],
+                'channel_id': VERO_CHANNEL,
+                'initial_comment': text,
+            },
+        )
+        r.raise_for_status()
+        resp_data = r.json()
+        if not resp_data.get('ok'):
+            log.warning(f'completeUploadExternal error: {resp_data.get("error")}')
+        else:
+            log.info(f'Slack message sent for {customer_name} with {len(file_ids)} photos')
+            return
+
+    # Fallback: text-only message if photos unavailable
     r = requests.post(
         'https://slack.com/api/chat.postMessage',
-        headers={'Authorization': f'Bearer {SLACK_BOT_TOKEN}', 'Content-Type': 'application/json'},
-        json={'channel': VERO_CHANNEL, 'text': text, 'blocks': blocks},
+        headers={**slack_headers, 'Content-Type': 'application/json'},
+        json={'channel': VERO_CHANNEL, 'text': text},
     )
     r.raise_for_status()
     resp_data = r.json()
     if not resp_data.get('ok'):
         log.warning(f'Slack postMessage error: {resp_data.get("error")}')
-    log.info(f'Slack message sent for {customer_name} with {len(photos)} photos')
+    log.info(f'Slack text-only message sent for {customer_name} (no photos uploaded)')
 
 
 def get_todays_installs() -> list:
@@ -669,17 +695,9 @@ def start_m2_coperniq(project_id: int, customer_name: str):
         json={'fields': fields},
     )
     patch_r.raise_for_status()
+    log.info(f'M2 form {form_id} fields updated (not completing — Lux must approve first)')
 
-    # 5. Complete form
-    patch_r2 = requests.patch(
-        f'{COPERNIQ_BASE}/forms/{form_id}',
-        headers=COP_POST,
-        json={'status': 'COMPLETED'},
-    )
-    patch_r2.raise_for_status()
-    log.info(f'M2 form {form_id} marked COMPLETED')
-
-    # 6. Set WO status to WAITING
+    # 5. Set WO status to WAITING
     wo_patch = requests.patch(
         f'{COPERNIQ_BASE}/projects/{project_id}/work-orders/{wo_id}',
         headers=COP_POST,
@@ -816,13 +834,23 @@ def run_browser_tasks(
     customer_address: str,
     bom_files: list,
     cad_file,
+    install: Optional[dict] = None,
 ) -> int:
     """Run all Playwright tasks (CC PDF export, Lux upload). Returns count of files uploaded."""
     import asyncio
-    from install_browser import export_cc_checklist_pdf, upload_to_lux_portal
+    from install_browser import export_cc_checklist_pdf, upload_to_lux_portal, screenshot_tesla_commissioning
 
     async def _run():
-        pdf = await export_cc_checklist_pdf(cc_project_id)
+        pdf = export_cc_checklist_pdf(cc_project_id)
+
+        custom = (install or {}).get('custom') or {}
+        tesla_png = await screenshot_tesla_commissioning(
+            customer_address=customer_address,
+            customer_name=customer_name,
+            battery_model=custom.get('battery_model', ''),
+            battery_kwh=float(custom.get('battery_kwh') or 0),
+            commissioning_date=(custom.get('install_completed_date') or '')[:10],
+        )
 
         lux_files = []
         if pdf:
@@ -832,9 +860,8 @@ def run_browser_tasks(
             lux_files.append((cad_name, cad_data, 'CAD/Plan Set'))
         for name, data in bom_files:
             lux_files.append((name, data, 'Bill of Materials'))
-
-        # Tesla commissioning data is retrieved via API (get_tesla_commissioning_data),
-        # not via browser — no Tesla file to add here
+        if tesla_png:
+            lux_files.append(('tesla_commissioning.png', tesla_png, 'Commissioning Screen Shot'))
 
         if lux_files:
             await upload_to_lux_portal(customer_name, lux_files)
@@ -899,7 +926,8 @@ def process_install(install: dict) -> bool:
 
     # 5. Send customer SMS
     try:
-        send_customer_sms(project_id, customer_name)
+        customer_phone = install.get('primaryPhone') or ''
+        send_customer_sms(project_id, customer_name, customer_phone)
     except Exception:
         log.exception(f'send_customer_sms failed for {customer_name}')
 
@@ -918,7 +946,7 @@ def process_install(install: dict) -> bool:
 
     # 7. Browser tasks: export CC checklist PDF, upload all docs to Lux
     try:
-        uploaded_count = run_browser_tasks(cc_project_id, customer_name, address_str, bom_files, cad_file)
+        uploaded_count = run_browser_tasks(cc_project_id, customer_name, address_str, bom_files, cad_file, install)
         log.info(f'Browser tasks complete: {uploaded_count} file(s) uploaded to Lux')
     except Exception:
         log.exception(f'Browser tasks failed for {customer_name}')

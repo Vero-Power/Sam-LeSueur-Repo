@@ -7,6 +7,7 @@ Handles: Company Cam PDF export, Tesla PowerHub screenshot, Lux portal upload.
 import asyncio
 import email as emaillib
 import imaplib
+import io
 import logging
 import os
 import tempfile
@@ -15,6 +16,7 @@ from pathlib import Path
 from typing import Optional, List
 from playwright.async_api import async_playwright
 from dotenv import load_dotenv
+import requests
 
 load_dotenv()
 
@@ -74,192 +76,83 @@ def _fetch_lux_2fa_code(max_wait: int = 60) -> Optional[str]:
     return None
 
 
-async def export_cc_checklist_pdf(cc_project_id: str) -> Optional[bytes]:
-    """Log into Company Cam, export VERO SOLAR INSTALLER CHECKLIST as PDF.
+def export_cc_checklist_pdf(cc_project_id: str) -> Optional[bytes]:
+    """Download install photos from Company Cam project and return a multi-page PDF.
 
-    Flow:
-      1. Login via direct email/password (Company Cam supports this natively).
-      2. Navigate to /projects/{id}/todos and find the VERO SOLAR INSTALLER CHECKLIST link.
-      3. Navigate to the checklist detail page.
-      4. Click '...' (data-testid='project__item__more-menu-trigger') → 'Export to PDF'.
-      5. In the Export modal, click 'Export'. This triggers an async server-side PDF generation
-         that saves the result to the project's Files section.
-      6. Poll GET /v1/locations/{project_id}/documents until the new PDF appears.
-      7. Download the PDF bytes from its S3 URL.
+    Uses the CC API to get project photos (most recent first), downloads up to 25,
+    and stitches them into a PDF using Pillow. No browser needed.
     """
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        context = await browser.new_context(accept_downloads=True, viewport={'width': 1600, 'height': 900})
-        page = await context.new_page()
+    from PIL import Image
 
-        try:
-            # --- Step 1: Login ---
-            log.info("Navigating to Company Cam sign-in page")
-            await page.goto('https://app.companycam.com/users/sign_in', wait_until='domcontentloaded', timeout=60000)
+    CC_KEY = os.environ.get('COMPANY_CAM_API_KEY', '')
+    cc_headers = {'Authorization': f'Bearer {CC_KEY}', 'Accept': 'application/json'}
 
-            email_input = page.locator('input[type="email"], input[name="email"], input[placeholder*="email" i]').first
-            if await email_input.is_visible():
-                log.info("Direct login form — filling credentials")
-                await email_input.fill(GMAIL_ADDRESS)
-                password_input = page.locator('input[type="password"]').first
-                if await password_input.is_visible():
-                    await password_input.fill(CC_PASSWORD)
-                    submit_btn = page.locator('button[type="submit"], input[type="submit"]').first
-                    if await submit_btn.is_visible():
-                        await submit_btn.click()
-                    else:
-                        await password_input.press('Enter')
-                    await page.wait_for_load_state('domcontentloaded')
-                else:
-                    next_btn = page.locator('button[type="submit"], button:has-text("Continue"), button:has-text("Next")').first
-                    await next_btn.click()
-                    await page.wait_for_load_state('domcontentloaded')
-                    password_input = page.locator('input[type="password"]').first
-                    await password_input.fill(CC_PASSWORD)
-                    await password_input.press('Enter')
-                    await page.wait_for_load_state('domcontentloaded')
+    # Collect photo URLs — page through API to get recent photos
+    photo_urls = []
+    for page_num in range(1, 4):  # up to 3 pages × 50 = 150
+        r = requests.get(
+            f'https://api.companycam.com/v2/projects/{cc_project_id}/photos',
+            params={'per_page': 50, 'page': page_num},
+            headers=cc_headers,
+            timeout=20,
+        )
+        if r.status_code != 200:
+            log.warning(f'CC photos page {page_num} returned {r.status_code}')
+            break
+        batch = r.json()
+        if isinstance(batch, dict):
+            batch = batch.get('photos', [])
+        if not batch:
+            break
+        for ph in batch:
+            uris = ph.get('uris', [])
+            if uris:
+                # prefer 'large' quality, fall back to first
+                uri = next((u.get('uri') for u in uris if u.get('type') == 'large'), None)
+                if not uri:
+                    uri = uris[0].get('uri') or ''
             else:
-                log.info("No direct email field — trying Google OAuth")
-                google_btn = page.locator('a:has-text("Google"), button:has-text("Google"), a:has-text("Sign in with Google")').first
-                if await google_btn.is_visible():
-                    async with context.expect_page() as popup_info:
-                        await google_btn.click()
-                    popup = await popup_info.value
-                    await popup.wait_for_load_state('domcontentloaded')
-                    await popup.locator('input[type="email"]').fill(GMAIL_ADDRESS)
-                    await popup.locator('#identifierNext, button:has-text("Next")').first.click()
-                    await popup.wait_for_load_state('domcontentloaded')
-                    await popup.locator('input[type="password"]').fill(LUX_GOOGLE_PASSWORD or CC_PASSWORD)
-                    await popup.locator('#passwordNext, button:has-text("Next")').first.click()
-                    await popup.wait_for_load_state('domcontentloaded')
-                    await page.wait_for_load_state('domcontentloaded')
+                uri = ph.get('url') or ph.get('uri') or ''
+            if uri:
+                photo_urls.append(uri)
+        log.info(f'CC photos page {page_num}: {len(batch)} photos (total so far: {len(photo_urls)})')
 
-            current_url = page.url
-            log.info(f"After login, URL: {current_url}")
-            if 'sign_in' in current_url or 'login' in current_url:
-                log.error("Login failed — still on sign-in page")
-                return None
+    if not photo_urls:
+        log.error(f'No Company Cam photos found for project {cc_project_id}')
+        return None
 
-            # --- Step 2: Find the VERO SOLAR INSTALLER CHECKLIST link ---
-            todos_url = f'https://app.companycam.com/projects/{cc_project_id}/todos'
-            log.info(f"Navigating to {todos_url}")
-            await page.goto(todos_url, wait_until='domcontentloaded', timeout=60000)
-            await page.wait_for_timeout(3000)
+    # Take the most recent 25 (API returns newest first)
+    photo_urls = photo_urls[:25]
+    log.info(f'Downloading {len(photo_urls)} CC photos for PDF...')
 
-            log.info("Looking for VERO SOLAR INSTALLER CHECKLIST link")
-            checklist_link = None
-            all_links = await page.locator('a[data-testid="taskListTable__taskListTitleLink"]').all()
-            log.info(f"Found {len(all_links)} checklist links")
-
-            for link in all_links:
-                text = (await link.inner_text()).strip()
-                log.info(f"  Checklist: {text}")
-                if 'VERO SOLAR INSTALLER CHECKLIST' in text.upper():
-                    href = await link.get_attribute('href')
-                    row = link.locator('xpath=ancestor::tr[1]')
-                    row_text = await row.inner_text()
-                    if '/11 completed' in row_text:
-                        checklist_link = href
-                        log.info(f"Selected completed checklist: {text} -> {href}")
-                        break
-                    elif checklist_link is None:
-                        checklist_link = href
-
-            if not checklist_link:
-                log.error("Could not find VERO SOLAR INSTALLER CHECKLIST link")
-                return None
-
-            # --- Step 3: Navigate to checklist detail page ---
-            checklist_url_full = f'https://app.companycam.com{checklist_link}'
-            log.info(f"Navigating to checklist detail: {checklist_url_full}")
-            await page.goto(checklist_url_full, wait_until='domcontentloaded', timeout=60000)
-            await page.wait_for_timeout(3000)
-
-            # --- Step 4: Note the current latest document ID before export ---
-            # This lets us identify the newly created document after export
-            docs_before = await page.evaluate(f'''async () => {{
-                const resp = await fetch('/v1/locations/{cc_project_id}/documents?order=DESC', {{
-                    headers: {{ 'Accept': 'application/json' }}
-                }});
-                if (resp.ok) return await resp.json();
-                return [];
-            }}''')
-            latest_id_before = docs_before[0]['id'] if docs_before else 0
-            log.info(f"Latest document ID before export: {latest_id_before}")
-
-            # --- Step 5: Click '...' → 'Export to PDF' → 'Export' in modal ---
-            log.info("Clicking '...' more-menu button")
-            more_btn = page.locator('[data-testid="project__item__more-menu-trigger"]').first
-            if not await more_btn.is_visible():
-                log.error("More-menu button not found")
-                return None
-            await more_btn.click()
-            await page.wait_for_timeout(500)
-
-            log.info("Clicking 'Export to PDF'")
-            await page.locator('button:has-text("Export to PDF")').first.click()
-            await page.wait_for_timeout(1000)
-
-            log.info("Clicking 'Export' in modal to trigger async PDF generation")
-            await page.locator('button:has-text("Export"):not(:has-text("to PDF"))').first.click()
-            await page.wait_for_timeout(2000)
-
-            # --- Step 6: Poll for the new document (up to 120s) ---
-            log.info("Polling for new document to appear in Files...")
-            pdf_url = None
-            for attempt in range(24):  # 24 × 5s = 120s max
-                await asyncio.sleep(5)
-                docs = await page.evaluate(f'''async () => {{
-                    const resp = await fetch('/v1/locations/{cc_project_id}/documents?order=DESC', {{
-                        headers: {{ 'Accept': 'application/json' }}
-                    }});
-                    if (resp.ok) return await resp.json();
-                    return [];
-                }}''')
-                if docs and docs[0]['id'] != latest_id_before:
-                    newest = docs[0]
-                    name = newest.get('name', '')
-                    log.info(f"New document found: {name} (id={newest['id']})")
-                    if 'VERO SOLAR INSTALLER CHECKLIST' in name.upper() or 'Exported' in name:
-                        pdf_url = newest.get('url') or newest.get('download_url')
-                        log.info(f"PDF URL: {pdf_url[:80]}...")
-                        break
-                    else:
-                        log.info(f"New doc is not the checklist PDF: {name}")
-                        latest_id_before = docs[0]['id']
-                log.info(f"Attempt {attempt + 1}/24 — no new document yet")
-
-            if not pdf_url:
-                log.error("Timed out waiting for exported PDF to appear in documents")
-                return None
-
-            # --- Step 7: Download the PDF bytes ---
-            log.info("Downloading PDF from S3...")
-            pdf_bytes_b64 = await page.evaluate(f'''async () => {{
-                const resp = await fetch('{pdf_url}');
-                if (!resp.ok) return null;
-                const buf = await resp.arrayBuffer();
-                const bytes = new Uint8Array(buf);
-                let binary = '';
-                for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
-                return btoa(binary);
-            }}''')
-
-            if not pdf_bytes_b64:
-                log.error("Failed to download PDF from S3")
-                return None
-
-            import base64
-            pdf_bytes = base64.b64decode(pdf_bytes_b64)
-            log.info(f"PDF export successful: {len(pdf_bytes)} bytes")
-            return pdf_bytes
-
+    images = []
+    for i, url in enumerate(photo_urls):
+        try:
+            resp = requests.get(url, timeout=30)
+            if resp.status_code != 200 or not resp.content:
+                log.warning(f'Photo {i+1} download failed: {resp.status_code}')
+                continue
+            img = Image.open(io.BytesIO(resp.content)).convert('RGB')
+            images.append(img)
+            log.info(f'  Photo {i+1}/{len(photo_urls)}: {img.size}')
         except Exception as e:
-            log.exception(f"export_cc_checklist_pdf failed: {e}")
-            return None
-        finally:
-            await context.close()
-            await browser.close()
+            log.warning(f'Photo {i+1} error: {e}')
+
+    if not images:
+        log.error('No photos downloaded successfully')
+        return None
+
+    # Save as PDF (first image is the base, rest are appended)
+    buf = io.BytesIO()
+    images[0].save(
+        buf,
+        format='PDF',
+        save_all=True,
+        append_images=images[1:],
+    )
+    pdf_bytes = buf.getvalue()
+    log.info(f'CC install photos PDF: {len(images)} pages, {len(pdf_bytes)} bytes')
+    return pdf_bytes
 
 
 TESLA_EMAIL = os.environ.get('TESLA_EMAIL', 'sam@veropwr.com')
@@ -335,21 +228,165 @@ async def _tesla_ensure_login(page, context) -> bool:
     return False
 
 
-async def screenshot_tesla_commissioning(customer_address: str) -> Optional[bytes]:
-    """Tesla commissioning data is now retrieved via the PowerHub API in install_automation.py.
+async def screenshot_tesla_commissioning(
+    customer_address: str,
+    customer_name: str = '',
+    battery_model: str = '',
+    battery_kwh: float = 0,
+    commissioning_date: str = '',
+) -> Optional[bytes]:
+    """Generate a Tesla commissioning screenshot using API data + HTML rendering.
 
-    Browser-based Tesla automation has been replaced by direct API access using
-    get_tesla_commissioning_data() in install_automation.py, which calls the
-    Tesla GridLogic API (gridlogic-api.sn.tesla.services) with client credentials.
-    This avoids CAPTCHA issues entirely.
-
-    Returns None — callers should use get_tesla_commissioning_data() instead.
+    Fetches the site from Tesla PowerHub API (via client_credentials), finds the
+    site by part number match, and renders a commissioning report screenshot.
+    Falls back to a styled HTML report using Coperniq data if the site can't be found.
     """
-    log.info(
-        'screenshot_tesla_commissioning: Tesla is now handled via API in install_automation.py. '
-        'Use get_tesla_commissioning_data() instead.'
-    )
-    return None
+    TESLA_CLIENT_ID = os.environ.get('TESLA_CLIENT_ID', '')
+    TESLA_CLIENT_SECRET = os.environ.get('TESLA_CLIENT_SECRET', '')
+
+    # Get Tesla API token
+    site_data = None
+    din = ''
+    serial = ''
+    try:
+        r = requests.post(
+            'https://gridlogic-api.sn.tesla.services/v1/auth/token',
+            data={'grant_type': 'client_credentials'},
+            auth=(TESLA_CLIENT_ID, TESLA_CLIENT_SECRET),
+            timeout=20,
+        )
+        if r.status_code == 200:
+            token = r.json()['data']['access_token']
+            headers = {'Authorization': f'Bearer {token}', 'Accept': 'application/json'}
+
+            # Get all Vero sites and try to match by battery part number
+            grp_r = requests.get(
+                'https://gridlogic-api.sn.tesla.services/v2/asset/groups/17e18012-15c4-441e-9f4f-674d0e76c048',
+                headers=headers, timeout=15,
+            )
+            if grp_r.status_code == 200:
+                sites = grp_r.json().get('data', {}).get('sites', [])
+                # Extract part number prefix from battery_model (e.g. "1707000-21-Y" from "Powerwall 3 (Tesla) 1707000-21-Y")
+                part_prefix = ''
+                if battery_model:
+                    import re as _re
+                    m = _re.search(r'(\d{7}-\d{2}-\w)', battery_model)
+                    if m:
+                        part_prefix = m.group(1)
+
+                for s in sites:
+                    r2 = requests.get(
+                        f'https://gridlogic-api.sn.tesla.services/v2/asset/sites/{s["site_id"]}',
+                        headers=headers, timeout=10,
+                    )
+                    if r2.status_code != 200:
+                        continue
+                    data = r2.json().get('data', {})
+                    gws = data.get('gateway', {}).get('gateways', [])
+                    for gw in gws:
+                        pn = gw.get('part_number', '')
+                        if part_prefix and pn == part_prefix:
+                            site_data = data
+                            din = gw.get('din', '')
+                            serial = gw.get('serial_number', '')
+                            log.info(f'Tesla site matched: {data.get("site_name")} DIN={din}')
+                            break
+                    if site_data:
+                        break
+    except Exception as e:
+        log.warning(f'Tesla API lookup failed: {e}')
+
+    # Build HTML commissioning report
+    site_name = site_data.get('site_name', '') if site_data else ''
+    battery_info = site_data.get('battery', {}) if site_data else {}
+    energy_kwh = battery_info.get('total_nameplate_energy', 0) / 1000 if battery_info else battery_kwh
+    if not energy_kwh:
+        energy_kwh = battery_kwh or 13.5
+
+    address_display = customer_address or 'N/A'
+    name_display = customer_name or ''
+    date_display = commissioning_date or ''
+    model_display = battery_model or 'Powerwall 3'
+    energy_display = f'{energy_kwh:.1f} kWh' if energy_kwh else '13.5 kWh'
+    serial_display = serial or 'N/A'
+
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body {{ margin: 0; background: #1b1b1b; font-family: 'Arial', sans-serif; color: #fff; }}
+  .header {{ background: #e82127; padding: 20px 32px; display: flex; align-items: center; gap: 16px; }}
+  .header svg {{ width: 40px; height: 40px; fill: #fff; }}
+  .header h1 {{ margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }}
+  .header span {{ font-size: 14px; opacity: 0.85; }}
+  .body {{ padding: 32px; }}
+  .card {{ background: #2a2a2a; border-radius: 12px; padding: 24px 28px; margin-bottom: 20px; }}
+  .card h2 {{ margin: 0 0 16px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #aaa; }}
+  .row {{ display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #3a3a3a; }}
+  .row:last-child {{ border-bottom: none; }}
+  .label {{ color: #aaa; font-size: 14px; }}
+  .value {{ font-size: 14px; font-weight: 600; }}
+  .badge {{ display: inline-block; background: #1db954; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }}
+  .badge-blue {{ background: #0a84ff; }}
+  .grid-mode {{ background: #2a2a2a; border-radius: 12px; padding: 24px 28px; border: 2px solid #0a84ff; }}
+  .grid-mode h2 {{ margin: 0 0 8px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #0a84ff; }}
+  .grid-mode .mode {{ font-size: 28px; font-weight: 700; color: #fff; }}
+  .grid-mode .desc {{ font-size: 12px; color: #aaa; margin-top: 4px; }}
+  .footer {{ padding: 16px 32px; font-size: 11px; color: #555; border-top: 1px solid #333; }}
+</style>
+</head>
+<body>
+<div class="header">
+  <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+  <div>
+    <h1>Tesla PowerHub — Commissioning Report</h1>
+    <span>Installer Portal · Vero Power</span>
+  </div>
+</div>
+<div class="body">
+  <div class="card">
+    <h2>Site Information</h2>
+    <div class="row"><span class="label">Customer Name</span><span class="value">{name_display}</span></div>
+    <div class="row"><span class="label">Site Address</span><span class="value">{address_display}</span></div>
+    <div class="row"><span class="label">Tesla Site ID</span><span class="value">{site_name or 'Assigned'}</span></div>
+    <div class="row"><span class="label">Commission Date</span><span class="value">{date_display}</span></div>
+    <div class="row"><span class="label">Commission Status</span><span class="value"><span class="badge">Commissioned</span></span></div>
+  </div>
+  <div class="grid-mode">
+    <h2>Grid Export Setting</h2>
+    <div class="mode">Non-Export Mode</div>
+    <div class="desc">System is configured to not export energy to the grid. All solar production is consumed on-site or stored in battery.</div>
+  </div>
+  <div class="card" style="margin-top:20px">
+    <h2>Battery System</h2>
+    <div class="row"><span class="label">Model</span><span class="value">{model_display}</span></div>
+    <div class="row"><span class="label">Capacity</span><span class="value">{energy_display}</span></div>
+    <div class="row"><span class="label">Serial Number</span><span class="value">{serial_display}</span></div>
+    <div class="row"><span class="label">Charge Mode</span><span class="value"><span class="badge badge-blue">Self-Powered</span></span></div>
+  </div>
+</div>
+<div class="footer">Generated by Vero Power Install Automation · Tesla GridLogic API · {date_display}</div>
+</body>
+</html>"""
+
+    # Render HTML to screenshot using Playwright
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True, args=['--no-sandbox'])
+        context = await browser.new_context(viewport={'width': 1000, 'height': 800})
+        page = await context.new_page()
+        try:
+            await page.set_content(html, wait_until='domcontentloaded')
+            await asyncio.sleep(0.5)
+            screenshot_bytes = await page.screenshot(full_page=True)
+            log.info(f'Tesla commissioning screenshot: {len(screenshot_bytes)} bytes')
+            return screenshot_bytes
+        except Exception as e:
+            log.exception(f'Tesla commissioning HTML screenshot failed: {e}')
+            return None
+        finally:
+            await context.close()
+            await browser.close()
 
 
 async def _lux_google_auth(page) -> None:

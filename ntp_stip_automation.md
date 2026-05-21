@@ -24,7 +24,7 @@ Watches for emails with subject: `Vero NTP Stipulation: [Customer Name]`
    - Stipulations → matched dropdown values
 10. Sets the NTP work order to `WAITING`
 11. Leaves a note on the project tagging Sam LeSueur with the stip list
-12. Sends a Slack message to the closer's `-ops` channel tagging them
+12. Notifies the rep — Slack to their `-ops` channel if found, otherwise emails the rep directly at their Coperniq `closer_email`
 13. Replies to Lux: *"Hi Kathy, Thank you for the heads up — we are on it!"*
 
 ## Stipulation Matching
@@ -34,7 +34,7 @@ Email text is matched to Coperniq dropdown values using keywords:
 | Coperniq Value | Keywords That Trigger It |
 |----------------|--------------------------|
 | Bank Verification | bank verification, bank |
-| Title Verification | title |
+| Title Verification | title, property ownership, proof of ownership |
 | Energy Community Error | energy community |
 | Finance Contract Signature Needed | signature, contract |
 | Pending Change Order | change order |
@@ -48,11 +48,11 @@ Email text is matched to Coperniq dropdown values using keywords:
 | Copy of ID | copy of id, photo id, id front, id back, provide an id |
 | Social Security card | social security, ssn, ss #, ss# |
 
-## Slack
+## Rep Notification
 
-- Sends to the closer's `-ops` channel (looked up by last name from channel list)
-- Falls back to `#corporate-operations` if no matching channel is found
-- Tags the closer by their Slack user ID (looked up by email from Coperniq)
+- Sends Slack to the closer's `-ops` channel (looked up by last name from channel list), tagging them by Slack user ID
+- If no `-ops` channel found: emails the rep directly at their `closer_email` from Coperniq
+- Only falls back to `#corporate-operations` if no channel AND no email is available
 
 ## How It Runs
 
