@@ -27,8 +27,13 @@ GMAIL_ADDRESS = os.environ['GMAIL_ADDRESS']
 GMAIL_APP_PW = os.environ['GMAIL_APP_PASSWORD']
 SLACK_BOT_TOKEN = os.environ['SLACK_BOT_TOKEN']
 KATHY_EMAIL = os.environ['KATHY_EMAIL']
+TESLA_CLIENT_ID = os.environ['TESLA_CLIENT_ID']
+TESLA_CLIENT_SECRET = os.environ['TESLA_CLIENT_SECRET']
+TESLA_GROUP_ID = os.environ['TESLA_GROUP_ID']
 
 COPERNIQ_BASE = 'https://api.coperniq.io/v1'
+TESLA_AUTH_URL = 'https://gridlogic-api.sn.tesla.services/v1/auth/token'
+TESLA_ASSET_BASE = 'https://gridlogic-api.sn.tesla.services/v2/asset'
 COMPANY_CAM_BASE = 'https://api.companycam.com/v2'
 POLL_INTERVAL = 1800  # 30 minutes
 
@@ -619,6 +624,111 @@ def start_m2_coperniq(project_id: int, customer_name: str):
     )
     note_r.raise_for_status()
     log.info(f'M2 note left on project {project_id}')
+
+
+def _tesla_get_token() -> Optional[str]:
+    """Obtain a Bearer token from the Tesla PowerHub API using client credentials.
+
+    Auth endpoint: POST https://gridlogic-api.sn.tesla.services/v1/auth/token
+    Uses HTTP Basic auth (client_id:client_secret) with grant_type=client_credentials.
+    Returns the access_token string, or None on failure.
+    """
+    try:
+        r = requests.post(
+            TESLA_AUTH_URL,
+            data={'grant_type': 'client_credentials'},
+            auth=(TESLA_CLIENT_ID, TESLA_CLIENT_SECRET),
+            timeout=20,
+        )
+        r.raise_for_status()
+        return r.json()['data']['access_token']
+    except Exception as e:
+        log.error(f'[tesla] Auth failed: {e}')
+        return None
+
+
+def get_tesla_commissioning_data(customer_address: str) -> Optional[dict]:
+    """Get Tesla PowerHub commissioning data for a site by address.
+
+    Tesla PowerHub API overview (discovered via endpoint probing):
+      - Auth:   POST https://gridlogic-api.sn.tesla.services/v1/auth/token
+                HTTP Basic auth with (client_id, client_secret), grant_type=client_credentials
+      - Sites:  GET  https://gridlogic-api.sn.tesla.services/v2/asset/sites?din={gateway_din}
+                Returns site data for the Tesla gateway with that DIN.
+
+    NOTE: The PowerHub Residential API looks up sites by gateway DIN (device identifier),
+    not by street address.  There is no address-search endpoint in the API.
+
+    Workflow:
+      1. Obtain a Bearer token.
+      2. Look up the Coperniq project by address to find the gateway DIN stored in
+         the project's custom fields (custom.tesla_gateway_din or similar).
+      3. Call /v2/asset/sites?din={din} to retrieve commissioning data.
+      4. If no DIN is available, log a warning and return None.
+
+    Returns a dict of site data from the Tesla PowerHub API, or None if not found.
+    """
+    token = _tesla_get_token()
+    if not token:
+        log.error(f'[tesla] Cannot look up site — auth failed')
+        return None
+
+    headers = {'Authorization': f'Bearer {token}', 'Accept': 'application/json'}
+
+    # Step 1 — Try to resolve a gateway DIN by searching Coperniq for the address
+    din = None
+    try:
+        r = requests.get(
+            f'{COPERNIQ_BASE}/projects/search',
+            params={'prop1': 'address', 'op1': 'contains', 'value1': customer_address.split(',')[0].strip()},
+            headers=COP_GET,
+            timeout=15,
+        )
+        r.raise_for_status()
+        projects = r.json()
+        for project in projects:
+            custom = project.get('custom') or {}
+            # Try common field names that might store the gateway DIN
+            for key in ('tesla_gateway_din', 'gateway_din', 'tesla_din', 'gateway_serial',
+                        'tesla_gateway', 'powerwall_din'):
+                candidate = custom.get(key)
+                if candidate:
+                    din = str(candidate).strip()
+                    log.info(f'[tesla] Found gateway DIN {din!r} for {customer_address!r}')
+                    break
+            if din:
+                break
+    except Exception as e:
+        log.warning(f'[tesla] Coperniq address lookup failed: {e}')
+
+    if not din:
+        log.warning(
+            f'[tesla] No gateway DIN found for {customer_address!r}. '
+            'The PowerHub API requires a gateway DIN to look up site data. '
+            'Store the DIN in a Coperniq custom field (e.g. tesla_gateway_din) to enable this lookup.'
+        )
+        return None
+
+    # Step 2 — Look up the site by DIN
+    try:
+        r = requests.get(
+            f'{TESLA_ASSET_BASE}/sites',
+            params={'din': din},
+            headers=headers,
+            timeout=20,
+        )
+        r.raise_for_status()
+        data = r.json().get('data', [])
+        if not data:
+            log.warning(f'[tesla] No site found for DIN {din!r} (address: {customer_address!r})')
+            return None
+
+        site = data[0]
+        log.info(f'[tesla] Site found for DIN {din!r}: {site}')
+        return site
+    except Exception as e:
+        log.error(f'[tesla] Site lookup failed for DIN {din!r}: {e}')
+        return None
 
 
 # --- Main loop ---
