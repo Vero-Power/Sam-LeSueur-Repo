@@ -30,9 +30,6 @@ KATHY_EMAIL = os.environ['KATHY_EMAIL']
 TESLA_CLIENT_ID = os.environ['TESLA_CLIENT_ID']
 TESLA_CLIENT_SECRET = os.environ['TESLA_CLIENT_SECRET']
 TESLA_GROUP_ID = os.environ['TESLA_GROUP_ID']
-TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID', '')
-TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN', '')
-TWILIO_FROM_NUMBER = os.environ.get('TWILIO_FROM_NUMBER', '')
 
 COPERNIQ_BASE = 'https://api.coperniq.io/v1'
 TESLA_AUTH_URL = 'https://gridlogic-api.sn.tesla.services/v1/auth/token'
@@ -252,7 +249,7 @@ def complete_install_coperniq(project_id: int) -> dict:
 
 
 def send_customer_sms(project_id: int, customer_name: str, customer_phone: str = ''):
-    """Send a post-install thank-you SMS to the customer via Twilio."""
+    """Send a post-install thank-you SMS via Coperniq's built-in communication feature."""
     first_name = customer_name.split()[0]
     message = (
         f"Hey {first_name}! This is Sam with Vero, just checking in to make sure the install "
@@ -260,22 +257,46 @@ def send_customer_sms(project_id: int, customer_name: str, customer_phone: str =
         f"or friends who are interested in the program, let us know so we can send ya a $500 referral bonus!"
     )
 
-    if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN and TWILIO_FROM_NUMBER and customer_phone:
-        r = requests.post(
-            f'https://api.twilio.com/2010-04-01/Accounts/{TWILIO_ACCOUNT_SID}/Messages.json',
-            auth=(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN),
-            data={
-                'From': TWILIO_FROM_NUMBER,
-                'To': customer_phone,
-                'Body': message,
-            },
-        )
-        if r.status_code in (200, 201):
-            log.info(f'SMS sent to {customer_name} ({customer_phone}) via Twilio')
-            return
-        log.warning(f'Twilio SMS failed: {r.status_code} {r.text[:200]}')
+    # Find contact ID for the sendTo field
+    contact_id = None
+    if customer_phone:
+        try:
+            name_parts = customer_name.strip().split()
+            q = name_parts[-1] if name_parts else customer_name
+            r = requests.get(
+                f'{COPERNIQ_BASE}/contacts',
+                headers=COP_GET,
+                params={'q': q},
+                timeout=30,
+            )
+            if r.status_code == 200:
+                for c in r.json():
+                    if customer_phone in (c.get('phones') or []):
+                        contact_id = c['id']
+                        break
+        except Exception as e:
+            log.warning(f'Contact lookup failed for {customer_name}: {e}')
 
-    log.warning(f'SMS not sent for {customer_name} — add TWILIO_ACCOUNT_SID/AUTH_TOKEN to .env')
+    payload = {
+        'type': 'COMMUNICATION',
+        'body': message,
+        'sms': True,
+        'email': False,
+        'portal': False,
+    }
+    if contact_id:
+        payload['sendTo'] = [contact_id]
+
+    r = requests.post(
+        f'{COPERNIQ_BASE}/projects/{project_id}/notes',
+        headers=COP_POST,
+        json=payload,
+        timeout=30,
+    )
+    if r.status_code in (200, 201):
+        log.info(f'SMS sent to {customer_name} via Coperniq (contact_id={contact_id})')
+    else:
+        log.warning(f'Coperniq SMS failed for {customer_name}: {r.status_code} {r.text[:200]}')
 
 
 def _slack_user_id_from_email(email: str) -> Optional[str]:
