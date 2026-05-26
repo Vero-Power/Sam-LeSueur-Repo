@@ -75,6 +75,22 @@ Polls Coperniq every 30 minutes for solar installs completed today.
 
 ---
 
+### `wo_automation.py` — WO Assignment
+Polls Coperniq every 5 minutes for work orders assigned to Sam that are still ASSIGNED status.
+
+**Actions:**
+1. Moves Verofication WOs to WAITING and tags Daxton in a note
+2. Moves Electrical Review WOs to WAITING and tags Daxton in a note
+3. Moves NTP WOs to WAITING, leaves note: "Waiting on underwriting review"
+4. Moves Change Order WOs to WAITING, leaves note: "Waiting on change order details" tagging Sam
+5. Moves M2 WOs to WAITING, leaves note: "Waiting on install to be completed"
+6. Skips Construction Review WOs (Sam should not be assigned these)
+7. Skips Solar Installation WOs (always stays ASSIGNED)
+
+📄 See [wo_automation.md](wo_automation.md) for full details.
+
+---
+
 ### `m3_automation.py` — M3 Submission
 Polls Coperniq every 30 minutes for projects where PTO has been granted (PTO Submitted + PTO Approved WOs both COMPLETED, M3 WO still WAITING).
 
@@ -199,9 +215,11 @@ launchctl list | grep vero
 | `install_browser.py` | Playwright + API tasks: CC photos PDF, Tesla screenshot, Lux upload |
 | `create_lux_session.py` | One-time setup: persistent Chrome profile for Lux portal |
 | `create_tesla_session.py` | Not needed — Tesla uses API credentials, no browser login |
+| `wo_automation.py` | WO Assignment automation |
 | `find_m2_ntp_mismatch.py` | Utility: finds and fixes projects with mismatched M2/NTP statuses |
 | `test_jondrea.py` | Test runner: runs full install pipeline on Jondrea Freeman |
 | `test_seth_m3.py` | Test runner: runs full M3 pipeline on Seth Riklin |
+| `wo_automation.md` | WO Assignment automation docs |
 | `ntp_automation.md` | NTP automation docs |
 | `m2_automation.md` | M2 automation docs |
 | `ntp_stip_automation.md` | NTP stipulation automation docs |
@@ -216,6 +234,7 @@ launchctl list | grep vero
 | `processed_stip_emails.json` | Tracks processed stipulation emails — **not committed** |
 | `processed_installs.json` | Tracks processed install project IDs — **not committed** |
 | `processed_m3_projects.json` | Tracks processed M3 project IDs — **not committed** |
+| `processed_wo_assignments.json` | Tracks processed WO assignment IDs — **not committed** |
 | `lux_browser_profile/` | Persistent Chrome profile for Lux portal — **not committed** |
 
 ---
