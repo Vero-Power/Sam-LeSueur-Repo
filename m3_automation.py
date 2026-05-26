@@ -208,16 +208,15 @@ def update_commissioning_form(form_id: int):
 
 def complete_commissioning_wo(project_id: int, wo: dict):
     wo_id = wo['id']
-    # Check off all checklist items first
-    checklist = [{'id': item['id'], 'isCompleted': True} for item in wo.get('checklist', [])]
-    if checklist:
-        _api_patch(
-            f'{COPERNIQ_BASE}/projects/{project_id}/work-orders/{wo_id}',
-            {'checklist': checklist},
-        )
+    for item in wo.get('checklist', []):
+        if not item.get('isCompleted'):
+            _api_patch(
+                f'{COPERNIQ_BASE}/projects/{project_id}/work-orders/{wo_id}/checklist/{item["id"]}',
+                {'isCompleted': True},
+            )
     _api_patch(
         f'{COPERNIQ_BASE}/projects/{project_id}/work-orders/{wo_id}',
-        {'isCompleted': True},
+        {'status': 'COMPLETED'},
     )
     log.info(f'Commissioning WO {wo_id} → COMPLETED')
 
