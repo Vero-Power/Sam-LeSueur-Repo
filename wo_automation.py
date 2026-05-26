@@ -42,7 +42,6 @@ HANDLED_TEMPLATES = {
     NTP_WO_TEMPLATE,
     CHANGE_ORDER_TEMPLATE,
     M2_WO_TEMPLATE,
-    SIGNED_DESIGN_TEMPLATE,
 }
 
 WO_NOTES = {
@@ -57,9 +56,6 @@ WO_NOTES = {
         f'Waiting on change order details. [Sam LeSueur|~id:{SAM_USER_ID}]'
     ),
     M2_WO_TEMPLATE:       'Waiting on install to be completed.',
-    SIGNED_DESIGN_TEMPLATE: (
-        f'Waiting on signed design / planset review. [Clay Neser|~id:{CLAY_USER_ID}]'
-    ),
 }
 
 DIR            = Path(__file__).parent
