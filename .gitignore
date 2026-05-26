@@ -4,6 +4,9 @@ processed_emails.json
 processed_m2_emails.json
 processed_stip_emails.json
 processed_installs.json
+processed_m3_projects.json
+processed_wo_assignments.json
+all_projects.json
 __pycache__/
 *.pyc
 .env

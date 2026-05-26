@@ -85,7 +85,8 @@ Polls Coperniq every 5 minutes for work orders assigned to Sam that are still AS
 4. Moves Change Order WOs to WAITING, leaves note: "Waiting on change order details" tagging Sam
 5. Moves M2 WOs to WAITING, leaves note: "Waiting on install to be completed"
 6. Skips Construction Review WOs (Sam should not be assigned these)
-7. Skips Solar Installation WOs (always stays ASSIGNED)
+7. Moves Signed Design/Planset Review WOs to WAITING and tags Clay in a note
+8. Skips Solar Installation and Construction Review WOs
 
 📄 See [wo_automation.md](wo_automation.md) for full details.
 
