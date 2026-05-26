@@ -156,31 +156,43 @@ def save_processed_ids(ids: set):
     PROCESSED_FILE.write_text(json.dumps(list(ids)))
 
 
-def fetch_new_m2_emails(processed_ids: set) -> list[dict]:
-    mail = imaplib.IMAP4_SSL('imap.gmail.com', timeout=30)
-    mail.login(GMAIL_ADDRESS, GMAIL_APP_PW)
-    mail.select('inbox')
+def fetch_new_m2_emails(processed_ids: set) -> list:
+    for attempt in range(3):
+        try:
+            mail = imaplib.IMAP4_SSL('imap.gmail.com', timeout=30)
+            mail.login(GMAIL_ADDRESS, GMAIL_APP_PW)
+            mail.select('inbox')
 
-    _, data = mail.search(None, 'SUBJECT "Vero LLC M2 Approval:"')
-    emails = []
-    for num in data[0].split():
-        _, raw = mail.fetch(num, '(RFC822)')
-        msg = message_from_bytes(raw[0][1])
-        msg_id = msg.get('Message-ID', '').strip()
-        if not msg_id or msg_id in processed_ids:
-            continue
-        subject = _decode_subject(msg.get('Subject', ''))
-        if 'Vero LLC M2 Approval:' not in subject:
-            continue
-        emails.append({
-            'id':      msg_id,
-            'subject': subject,
-            'sender':  msg.get('From', ''),
-            'body':    _extract_body(msg),
-        })
+            _, data = mail.search(None, 'SUBJECT "Vero LLC M2 Approval:"')
+            emails = []
+            for num in data[0].split():
+                _, raw = mail.fetch(num, '(RFC822)')
+                msg = message_from_bytes(raw[0][1])
+                msg_id = msg.get('Message-ID', '').strip()
+                if not msg_id or msg_id in processed_ids:
+                    continue
+                subject = _decode_subject(msg.get('Subject', ''))
+                if 'Vero LLC M2 Approval:' not in subject:
+                    continue
+                emails.append({
+                    'id':      msg_id,
+                    'subject': subject,
+                    'sender':  msg.get('From', ''),
+                    'body':    _extract_body(msg),
+                })
 
-    mail.logout()
-    return emails
+            try:
+                mail.logout()
+            except Exception:
+                pass
+            return emails
+        except Exception as e:
+            if attempt < 2:
+                log.warning(f'IMAP error (attempt {attempt + 1}/3): {e} — retrying in 5s')
+                time.sleep(5)
+            else:
+                log.warning(f'IMAP unavailable after 3 attempts: {e}')
+                return []
 
 
 def send_reply(to: str, subject: str):

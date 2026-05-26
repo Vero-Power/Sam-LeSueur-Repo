@@ -65,24 +65,36 @@ def save_processed_ids(ids: set):
 
 
 def fetch_new_ntp_emails(processed_ids: set) -> list:
-    mail = imaplib.IMAP4_SSL('imap.gmail.com', timeout=30)
-    mail.login(GMAIL_ADDRESS, GMAIL_APP_PW)
-    mail.select('inbox')
+    for attempt in range(3):
+        try:
+            mail = imaplib.IMAP4_SSL('imap.gmail.com', timeout=30)
+            mail.login(GMAIL_ADDRESS, GMAIL_APP_PW)
+            mail.select('inbox')
 
-    _, data = mail.search(None, 'SUBJECT "Vero LLC NTP Approval:"')
-    new = []
-    for num in data[0].split():
-        _, raw = mail.fetch(num, '(RFC822)')
-        msg = message_from_bytes(raw[0][1])
-        msg_id = msg.get('Message-ID', '').strip()
-        if not msg_id or msg_id in processed_ids:
-            continue
-        subject = _decode_subject(msg.get('Subject', ''))
-        if 'Vero LLC NTP Approval:' in subject and not subject.strip().lower().startswith('re:'):
-            new.append({'id': msg_id, 'subject': subject})
+            _, data = mail.search(None, 'SUBJECT "Vero LLC NTP Approval:"')
+            new = []
+            for num in data[0].split():
+                _, raw = mail.fetch(num, '(RFC822)')
+                msg = message_from_bytes(raw[0][1])
+                msg_id = msg.get('Message-ID', '').strip()
+                if not msg_id or msg_id in processed_ids:
+                    continue
+                subject = _decode_subject(msg.get('Subject', ''))
+                if 'Vero LLC NTP Approval:' in subject and not subject.strip().lower().startswith('re:'):
+                    new.append({'id': msg_id, 'subject': subject})
 
-    mail.logout()
-    return new
+            try:
+                mail.logout()
+            except Exception:
+                pass
+            return new
+        except Exception as e:
+            if attempt < 2:
+                log.warning(f'IMAP error (attempt {attempt + 1}/3): {e} — retrying in 5s')
+                time.sleep(5)
+            else:
+                log.warning(f'IMAP unavailable after 3 attempts: {e}')
+                return []
 
 
 # --- Coperniq API ---
