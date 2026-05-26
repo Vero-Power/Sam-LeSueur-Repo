@@ -73,6 +73,23 @@ Polls Coperniq every 30 minutes for solar installs completed today.
 
 📄 See [install_automation.md](install_automation.md) for full details.
 
+---
+
+### `m3_automation.py` — M3 Submission
+Polls Coperniq every 30 minutes for projects where PTO has been granted (PTO Submitted + PTO Approved WOs both COMPLETED).
+
+**Actions:**
+1. Takes a Tesla commissioning screenshot
+2. Downloads PTO Letter from Coperniq M3 form
+3. Uploads both to Lux portal **Pending PTO** section (Proof of Commissioning + PTO Letter)
+4. Updates M3 form: Finance Status → M3 Submitted, sets submitted date
+5. Updates Commissioning form: status → Completed, uploads monitoring screenshot
+6. Sets Commissioning WO → COMPLETED
+7. Emails Kathy and Mike Paris at Lux Financial
+8. Leaves a note in Coperniq
+
+📄 See [m3_automation.md](m3_automation.md) for full details.
+
 **Browser tasks** are handled by `install_browser.py`:
 - `export_cc_checklist_pdf(cc_project_id)` — CC API + Pillow, no browser needed
 - `screenshot_tesla_commissioning(...)` — Tesla GridLogic API + HTML rendering, no browser login
