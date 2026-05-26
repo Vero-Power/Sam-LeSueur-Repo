@@ -1,6 +1,6 @@
-# Vero Power — Email Automations
+# Vero Power — Email & Install Automations
 
-Python scripts running on the office Mac mini that monitor Gmail and Coperniq, automatically handling NTP approvals, NTP stipulations, M2 approvals, and post-install workflows. Replaces all Zapier workflows.
+Python scripts running on the office Mac mini that monitor Gmail and Coperniq, automatically handling NTP approvals, NTP stipulations, M2 approvals, install completions, and M3 submissions. Replaces all Zapier workflows.
 
 All automations run as launchd daemons and auto-restart on failure or reboot.
 
@@ -76,24 +76,56 @@ Polls Coperniq every 30 minutes for solar installs completed today.
 ---
 
 ### `m3_automation.py` — M3 Submission
-Polls Coperniq every 30 minutes for projects where PTO has been granted (PTO Submitted + PTO Approved WOs both COMPLETED).
+Polls Coperniq every 30 minutes for projects where PTO has been granted (PTO Submitted + PTO Approved WOs both COMPLETED, M3 WO still WAITING).
 
 **Actions:**
-1. Takes a Tesla commissioning screenshot
+1. Takes a Tesla commissioning screenshot via Tesla GridLogic API
 2. Downloads PTO Letter from Coperniq M3 form
-3. Uploads both to Lux portal **Pending PTO** section (Proof of Commissioning + PTO Letter)
-4. Updates M3 form: Finance Status → M3 Submitted, sets submitted date
-5. Updates Commissioning form: status → Completed, uploads monitoring screenshot
-6. Sets Commissioning WO → COMPLETED
+3. Uploads both to Lux portal **Pending PTO** section (Proof of Commissionsing + PTO Letter)
+4. Updates M3 form: Finance Status → M3 Submitted, sets submitted date and Finance Provider
+5. Updates Commissioning form: status → Completed, sets complete date, marks form COMPLETED
+6. Sets Commissioning WO → COMPLETED (patches each checklist item individually, then `status: COMPLETED`)
 7. Emails Kathy and Mike Paris at Lux Financial
 8. Leaves a note in Coperniq
 
 📄 See [m3_automation.md](m3_automation.md) for full details.
 
-**Browser tasks** are handled by `install_browser.py`:
-- `export_cc_checklist_pdf(cc_project_id)` — CC API + Pillow, no browser needed
+---
+
+## Helper Scripts
+
+### `install_browser.py`
+Playwright + API tasks shared by install and M3 automations:
+- `export_cc_checklist_pdf(cc_project_id)` — CC API + Pillow, no browser needed (SYNC, do not await)
 - `screenshot_tesla_commissioning(...)` — Tesla GridLogic API + HTML rendering, no browser login
 - `upload_to_lux_portal(customer_name, files)` — persistent Chrome profile (`lux_browser_profile/`)
+
+📄 See [install_browser.md](install_browser.md) for full details.
+
+---
+
+### `create_lux_session.py`
+One-time setup: creates persistent Chrome profile for Lux portal. Run once on Mac mini — handles Google OAuth, iPhone push approval, and Lux 2FA automatically. Re-run if session expires.
+
+📄 See [create_lux_session.md](create_lux_session.md) for full details.
+
+---
+
+### `find_m2_ntp_mismatch.py`
+Utility script — scans all Coperniq projects and finds any where the NTP form still says "NTP Approved" but the M2 WO or form is already completed. Fixes mismatches by setting NTP form Finance Status → M2 Approved.
+
+Run manually when needed:
+```bash
+python3 find_m2_ntp_mismatch.py
+```
+
+---
+
+### `test_jondrea.py`
+Test runner — runs the full install pipeline on Jondrea Freeman (Coperniq project 793003, Company Cam 99879909). Use to verify the install automation end-to-end.
+
+### `test_seth_m3.py`
+Test runner — runs the full M3 pipeline on Seth Riklin (Coperniq project 796539). Use to verify the M3 automation end-to-end.
 
 ---
 
@@ -126,10 +158,10 @@ KATHY_EMAIL=kathy.treanor@luxfinancial.io
 ### 3. One-time Lux portal setup
 
 ```bash
-python create_lux_session.py
+python3 create_lux_session.py
 ```
 
-Logs into Lux portal via Google OAuth + Gmail 2FA and saves a persistent Chrome profile. Only needed once.
+Logs into Lux portal via Google OAuth + Gmail 2FA and saves a persistent Chrome profile. Only needed once (re-run if session expires).
 
 ---
 
@@ -142,7 +174,13 @@ pkill -f ntp_automation.py
 pkill -f m2_automation.py
 pkill -f ntp_stip_automation.py
 pkill -f install_automation.py
+pkill -f m3_automation.py
 # launchd auto-restarts each one
+```
+
+To check all are running:
+```bash
+launchctl list | grep vero
 ```
 
 > **Note:** `processed_stip_emails.json` is loaded at startup — restart the daemon after editing it manually.
@@ -157,22 +195,28 @@ pkill -f install_automation.py
 | `m2_automation.py` | M2 Approval automation |
 | `ntp_stip_automation.py` | NTP Stipulation automation |
 | `install_automation.py` | Install Completion automation (main orchestrator) |
+| `m3_automation.py` | M3 Submission automation |
 | `install_browser.py` | Playwright + API tasks: CC photos PDF, Tesla screenshot, Lux upload |
 | `create_lux_session.py` | One-time setup: persistent Chrome profile for Lux portal |
 | `create_tesla_session.py` | Not needed — Tesla uses API credentials, no browser login |
+| `find_m2_ntp_mismatch.py` | Utility: finds and fixes projects with mismatched M2/NTP statuses |
 | `test_jondrea.py` | Test runner: runs full install pipeline on Jondrea Freeman |
-| `find_m2_ntp_mismatch.py` | Utility: finds projects with mismatched M2/NTP statuses |
+| `test_seth_m3.py` | Test runner: runs full M3 pipeline on Seth Riklin |
+| `ntp_automation.md` | NTP automation docs |
+| `m2_automation.md` | M2 automation docs |
+| `ntp_stip_automation.md` | NTP stipulation automation docs |
+| `install_automation.md` | Install automation docs |
+| `m3_automation.md` | M3 automation docs |
+| `install_browser.md` | install_browser.py docs |
+| `create_lux_session.md` | create_lux_session.py docs |
 | `requirements.txt` | Python dependencies |
 | `.env` | Credentials — **not committed** |
 | `processed_emails.json` | Tracks processed NTP approval emails — **not committed** |
 | `processed_m2_emails.json` | Tracks processed M2 approval emails — **not committed** |
 | `processed_stip_emails.json` | Tracks processed stipulation emails — **not committed** |
 | `processed_installs.json` | Tracks processed install project IDs — **not committed** |
+| `processed_m3_projects.json` | Tracks processed M3 project IDs — **not committed** |
 | `lux_browser_profile/` | Persistent Chrome profile for Lux portal — **not committed** |
-| `ntp_automation.md` | NTP automation docs |
-| `m2_automation.md` | M2 automation docs |
-| `ntp_stip_automation.md` | NTP stipulation automation docs |
-| `install_automation.md` | Install automation docs |
 
 ---
 
@@ -185,8 +229,8 @@ pkill -f install_automation.py
 | `COPERNIQ_API_KEY` | All | Coperniq API key |
 | `SLACK_BOT_TOKEN` | ntp_stip, install | Slack bot token |
 | `COMPANY_CAM_API_KEY` | install | Company Cam API key |
-| `LUX_GOOGLE_PASSWORD` | install | Google password for Lux portal |
-| `TESLA_CLIENT_ID` | install | Tesla GridLogic API client ID |
-| `TESLA_CLIENT_SECRET` | install | Tesla GridLogic API client secret |
-| `TESLA_GROUP_ID` | install | Tesla GridLogic Vero group ID |
-| `KATHY_EMAIL` | install | Kathy Treanor's email at Lux Financial |
+| `LUX_GOOGLE_PASSWORD` | install, m3 | Google password for Lux portal |
+| `TESLA_CLIENT_ID` | install, m3 | Tesla GridLogic API client ID |
+| `TESLA_CLIENT_SECRET` | install, m3 | Tesla GridLogic API client secret |
+| `TESLA_GROUP_ID` | install, m3 | Tesla GridLogic Vero group ID |
+| `KATHY_EMAIL` | install, m3 | Kathy Treanor's email at Lux Financial |
