@@ -109,6 +109,23 @@ Polls Coperniq every 30 minutes for projects where PTO has been granted (PTO Sub
 
 ---
 
+### `clock_automation.py` — Time Clock
+Monitors #corporate-operations Slack for Sam's messages and auto clocks in/out on the employee dashboard.
+
+**Clock IN** — any message containing: `locked in`, `yoked in`, `clocked in`, etc.
+
+**Clock OUT** — any message containing `arrived` and `left`:
+```
+arrived 8:03
+left 5:12
+```
+
+Calls `https://disputes.veropwr.com/api/timeclock/clock-in|clock-out`. Polls every 2 minutes.
+
+📄 See [clock_automation.md](clock_automation.md) for full details.
+
+---
+
 ## Helper Scripts
 
 ### `install_browser.py`
