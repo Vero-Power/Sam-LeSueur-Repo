@@ -7,6 +7,7 @@ processed_installs.json
 processed_m3_projects.json
 processed_wo_assignments.json
 all_projects.json
+clock_state.json
 __pycache__/
 *.pyc
 .env
