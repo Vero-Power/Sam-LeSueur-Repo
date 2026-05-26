@@ -13,15 +13,20 @@ Monitors Coperniq for completed solar installs and runs the full post-install wo
 ## What It Does
 
 1. Finds today's Solar Installation projects in Coperniq
-2. Checks Company Cam for completed VERO SOLAR INSTALLER CHECKLIST
+2. Checks Company Cam for a completed VERO SOLAR INSTALLER CHECKLIST
 3. Completes the Solar Installation work order, form, and field visit in Coperniq
-4. Sends Slack message to #vero with panel + battery photos, tagging setter and closer
-5. Sends customer follow-up SMS via Twilio (requires TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM_NUMBER in .env)
+4. Sends Slack message to #vero with all install photos, tagging setter and closer
+5. Sends customer follow-up SMS via Coperniq's built-in Communication API (no Twilio needed)
 6. Downloads BOM from Gmail (`[Customer] Solar Materials` email) and CAD/planset from Coperniq
-7. Exports Company Cam install photos as a multi-page PDF (via CC API + Pillow — no browser needed). Filters to 'installed panel' and 'installed battery' photos only, excludes serial number/barcode tasks.
-8. Uploads all documents (checklist PDF, CAD/planset, BOM) to Lux portal
-9. Emails kathy.treanor@luxfinancial.io that M2 was submitted
-10. Finds or creates the M2 work order and form in Coperniq, sets Finance Status → M2 Submitted, WO → WAITING, leaves a note
+7. Exports Company Cam install photos as a multi-page PDF (via CC API + Pillow — no browser needed)
+8. Takes a Tesla PowerHub commissioning screenshot via Tesla GridLogic API + HTML renderer (no browser login needed)
+9. Uploads 4 documents to the Lux Financial portal via Playwright:
+   - Installation Photos (CC checklist PDF)
+   - CAD/Plan Set (from Coperniq files)
+   - Bill of Materials (from Gmail attachment)
+   - Commissioning Screen Shot (Tesla PNG)
+10. Emails kathy.treanor@luxfinancial.io that M2 was submitted
+11. Creates M2 work order and form in Coperniq, sets Finance Status → M2 Submitted, WO → WAITING, leaves a note
 
 ## Slack Format
 
@@ -33,7 +38,7 @@ Closer: @[tag]
 Area: [City]
 ```
 
-Plus panel and battery photos from the Company Cam installer checklist.
+Plus all install photos from Company Cam uploaded in a single grouped message.
 
 ## How It Runs
 
@@ -43,29 +48,22 @@ Plus panel and battery photos from the Company Cam installer checklist.
 
 ## One-Time Setup
 
-### Create Lux portal session
+### Create Lux portal browser session
 
-Before running for the first time, create a saved Google OAuth session for the Lux portal:
+Before running for the first time, create a persistent Chrome profile for the Lux portal:
 
 ```bash
 cd /Users/samlesueur/vero-power
 python create_lux_session.py
 ```
 
-This opens a browser window. Log in with sam@veropwr.com and complete any Google prompts. The session is saved to `lux_session.json` and reused automatically.
-
-### Load the launchd daemon
-
-```bash
-launchctl load ~/Library/LaunchAgents/com.vero.install-automation.plist
-launchctl list | grep install
-```
+This opens a browser, logs in with sam@veropwr.com via Google OAuth + Gmail 2FA, and saves the session to `lux_browser_profile/`. The session is reused on every run — no re-login needed.
 
 ## Restart
 
 ```bash
-# Kill the process — launchd auto-restarts it
 pkill -f install_automation.py
+# launchd auto-restarts it
 ```
 
 ## Logs
@@ -84,23 +82,20 @@ tail -f install_automation.log
 | `SLACK_BOT_TOKEN` | Slack bot token |
 | `COMPANY_CAM_API_KEY` | Company Cam API key |
 | `LUX_GOOGLE_PASSWORD` | Google password for Lux portal login |
-| `TESLA_CLIENT_ID` | Tesla PowerHub API client ID |
-| `TESLA_CLIENT_SECRET` | Tesla PowerHub API client secret |
-| `TESLA_GROUP_ID` | Tesla PowerHub group ID |
+| `TESLA_CLIENT_ID` | Tesla GridLogic API client ID |
+| `TESLA_CLIENT_SECRET` | Tesla GridLogic API client secret |
+| `TESLA_GROUP_ID` | Tesla GridLogic group ID (Vero group) |
 | `KATHY_EMAIL` | Kathy's email at Lux Financial |
-| `TWILIO_ACCOUNT_SID` | Twilio account SID for customer SMS |
-| `TWILIO_AUTH_TOKEN` | Twilio auth token |
-| `TWILIO_FROM_NUMBER` | Twilio phone number to send SMS from |
 
 ## Files
 
 | File | Description |
 |------|-------------|
 | `install_automation.py` | Main script |
-| `install_browser.py` | Playwright browser automation (Lux upload, Tesla screenshot) |
-| `create_lux_session.py` | One-time script to create saved Lux Google OAuth + 2FA session |
-| `create_tesla_session.py` | One-time script to create saved Tesla PowerHub browser session |
+| `install_browser.py` | Playwright browser tasks (CC PDF, Tesla screenshot, Lux upload) |
+| `create_lux_session.py` | One-time setup: persistent Chrome profile for Lux portal |
+| `create_tesla_session.py` | Not needed — Tesla uses API credentials, no browser login |
+| `test_jondrea.py` | Test runner: runs full install pipeline on Jondrea Freeman |
 | `install_automation.log` | Log output |
 | `processed_installs.json` | Tracks processed project IDs — do not delete |
-| `lux_session.json` | Saved Lux portal session — do not commit |
-| `tesla_session.json` | Saved Tesla PowerHub session — do not commit |
+| `lux_browser_profile/` | Persistent Chrome profile for Lux portal — do not commit |

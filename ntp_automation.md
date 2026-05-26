@@ -30,6 +30,7 @@ Watches for emails with subject: `Vero LLC NTP Approval: [Customer Name]`
 ## How It Runs
 
 - Polls Gmail every **2 minutes** via IMAP
+- IMAP connections retry up to 3 times (5s between attempts) before skipping the poll — transient Gmail connection drops don't cause errors
 - Runs as a launchd daemon on the Mac mini (auto-restarts on failure/reboot)
 - Processed email IDs saved to `processed_emails.json` to prevent double-processing
 
