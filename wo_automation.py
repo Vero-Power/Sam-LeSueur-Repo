@@ -19,7 +19,7 @@ load_dotenv()
 
 COPERNIQ_API_KEY = os.environ['COPERNIQ_API_KEY']
 COPERNIQ_BASE    = 'https://api.coperniq.io/v1'
-POLL_INTERVAL    = 300   # 5 minutes
+POLL_INTERVAL    = 900   # 15 minutes
 PROJECT_REFRESH  = 3600  # re-enumerate projects every 1 hour
 
 SAM_USER_ID    = 14206
@@ -242,7 +242,7 @@ def main():
                             changed = True
                     except Exception as e:
                         log.exception(f'Error processing WO {wo.get("id")} on project {project_id}: {e}')
-                time.sleep(0.1)
+                time.sleep(0.2)
 
             if changed:
                 save_processed(processed_ids)

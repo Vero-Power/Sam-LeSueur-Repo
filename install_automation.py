@@ -429,16 +429,24 @@ def get_todays_installs() -> list:
       - custom.install_scheduled_date / install_completed_date
     """
     today = _today_date()
-    r = requests.get(
-        f'{COPERNIQ_BASE}/projects/search',
-        params={
-            'prop1': 'install_scheduled_date',
-            'op1': 'contains',
-            'value1': today,
-        },
-        headers=COP_GET,
-    )
-    r.raise_for_status()
+    for attempt in range(5):
+        r = requests.get(
+            f'{COPERNIQ_BASE}/projects/search',
+            params={
+                'prop1': 'install_scheduled_date',
+                'op1': 'contains',
+                'value1': today,
+            },
+            headers=COP_GET,
+            timeout=30,
+        )
+        if r.status_code == 429:
+            wait = 30 * (attempt + 1)
+            log.warning(f'Rate limited on projects/search — waiting {wait}s')
+            time.sleep(wait)
+            continue
+        r.raise_for_status()
+        break
     projects = r.json()
 
     log.info(f'Found {len(projects)} solar install(s) scheduled for {today}')
