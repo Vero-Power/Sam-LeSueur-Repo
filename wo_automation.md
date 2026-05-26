@@ -18,7 +18,7 @@ Polls all Coperniq projects every 5 minutes for work orders assigned to Sam (or 
 | 🧾 Notice to Proceed (NTP) W/O | 1907087 | Move to WAITING, leave note: "Waiting on underwriting review." |
 | 🪖 Change Order | 1907067 | Move to WAITING, leave note: "Waiting on change order details." tagging Sam |
 | ⏳ Milestone 2 (M2) W/O | 1907088 | Move to WAITING, leave note: "Waiting on install to be completed." |
-| Signed Design / Planset Review | 2121772 | Move to WAITING, leave note tagging Clay |
+| Signed Design / Planset Review | 2121772 | Skip — leave in ASSIGNED |
 | 🛠️ Construction Review | 1907081 | Skip — Sam should not be assigned these |
 | 🥷🏿 Solar Installation | 1907074/1907085 | Skip — always stays ASSIGNED |
 
