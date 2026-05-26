@@ -199,16 +199,25 @@ def update_m3_form(form_id: int):
 def update_commissioning_form(form_id: int):
     today = _today_et()
     _api_patch(f'{COPERNIQ_BASE}/forms/{form_id}', {'fields': [
-        {'columnId': COMM_COL_STATUS,         'value': 'Completed'},
-        {'columnId': COMM_COL_COMPLETE_DATE,   'value': today},
+        {'columnId': COMM_COL_STATUS,        'value': 'Completed'},
+        {'columnId': COMM_COL_COMPLETE_DATE,  'value': today},
     ]})
-    log.info('Commissioning form updated: status→Completed, complete date set')
+    _api_patch(f'{COPERNIQ_BASE}/forms/{form_id}', {'status': 'COMPLETED'})
+    log.info('Commissioning form updated and completed')
 
 
-def complete_commissioning_wo(project_id: int, wo_id: int):
+def complete_commissioning_wo(project_id: int, wo: dict):
+    wo_id = wo['id']
+    # Check off all checklist items first
+    checklist = [{'id': item['id'], 'isCompleted': True} for item in wo.get('checklist', [])]
+    if checklist:
+        _api_patch(
+            f'{COPERNIQ_BASE}/projects/{project_id}/work-orders/{wo_id}',
+            {'checklist': checklist},
+        )
     _api_patch(
         f'{COPERNIQ_BASE}/projects/{project_id}/work-orders/{wo_id}',
-        {'status': 'COMPLETED'},
+        {'isCompleted': True},
     )
     log.info(f'Commissioning WO {wo_id} → COMPLETED')
 
@@ -337,7 +346,7 @@ async def process_m3(project: dict) -> bool:
     # 4. Upload to Lux portal (Pending PTO section)
     lux_files = []
     if screenshot:
-        lux_files.append((f'{customer_name}_commissioning.png', screenshot, 'Proof of Commissioning'))
+        lux_files.append((f'{customer_name}_commissioning.png', screenshot, 'Proof of Commissionsing'))
     if pto_bytes:
         lux_files.append((pto_filename or 'PTO_Letter.pdf', pto_bytes, 'PTO Letter'))
 
@@ -361,7 +370,7 @@ async def process_m3(project: dict) -> bool:
         log.warning('Commissioning form not found — skipping commissioning updates')
 
     if commissioning_wo:
-        complete_commissioning_wo(project_id, commissioning_wo['id'])
+        complete_commissioning_wo(project_id, commissioning_wo)
     else:
         log.warning('Commissioning WO not found — skipping')
 
