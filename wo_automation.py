@@ -140,7 +140,7 @@ def save_project_map(project_map: dict):
 def build_project_map(current_map: dict) -> dict:
     """Scan project numbers to build complete {number: project_id} map."""
     max_num = max(current_map.keys(), default=0)
-    scan_up_to = max_num + 30  # scan 30 ahead to catch new projects
+    scan_up_to = max(max_num + 30, 250)  # always scan at least to 250 on first run
 
     log.info(f'Scanning project numbers 1–{scan_up_to} to build project map...')
     updated = dict(current_map)
